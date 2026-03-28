@@ -42,10 +42,10 @@ namespace SourceGit.ViewModels
         public LauncherPage()
         {
             _node = new RepositoryNode() { Id = Guid.NewGuid().ToString() };
-            _data = Welcome.Instance;
+            _data = Dashboard.Instance;
 
             // New welcome page will clear the search filter before.
-            Welcome.Instance.ClearSearchFilter();
+            Dashboard.Instance.ClearSearchFilter();
         }
 
         public LauncherPage(RepositoryNode node, Repository repo)

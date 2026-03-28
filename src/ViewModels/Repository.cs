@@ -1569,6 +1569,10 @@ namespace SourceGit.ViewModels
             {
                 if (page.Node.Id.Equals(FullPath))
                     return page;
+
+                // Support repos opened inside the Dashboard
+                if (page.Data is Dashboard dashboard && dashboard.ActiveRepository == this)
+                    return page;
             }
 
             return null;

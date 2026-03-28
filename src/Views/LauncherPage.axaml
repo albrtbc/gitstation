@@ -18,6 +18,10 @@
             PointerPressed="OnToolBarPointerPressed">
       <ContentControl Content="{Binding Data}">
         <ContentControl.DataTemplates>
+          <DataTemplate DataType="vm:Dashboard">
+            <v:DashboardToolbar/>
+          </DataTemplate>
+
           <DataTemplate DataType="vm:Welcome">
             <v:WelcomeToolbar/>
           </DataTemplate>
@@ -33,6 +37,10 @@
     <Border Grid.Row="1">
       <ContentControl Content="{Binding Data}">
         <ContentControl.DataTemplates>
+          <DataTemplate DataType="vm:Dashboard">
+            <v:Dashboard/>
+          </DataTemplate>
+
           <DataTemplate DataType="vm:Welcome">
             <v:Welcome/>
           </DataTemplate>
