@@ -66,18 +66,6 @@ namespace SourceGit.ViewModels
         public AvaloniaList<Models.GitHubComment> Comments { get; } = [];
         public AvaloniaList<Models.GitHubReview> Reviews { get; } = [];
 
-        public string NewComment
-        {
-            get => _newComment;
-            set => SetProperty(ref _newComment, value);
-        }
-
-        public string ReviewBody
-        {
-            get => _reviewBody;
-            set => SetProperty(ref _reviewBody, value);
-        }
-
         public bool IsLoading
         {
             get => _isLoading;
@@ -125,30 +113,17 @@ namespace SourceGit.ViewModels
             }
         }
 
-        public async Task AddInlineCommentAsync(string filePath, int line, string comment)
+        public async Task<bool> AddInlineCommentAsync(string filePath, int line, string comment)
         {
             if (_client == null || _selectedPR == null || string.IsNullOrWhiteSpace(comment))
-                return;
+                return false;
 
-            await _client.CreateReviewCommentAsync(
+            return await _client.CreateReviewCommentAsync(
                 _selectedPR.Number,
                 comment,
                 _selectedPR.Head.Sha,
                 filePath,
                 line);
-        }
-
-        public async Task AddCommentAsync()
-        {
-            if (_client == null || _selectedPR == null || string.IsNullOrWhiteSpace(_newComment))
-                return;
-
-            var comment = await _client.AddCommentAsync(_selectedPR.Number, _newComment);
-            if (comment != null)
-            {
-                Dispatcher.UIThread.Invoke(() => Comments.Add(comment));
-                NewComment = string.Empty;
-            }
         }
 
         public async Task ApproveAsync()
@@ -180,8 +155,11 @@ namespace SourceGit.ViewModels
             if (_client == null || _selectedPR == null)
                 return;
 
-            await _client.MergePullRequestAsync(_selectedPR.Number, method);
-            await RefreshAsync();
+            var (success, error) = await _client.MergePullRequestAsync(_selectedPR.Number, method);
+            if (!success)
+                App.RaiseException(string.Empty, $"Failed to merge: {error}");
+            else
+                await RefreshAsync();
         }
 
         private async Task LoadPullRequestDetail(Models.GitHubPullRequest pr)
@@ -202,9 +180,12 @@ namespace SourceGit.ViewModels
                 Dispatcher.UIThread.Invoke(() => Changes = []);
             }
 
-            // Load comments and reviews from GitHub API
-            var comments = await _client.GetCommentsAsync(pr.Number);
-            var reviews = await _client.GetReviewsAsync(pr.Number);
+            // Load comments and reviews from GitHub API (in parallel)
+            var commentsTask = _client.GetCommentsAsync(pr.Number);
+            var reviewsTask = _client.GetReviewsAsync(pr.Number);
+            await Task.WhenAll(commentsTask, reviewsTask);
+            var comments = commentsTask.Result;
+            var reviews = reviewsTask.Result;
 
             Dispatcher.UIThread.Invoke(() =>
             {
@@ -226,23 +207,9 @@ namespace SourceGit.ViewModels
 
         private void InitializeClient()
         {
-            var token = Models.GitHubClient.ResolveToken();
-            if (string.IsNullOrEmpty(token) || _repo.Remotes == null)
-                return;
-
-            foreach (var remote in _repo.Remotes)
-            {
-                if (remote.URL.Contains("github.com", StringComparison.OrdinalIgnoreCase))
-                {
-                    var (owner, repo) = Models.GitHubClient.ParseRemoteUrl(remote.URL);
-                    if (!string.IsNullOrEmpty(owner) && !string.IsNullOrEmpty(repo))
-                    {
-                        _client = new Models.GitHubClient(token, owner, repo);
-                        OnPropertyChanged(nameof(IsGitHubRepo));
-                        return;
-                    }
-                }
-            }
+            _client = Models.GitHubClient.TryCreate(_repo.Remotes);
+            if (_client != null)
+                OnPropertyChanged(nameof(IsGitHubRepo));
         }
 
         private readonly Repository _repo;
@@ -251,8 +218,6 @@ namespace SourceGit.ViewModels
         private List<Models.Change> _changes;
         private List<Models.Change> _selectedChanges;
         private DiffContext _diffContext;
-        private string _newComment = string.Empty;
-        private string _reviewBody = string.Empty;
         private bool _isLoading;
         private string _filterState = "open";
     }

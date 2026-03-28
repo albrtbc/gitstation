@@ -59,6 +59,7 @@ namespace SourceGit.Views
             }
         }
 
+        // Prevents SelectRepository → ActiveNode change → SelectionChanged → SelectRepository re-entry loop
         private bool _isSelecting;
 
         private void OnRowContextRequested(object sender, ContextRequestedEventArgs e)

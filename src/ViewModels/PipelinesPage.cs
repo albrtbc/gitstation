@@ -83,8 +83,11 @@ namespace SourceGit.ViewModels
             if (_client == null || run == null)
                 return;
 
-            await _client.RerunWorkflowAsync(run.Id);
-            await RefreshAsync();
+            var (success, error) = await _client.RerunWorkflowAsync(run.Id);
+            if (!success)
+                App.RaiseException(string.Empty, $"Failed to re-run workflow: {error}");
+            else
+                await RefreshAsync();
         }
 
         public void OpenInBrowser(Models.GitHubWorkflowRun run)
@@ -119,23 +122,9 @@ namespace SourceGit.ViewModels
 
         private void InitializeClient()
         {
-            var token = Models.GitHubClient.ResolveToken();
-            if (string.IsNullOrEmpty(token) || _repo.Remotes == null)
-                return;
-
-            foreach (var remote in _repo.Remotes)
-            {
-                if (remote.URL.Contains("github.com", StringComparison.OrdinalIgnoreCase))
-                {
-                    var (owner, repo) = Models.GitHubClient.ParseRemoteUrl(remote.URL);
-                    if (!string.IsNullOrEmpty(owner) && !string.IsNullOrEmpty(repo))
-                    {
-                        _client = new Models.GitHubClient(token, owner, repo);
-                        OnPropertyChanged(nameof(IsGitHubRepo));
-                        return;
-                    }
-                }
-            }
+            _client = Models.GitHubClient.TryCreate(_repo.Remotes);
+            if (_client != null)
+                OnPropertyChanged(nameof(IsGitHubRepo));
         }
 
         private readonly Repository _repo;

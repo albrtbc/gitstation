@@ -29,14 +29,42 @@ namespace SourceGit.Models
 
         /// <summary>
         /// Auto-resolve GitHub token: tries gh CLI first, then falls back to Preferences.
+        /// Result is cached after the first call.
         /// </summary>
         public static string ResolveToken()
         {
-            var token = TryGetGhCliToken();
-            if (!string.IsNullOrEmpty(token))
-                return token;
+            if (_tokenResolved)
+                return _cachedToken;
 
-            return ViewModels.Preferences.Instance.GitHubToken;
+            _tokenResolved = true;
+            _cachedToken = TryGetGhCliToken();
+            if (!string.IsNullOrEmpty(_cachedToken))
+                return _cachedToken;
+
+            _cachedToken = ViewModels.Preferences.Instance.GitHubToken;
+            return _cachedToken;
+        }
+
+        private static string _cachedToken;
+        private static bool _tokenResolved;
+
+        public static GitHubClient TryCreate(IReadOnlyList<Remote> remotes)
+        {
+            var token = ResolveToken();
+            if (string.IsNullOrEmpty(token) || remotes == null)
+                return null;
+
+            foreach (var remote in remotes)
+            {
+                if (remote.URL.Contains("github.com", StringComparison.OrdinalIgnoreCase))
+                {
+                    var (owner, repo) = ParseRemoteUrl(remote.URL);
+                    if (!string.IsNullOrEmpty(owner) && !string.IsNullOrEmpty(repo))
+                        return new GitHubClient(token, owner, repo);
+                }
+            }
+
+            return null;
         }
 
         private static string TryGetGhCliToken()
@@ -121,11 +149,22 @@ namespace SourceGit.Models
             return await PatchAsync($"/repos/{Owner}/{Repo}/pulls/{number}", payload);
         }
 
-        public async Task<bool> MergePullRequestAsync(int number, string mergeMethod)
+        public async Task<(bool success, string error)> MergePullRequestAsync(int number, string mergeMethod)
         {
             var payload = JsonSerializer.Serialize(new { merge_method = mergeMethod });
-            var json = await PutAsync($"/repos/{Owner}/{Repo}/pulls/{number}/merge", payload);
-            return json != null;
+            try
+            {
+                var content = new StringContent(payload, Encoding.UTF8, "application/json");
+                var response = await _client.PutAsync($"/repos/{Owner}/{Repo}/pulls/{number}/merge", content);
+                var body = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                    return (true, null);
+                return (false, $"{response.StatusCode}: {body}");
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
         }
 
         // Comments
@@ -191,10 +230,9 @@ namespace SourceGit.Models
             return string.Empty;
         }
 
-        public async Task<bool> RerunWorkflowAsync(long runId)
+        public async Task<(bool success, string error)> RerunWorkflowAsync(long runId)
         {
-            var json = await PostAsync($"/repos/{Owner}/{Repo}/actions/runs/{runId}/rerun", "{}");
-            return json != null;
+            return await PostWithErrorAsync($"/repos/{Owner}/{Repo}/actions/runs/{runId}/rerun", "{}");
         }
 
         // Helper to extract owner/repo from a git remote URL
@@ -298,19 +336,6 @@ namespace SourceGit.Models
             }
             catch { }
             return false;
-        }
-
-        private async Task<string> PutAsync(string path, string jsonPayload)
-        {
-            try
-            {
-                var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-                var response = await _client.PutAsync(path, content);
-                if (response.IsSuccessStatusCode)
-                    return await response.Content.ReadAsStringAsync();
-            }
-            catch { }
-            return null;
         }
 
         private readonly HttpClient _client;

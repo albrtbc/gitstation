@@ -28,8 +28,10 @@ namespace SourceGit.ViewModels
                 return false;
 
             ProgressDescription = "Posting comment...";
-            await _prPage.AddInlineCommentAsync(FilePath, Line, _comment);
-            return true;
+            var success = await _prPage.AddInlineCommentAsync(FilePath, Line, _comment);
+            if (!success)
+                App.RaiseException(string.Empty, "Failed to post comment.");
+            return success;
         }
 
         private readonly PullRequestsPage _prPage;
