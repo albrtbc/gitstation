@@ -181,6 +181,20 @@
                   </Button>
                 </Grid>
               </ListBoxItem>
+
+              <ListBoxItem BorderThickness="0,1,0,0" IsVisible="{Binding !IsBare}">
+                <Grid Classes="view_mode" ColumnDefinitions="Auto,*">
+                  <Path Grid.Column="0" Classes="icon" Data="{StaticResource Icons.CreatePR}"/>
+                  <TextBlock Grid.Column="1" Classes="header" Text="PULL REQUESTS"/>
+                </Grid>
+              </ListBoxItem>
+
+              <ListBoxItem BorderThickness="0,1,0,0" IsVisible="{Binding !IsBare}">
+                <Grid Classes="view_mode" ColumnDefinitions="Auto,*">
+                  <Path Grid.Column="0" Classes="icon" Data="{StaticResource Icons.Action}"/>
+                  <TextBlock Grid.Column="1" Classes="header" Text="PIPELINES"/>
+                </Grid>
+              </ListBoxItem>
             </ListBox>
           </Border>
         </Border>
@@ -928,6 +942,14 @@
 
           <DataTemplate DataType="vm:StashesPage">
             <v:StashesPage/>
+          </DataTemplate>
+
+          <DataTemplate DataType="vm:PullRequestsPage">
+            <v:PullRequestsPage/>
+          </DataTemplate>
+
+          <DataTemplate DataType="vm:PipelinesPage">
+            <v:PipelinesPage/>
           </DataTemplate>
         </ContentControl.DataTemplates>
       </ContentControl>

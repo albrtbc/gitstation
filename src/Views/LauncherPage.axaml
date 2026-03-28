@@ -9,13 +9,15 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SourceGit.Views.LauncherPage"
              x:DataType="vm:LauncherPage">
-  <Grid RowDefinitions="36,*">
-    <!-- ToolBar -->
+  <Grid RowDefinitions="Auto,*">
+    <!-- ToolBar (hidden when Dashboard is active) -->
     <Border Grid.Row="0"
+            Height="36"
             BorderBrush="{DynamicResource Brush.Border0}"
             BorderThickness="0,0,0,1"
             Background="{DynamicResource Brush.ToolBar}"
-            PointerPressed="OnToolBarPointerPressed">
+            PointerPressed="OnToolBarPointerPressed"
+            IsVisible="{Binding Data, Converter={x:Static c:ObjectConverters.IsNotDashboard}}">
       <ContentControl Content="{Binding Data}">
         <ContentControl.DataTemplates>
           <DataTemplate DataType="vm:Welcome">
@@ -33,6 +35,10 @@
     <Border Grid.Row="1">
       <ContentControl Content="{Binding Data}">
         <ContentControl.DataTemplates>
+          <DataTemplate DataType="vm:Dashboard">
+            <v:Dashboard/>
+          </DataTemplate>
+
           <DataTemplate DataType="vm:Welcome">
             <v:Welcome/>
           </DataTemplate>

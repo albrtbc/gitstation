@@ -67,6 +67,8 @@ namespace SourceGit.ViewModels
                     {
                         1 => _workingCopy,
                         2 => _stashesPage,
+                        3 => _pullRequestsPage,
+                        4 => _pipelinesPage,
                         _ => _histories,
                     };
                 }
@@ -78,6 +80,8 @@ namespace SourceGit.ViewModels
             get => _selectedView;
             set => SetProperty(ref _selectedView, value);
         }
+
+        public PullRequestsPage PullRequestsPage => _pullRequestsPage;
 
         public bool EnableTopoOrderInHistory
         {
@@ -463,6 +467,8 @@ namespace SourceGit.ViewModels
             _histories = new Histories(this);
             _workingCopy = new WorkingCopy(this) { CommitMessage = _uiStates.LastCommitMessage };
             _stashesPage = new StashesPage(this);
+            _pullRequestsPage = new PullRequestsPage(this);
+            _pipelinesPage = new PipelinesPage(this);
             _searchCommitContext = new SearchCommitContext(this);
 
             if (Preferences.Instance.ShowLocalChangesByDefault)
@@ -516,6 +522,8 @@ namespace SourceGit.ViewModels
             _histories = null;
             _workingCopy = null;
             _stashesPage = null;
+            _pullRequestsPage = null;
+            _pipelinesPage = null;
 
             _localChangesCount = 0;
             _stashesCount = 0;
@@ -1569,6 +1577,10 @@ namespace SourceGit.ViewModels
             {
                 if (page.Node.Id.Equals(FullPath))
                     return page;
+
+                // Support repos opened inside the Dashboard
+                if (page.Data is Dashboard dashboard && dashboard.ActiveRepository == this)
+                    return page;
             }
 
             return null;
@@ -1836,6 +1848,8 @@ namespace SourceGit.ViewModels
         private Histories _histories = null;
         private WorkingCopy _workingCopy = null;
         private StashesPage _stashesPage = null;
+        private PullRequestsPage _pullRequestsPage = null;
+        private PipelinesPage _pipelinesPage = null;
         private int _selectedViewIndex = 0;
         private object _selectedView = null;
 

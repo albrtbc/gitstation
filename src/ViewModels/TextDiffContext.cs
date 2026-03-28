@@ -29,6 +29,12 @@ namespace SourceGit.ViewModels
         public Models.DiffOption Option => _option;
         public Models.TextDiff Data => _data;
 
+        public bool IsPullRequestDiff
+        {
+            get => _isPullRequestDiff;
+            set => SetProperty(ref _isPullRequestDiff, value);
+        }
+
         public Vector ScrollOffset
         {
             get => _scrollOffset;
@@ -161,21 +167,23 @@ namespace SourceGit.ViewModels
 
         private TextLineRange _displayRange = null;
         private TextDiffSelectedChunk _selectedChunk = null;
+        protected bool _isPullRequestDiff = false;
     }
 
     public class CombinedTextDiff : TextDiffContext
     {
-        public CombinedTextDiff(Models.DiffOption option, Models.TextDiff diff, TextDiffContext previous = null)
+        public CombinedTextDiff(Models.DiffOption option, Models.TextDiff diff, TextDiffContext previous = null, bool isPullRequestDiff = false)
         {
             _option = option;
             _data = diff;
+            _isPullRequestDiff = isPullRequestDiff;
 
             TryKeepPrevState(previous, _data.Lines);
         }
 
         public override TextDiffContext SwitchMode()
         {
-            return new TwoSideTextDiff(_option, _data, this);
+            return new TwoSideTextDiff(_option, _data, this, _isPullRequestDiff);
         }
     }
 
@@ -184,10 +192,11 @@ namespace SourceGit.ViewModels
         public List<Models.TextDiffLine> Old { get; } = [];
         public List<Models.TextDiffLine> New { get; } = [];
 
-        public TwoSideTextDiff(Models.DiffOption option, Models.TextDiff diff, TextDiffContext previous = null)
+        public TwoSideTextDiff(Models.DiffOption option, Models.TextDiff diff, TextDiffContext previous = null, bool isPullRequestDiff = false)
         {
             _option = option;
             _data = diff;
+            _isPullRequestDiff = isPullRequestDiff;
 
             foreach (var line in diff.Lines)
             {
@@ -218,7 +227,7 @@ namespace SourceGit.ViewModels
 
         public override TextDiffContext SwitchMode()
         {
-            return new CombinedTextDiff(_option, _data, this);
+            return new CombinedTextDiff(_option, _data, this, _isPullRequestDiff);
         }
 
         public void GetCombinedRangeForSingleSide(ref int startLine, ref int endLine, bool isOldSide)

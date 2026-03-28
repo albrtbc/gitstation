@@ -50,13 +50,6 @@ namespace SourceGit.ViewModels
         public LauncherPagesCommandPalette(Launcher launcher)
         {
             _launcher = launcher;
-
-            foreach (var page in _launcher.Pages)
-            {
-                if (page.Node.IsRepository)
-                    _opened.Add(page.Node.Id);
-            }
-
             UpdateVisible();
         }
 
@@ -67,102 +60,29 @@ namespace SourceGit.ViewModels
 
         public void OpenOrSwitchTo()
         {
-            _opened.Clear();
             _visiblePages.Clear();
             _visibleRepos.Clear();
             Close();
 
-            if (_selectedPage != null)
+            if (_selectedRepo != null)
+                Dashboard.Instance.SelectRepository(_selectedRepo);
+            else if (_selectedPage != null)
                 _launcher.ActivePage = _selectedPage;
-            else if (_selectedRepo != null)
-                _launcher.OpenRepositoryInTab(_selectedRepo, null);
         }
 
         private void UpdateVisible()
         {
-            var pages = new List<LauncherPage>();
-            CollectVisiblePages(pages);
-
             var repos = new List<RepositoryNode>();
             CollectVisibleRepository(repos, Preferences.Instance.RepositoryNodes);
 
-            var autoSelectPage = _selectedPage;
             var autoSelectRepo = _selectedRepo;
+            if (_selectedRepo == null || !repos.Contains(_selectedRepo))
+                autoSelectRepo = repos.Count > 0 ? repos[0] : null;
 
-            if (_selectedPage != null)
-            {
-                if (pages.Contains(_selectedPage))
-                {
-                    // Keep selection
-                }
-                else if (pages.Count > 0)
-                {
-                    autoSelectPage = pages[0];
-                }
-                else if (repos.Count > 0)
-                {
-                    autoSelectPage = null;
-                    autoSelectRepo = repos[0];
-                }
-                else
-                {
-                    autoSelectPage = null;
-                }
-            }
-            else if (_selectedRepo != null)
-            {
-                if (repos.Contains(_selectedRepo))
-                {
-                    // Keep selection
-                }
-                else if (repos.Count > 0)
-                {
-                    autoSelectRepo = repos[0];
-                }
-                else if (pages.Count > 0)
-                {
-                    autoSelectPage = pages[0];
-                    autoSelectRepo = null;
-                }
-                else
-                {
-                    autoSelectRepo = null;
-                }
-            }
-            else if (pages.Count > 0)
-            {
-                autoSelectPage = pages[0];
-                autoSelectRepo = null;
-            }
-            else if (repos.Count > 0)
-            {
-                autoSelectPage = null;
-                autoSelectRepo = repos[0];
-            }
-            else
-            {
-                autoSelectPage = null;
-                autoSelectRepo = null;
-            }
-
-            VisiblePages = pages;
+            VisiblePages = [];
             VisibleRepos = repos;
-            SelectedPage = autoSelectPage;
+            SelectedPage = null;
             SelectedRepo = autoSelectRepo;
-        }
-
-        private void CollectVisiblePages(List<LauncherPage> pages)
-        {
-            foreach (var page in _launcher.Pages)
-            {
-                if (page == _launcher.ActivePage)
-                    continue;
-
-                if (string.IsNullOrEmpty(_searchFilter) ||
-                    page.Node.Name.Contains(_searchFilter, StringComparison.OrdinalIgnoreCase) ||
-                    (page.Node.IsRepository && page.Node.Id.Contains(_searchFilter, StringComparison.OrdinalIgnoreCase)))
-                    pages.Add(page);
-            }
         }
 
         private void CollectVisibleRepository(List<RepositoryNode> outs, List<RepositoryNode> nodes)
@@ -175,9 +95,6 @@ namespace SourceGit.ViewModels
                     continue;
                 }
 
-                if (_opened.Contains(node.Id))
-                    continue;
-
                 if (string.IsNullOrEmpty(_searchFilter) ||
                     node.Id.Contains(_searchFilter, StringComparison.OrdinalIgnoreCase) ||
                     node.Name.Contains(_searchFilter, StringComparison.OrdinalIgnoreCase))
@@ -186,7 +103,6 @@ namespace SourceGit.ViewModels
         }
 
         private Launcher _launcher = null;
-        private HashSet<string> _opened = new HashSet<string>();
         private List<LauncherPage> _visiblePages = [];
         private List<RepositoryNode> _visibleRepos = [];
         private string _searchFilter = string.Empty;

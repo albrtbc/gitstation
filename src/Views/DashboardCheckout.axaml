@@ -1,0 +1,118 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:m="using:SourceGit.Models"
+             xmlns:vm="using:SourceGit.ViewModels"
+             xmlns:c="using:SourceGit.Converters"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="400"
+             x:Class="SourceGit.Views.DashboardCheckout"
+             x:DataType="vm:DashboardCheckout">
+  <StackPanel Orientation="Vertical" Margin="8,0">
+    <!-- Title -->
+    <StackPanel Orientation="Horizontal">
+      <Path Width="16" Height="16"
+            Margin="0,4,0,0"
+            Data="{StaticResource Icons.Branch}"/>
+
+      <TextBlock FontSize="18"
+                 Margin="8,0,0,0"
+                 Classes="bold"
+                 Text="Checkout Branch"/>
+    </StackPanel>
+
+    <!-- Search / New branch name -->
+    <TextBox Margin="0,16,0,0"
+             Height="28"
+             Padding="8,0"
+             CornerRadius="4"
+             Watermark="Search or type new branch name..."
+             Text="{Binding SearchFilter, Mode=TwoWay}"/>
+
+    <!-- New branch indicator -->
+    <StackPanel Orientation="Horizontal"
+                Margin="0,8,0,0"
+                IsVisible="{Binding IsNewBranch}">
+      <Path Width="12" Height="12"
+            Margin="0,0,4,0"
+            Data="{StaticResource Icons.Branch}"
+            Fill="{DynamicResource Brush.Accent}"/>
+      <TextBlock Foreground="{DynamicResource Brush.Accent}" FontSize="12">
+        <TextBlock.Text>
+          <MultiBinding StringFormat="Create new branch '{0}' from HEAD">
+            <Binding Path="SearchFilter"/>
+          </MultiBinding>
+        </TextBlock.Text>
+      </TextBlock>
+    </StackPanel>
+
+    <!-- Branch list -->
+    <Border Margin="0,8,0,0"
+            MaxHeight="250"
+            BorderThickness="1"
+            BorderBrush="{DynamicResource Brush.Border0}"
+            CornerRadius="4"
+            Background="{DynamicResource Brush.Contents}">
+      <ListBox Background="Transparent"
+               BorderThickness="0"
+               MaxHeight="250"
+               SelectionMode="Single"
+               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+               ScrollViewer.VerticalScrollBarVisibility="Auto"
+               ItemsSource="{Binding FilteredBranches}"
+               SelectedItem="{Binding SelectedBranch, Mode=TwoWay}">
+        <ListBox.Styles>
+          <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="MinHeight" Value="30"/>
+            <Setter Property="CornerRadius" Value="2"/>
+          </Style>
+
+          <Style Selector="ListBox">
+            <Setter Property="FocusAdorner">
+              <FocusAdornerTemplate>
+                <Grid/>
+              </FocusAdornerTemplate>
+            </Setter>
+          </Style>
+        </ListBox.Styles>
+
+        <ListBox.ItemsPanel>
+          <ItemsPanelTemplate>
+            <VirtualizingStackPanel Orientation="Vertical"/>
+          </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+
+        <ListBox.ItemTemplate>
+          <DataTemplate DataType="m:Branch">
+            <Grid ColumnDefinitions="Auto,Auto,*">
+              <TextBlock Grid.Column="0"
+                         Margin="0,0,6,0"
+                         FontSize="10"
+                         Foreground="{DynamicResource Brush.FG2}"
+                         VerticalAlignment="Center"
+                         Text="LOCAL"
+                         IsVisible="{Binding IsLocal}"/>
+              <TextBlock Grid.Column="0"
+                         Margin="0,0,6,0"
+                         FontSize="10"
+                         Foreground="{DynamicResource Brush.FG2}"
+                         VerticalAlignment="Center"
+                         Text="REMOTE"
+                         IsVisible="{Binding !IsLocal}"/>
+              <Path Grid.Column="1"
+                    Width="12" Height="12"
+                    Margin="0,0,4,0"
+                    Data="{StaticResource Icons.Branch}"
+                    Fill="{DynamicResource Brush.FG2}"/>
+              <TextBlock Grid.Column="2"
+                         VerticalAlignment="Center"
+                         Text="{Binding FriendlyName}"
+                         TextTrimming="CharacterEllipsis"/>
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Border>
+  </StackPanel>
+</UserControl>

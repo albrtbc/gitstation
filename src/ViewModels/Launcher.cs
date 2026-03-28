@@ -78,7 +78,7 @@ namespace SourceGit.ViewModels
                 if (test.IsSuccess && !string.IsNullOrEmpty(test.StdOut))
                 {
                     var node = pref.FindOrAddNodeByRepositoryPath(test.StdOut.Trim(), null, false);
-                    Welcome.Instance.Refresh();
+                    Dashboard.Instance.Refresh();
 
                     OpenRepositoryInTab(node, null);
                     return;
@@ -220,9 +220,9 @@ namespace SourceGit.ViewModels
 
                     repo.Close();
 
-                    Welcome.Instance.ClearSearchFilter();
+                    Dashboard.Instance.ClearSearchFilter();
                     last.Node = new RepositoryNode() { Id = Guid.NewGuid().ToString() };
-                    last.Data = Welcome.Instance;
+                    last.Data = Dashboard.Instance;
                     last.Popup?.Cleanup();
                     last.Popup = null;
 

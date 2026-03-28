@@ -58,7 +58,7 @@
       </Border>
 
       <!-- Unstaged -->
-      <Grid Grid.Row="1" RowDefinitions="28,*">
+      <Grid Grid.Row="3" RowDefinitions="28,*">
         <!-- Unstaged Toolbar -->
         <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Border0}">
           <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto,Auto,Auto,Auto">
@@ -145,7 +145,7 @@
                     Focusable="False"/>
 
       <!-- Staged -->
-      <Grid Grid.Row="3" RowDefinitions="28,*">
+      <Grid Grid.Row="1" RowDefinitions="28,*">
         <!-- Staged Toolbar -->
         <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource Brush.Border0}">
           <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto,Auto">

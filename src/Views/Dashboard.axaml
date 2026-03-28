@@ -1,0 +1,248 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:c="using:SourceGit.Converters"
+             xmlns:m="using:SourceGit.Models"
+             xmlns:vm="using:SourceGit.ViewModels"
+             xmlns:v="using:SourceGit.Views"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="600"
+             x:Class="SourceGit.Views.Dashboard"
+             x:DataType="vm:Dashboard">
+  <Grid ColumnDefinitions="280,1,*">
+    <!-- Left Panel: Repository List -->
+    <Grid Grid.Column="0" RowDefinitions="36,Auto,*" Background="{DynamicResource Brush.Contents}">
+      <!-- Header -->
+      <Border Grid.Row="0"
+              BorderBrush="{DynamicResource Brush.Border0}"
+              BorderThickness="0,0,0,1"
+              Background="{DynamicResource Brush.ToolBar}">
+        <Grid ColumnDefinitions="Auto,*,Auto" Margin="8,0">
+          <TextBlock Grid.Column="0"
+                     Text="Repositories"
+                     FontWeight="Bold"
+                     VerticalAlignment="Center"/>
+
+          <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+            <Button Classes="icon_button" Width="28" Height="28" Click="OnAddRepository" ToolTip.Tip="Add Repository">
+              <Path Width="12" Height="12" Data="{StaticResource Icons.Folder.Open}"/>
+            </Button>
+
+            <Button Classes="icon_button" Width="28" Height="28" Click="OnScanFolder" ToolTip.Tip="Scan Folder">
+              <Path Width="12" Height="12" Data="{StaticResource Icons.Scan}"/>
+            </Button>
+
+            <Button Classes="icon_button" Width="28" Height="28" Click="OnRefreshClicked" ToolTip.Tip="Refresh">
+              <Path Width="12" Height="12" Data="{StaticResource Icons.Loading}"/>
+            </Button>
+
+            <Button Classes="icon_button" Width="28" Height="28" ToolTip.Tip="Sort">
+              <Button.Flyout>
+                <MenuFlyout Placement="BottomEdgeAlignedRight">
+                  <MenuItem Header="Alphabetical" Click="OnSortAlphabetical"/>
+                  <MenuItem Header="Last Modified" Click="OnSortLastModified"/>
+                </MenuFlyout>
+              </Button.Flyout>
+              <Path Width="12" Height="12" Data="{StaticResource Icons.Filter}"/>
+            </Button>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <!-- Search Box -->
+      <TextBox Grid.Row="1"
+               x:Name="SearchBox"
+               Height="32"
+               Margin="8,8,8,4"
+               Padding="0"
+               CornerRadius="16"
+               BorderBrush="{DynamicResource Brush.Border0}"
+               BorderThickness="1"
+               Background="{DynamicResource Brush.Window}"
+               Watermark="{DynamicResource Text.Welcome.Search}"
+               VerticalContentAlignment="Center"
+               Text="{Binding SearchFilter, Mode=TwoWay}">
+        <TextBox.Styles>
+          <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border0}"/>
+          </Style>
+          <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+            <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border0}"/>
+          </Style>
+        </TextBox.Styles>
+
+        <TextBox.InnerLeftContent>
+          <Path Width="16" Height="16" Margin="6,0,3,0" Data="{StaticResource Icons.Search}" Fill="{DynamicResource Brush.FG2}"/>
+        </TextBox.InnerLeftContent>
+
+        <TextBox.InnerRightContent>
+          <Button Classes="icon_button" IsVisible="{Binding SearchFilter, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Command="{Binding ClearSearchFilter}">
+            <Path Width="16" Height="16" Data="{StaticResource Icons.Clear}" Fill="{DynamicResource Brush.FG1}"/>
+          </Button>
+        </TextBox.InnerRightContent>
+      </TextBox>
+
+      <!-- Repository List -->
+      <ListBox x:Name="RepoList"
+               Grid.Row="2"
+               Margin="4,4,4,4"
+               Background="Transparent"
+               BorderThickness="0"
+               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+               ScrollViewer.VerticalScrollBarVisibility="Auto"
+               ItemsSource="{Binding Repositories}"
+               SelectedItem="{Binding ActiveNode, Mode=OneWay}"
+               SelectionMode="Single"
+               SelectionChanged="OnRepoSelectionChanged">
+        <ListBox.Styles>
+          <Style Selector="ListBox">
+            <Setter Property="FocusAdorner">
+              <FocusAdornerTemplate>
+                <Border Background="Transparent" BorderThickness="0"/>
+              </FocusAdornerTemplate>
+            </Setter>
+          </Style>
+
+          <Style Selector="ListBoxItem" x:DataType="vm:RepositoryNode">
+            <Setter Property="Margin" Value="0,0,0,1"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="FocusAdorner">
+              <FocusAdornerTemplate>
+                <Border Background="Transparent" BorderThickness="0"/>
+              </FocusAdornerTemplate>
+            </Setter>
+          </Style>
+        </ListBox.Styles>
+
+        <ListBox.ItemsPanel>
+          <ItemsPanelTemplate>
+            <VirtualizingStackPanel Orientation="Vertical"/>
+          </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+
+        <ListBox.ItemTemplate>
+          <DataTemplate DataType="vm:RepositoryNode">
+            <Grid Background="Transparent"
+                  Height="36"
+                  ColumnDefinitions="8,*,Auto,4"
+                  ClipToBounds="True"
+                  ContextRequested="OnRowContextRequested">
+
+              <!-- Name + Branch -->
+              <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" ClipToBounds="True">
+                <TextBlock Text="{Binding Name}"
+                           FontWeight="Bold"
+                           FontSize="12"
+                           TextTrimming="CharacterEllipsis"/>
+                <StackPanel Orientation="Horizontal">
+                  <ContentControl Content="{Binding Status, Mode=OneWay}"
+                                  IsVisible="{Binding Status, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <ContentControl.DataTemplates>
+                      <DataTemplate DataType="m:RepositoryStatus">
+                        <StackPanel Orientation="Horizontal">
+                          <Path Width="10" Height="10" Margin="0,0,3,0" Data="{StaticResource Icons.Branch}" Fill="{DynamicResource Brush.FG2}"/>
+                          <TextBlock Text="{Binding CurrentBranch}" FontSize="11" Foreground="{DynamicResource Brush.FG2}" TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                      </DataTemplate>
+                    </ContentControl.DataTemplates>
+                  </ContentControl>
+                </StackPanel>
+              </StackPanel>
+
+              <!-- Status indicators -->
+              <ContentControl Grid.Column="2"
+                              Margin="0,0,8,0"
+                              VerticalAlignment="Center"
+                              Content="{Binding Status, Mode=OneWay}"
+                              IsVisible="{Binding Status, Converter={x:Static ObjectConverters.IsNotNull}}">
+                <ContentControl.DataTemplates>
+                  <DataTemplate DataType="m:RepositoryStatus">
+                    <StackPanel Orientation="Horizontal" Spacing="3" VerticalAlignment="Center">
+                      <!-- Push pending (ahead) -->
+                      <Path Width="10" Height="10"
+                            Data="{StaticResource Icons.Up}"
+                            Fill="{DynamicResource Brush.Accent}"
+                            VerticalAlignment="Center"
+                            IsVisible="{Binding Ahead, Converter={x:Static c:IntConverters.IsGreaterThanZero}}"/>
+                      <!-- Pull pending (behind) -->
+                      <Path Width="10" Height="10"
+                            Data="{StaticResource Icons.Down}"
+                            Fill="Orange"
+                            VerticalAlignment="Center"
+                            IsVisible="{Binding Behind, Converter={x:Static c:IntConverters.IsGreaterThanZero}}"/>
+                      <!-- Local changes badge -->
+                      <Border Height="18"
+                              CornerRadius="9"
+                              Padding="6,0"
+                              Background="{DynamicResource Brush.FG1}"
+                              VerticalAlignment="Center"
+                              IsVisible="{Binding LocalChanges, Converter={x:Static c:IntConverters.IsGreaterThanZero}}">
+                        <TextBlock Text="{Binding LocalChanges}"
+                                   FontFamily="{DynamicResource Fonts.Monospace}"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource Brush.Window}"/>
+                      </Border>
+                    </StackPanel>
+                  </DataTemplate>
+                </ContentControl.DataTemplates>
+              </ContentControl>
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Grid>
+
+    <!-- Splitter -->
+    <GridSplitter Grid.Column="1"
+                  Width="1"
+                  Background="{DynamicResource Brush.Border0}"
+                  ResizeDirection="Columns"/>
+
+    <!-- Right Panel: Repository View or Empty State -->
+    <Grid Grid.Column="2">
+      <!-- Empty state when no repo selected -->
+      <StackPanel HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  IsVisible="{Binding ActiveRepository, Converter={x:Static ObjectConverters.IsNull}}">
+        <Path Width="48" Height="48"
+              HorizontalAlignment="Center"
+              Data="{StaticResource Icons.February}"
+              Fill="{DynamicResource Brush.FG2}"
+              Opacity="0.4"/>
+        <TextBlock Margin="0,8,0,0"
+                   HorizontalAlignment="Center"
+                   Foreground="{DynamicResource Brush.FG2}"
+                   Text="Select a repository"/>
+      </StackPanel>
+
+      <!-- Repository content when selected -->
+      <Grid RowDefinitions="36,*"
+            IsVisible="{Binding ActiveRepository, Converter={x:Static ObjectConverters.IsNotNull}}">
+        <!-- Repository Toolbar -->
+        <Border Grid.Row="0"
+                BorderBrush="{DynamicResource Brush.Border0}"
+                BorderThickness="0,0,0,1"
+                Background="{DynamicResource Brush.ToolBar}">
+          <ContentControl Content="{Binding ActiveRepository}">
+            <ContentControl.DataTemplates>
+              <DataTemplate DataType="vm:Repository">
+                <v:RepositoryToolbar/>
+              </DataTemplate>
+            </ContentControl.DataTemplates>
+          </ContentControl>
+        </Border>
+
+        <!-- Repository View -->
+        <ContentControl Grid.Row="1" Content="{Binding ActiveRepository}">
+          <ContentControl.DataTemplates>
+            <DataTemplate DataType="vm:Repository">
+              <v:Repository/>
+            </DataTemplate>
+          </ContentControl.DataTemplates>
+        </ContentControl>
+      </Grid>
+    </Grid>
+  </Grid>
+</UserControl>
