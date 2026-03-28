@@ -45,12 +45,6 @@ namespace SourceGit.Views
                 await vm.RequestChangesAsync();
         }
 
-        private async void OnCommentReview(object s, RoutedEventArgs e)
-        {
-            if (DataContext is ViewModels.PullRequestsPage vm)
-                await vm.CommentReviewAsync();
-        }
-
         private async void OnMerge(object s, RoutedEventArgs e)
         {
             if (DataContext is ViewModels.PullRequestsPage vm)

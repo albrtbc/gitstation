@@ -156,28 +156,16 @@ namespace SourceGit.ViewModels
             if (_client == null || _selectedPR == null)
                 return;
 
-            await _client.SubmitReviewAsync(_selectedPR.Number, "APPROVE", _reviewBody ?? string.Empty);
-            ReviewBody = string.Empty;
+            await _client.SubmitReviewAsync(_selectedPR.Number, "APPROVE", string.Empty);
             await LoadPullRequestDetail(_selectedPR);
         }
 
         public async Task RequestChangesAsync()
         {
-            if (_client == null || _selectedPR == null || string.IsNullOrWhiteSpace(_reviewBody))
+            if (_client == null || _selectedPR == null)
                 return;
 
-            await _client.SubmitReviewAsync(_selectedPR.Number, "REQUEST_CHANGES", _reviewBody);
-            ReviewBody = string.Empty;
-            await LoadPullRequestDetail(_selectedPR);
-        }
-
-        public async Task CommentReviewAsync()
-        {
-            if (_client == null || _selectedPR == null || string.IsNullOrWhiteSpace(_reviewBody))
-                return;
-
-            await _client.SubmitReviewAsync(_selectedPR.Number, "COMMENT", _reviewBody);
-            ReviewBody = string.Empty;
+            await _client.SubmitReviewAsync(_selectedPR.Number, "REQUEST_CHANGES", "Changes requested");
             await LoadPullRequestDetail(_selectedPR);
         }
 
