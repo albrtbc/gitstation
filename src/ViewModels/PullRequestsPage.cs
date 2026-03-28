@@ -156,8 +156,11 @@ namespace SourceGit.ViewModels
             if (_client == null || _selectedPR == null)
                 return;
 
-            await _client.SubmitReviewAsync(_selectedPR.Number, "APPROVE", string.Empty);
-            await LoadPullRequestDetail(_selectedPR);
+            var (success, error) = await _client.SubmitReviewAsync(_selectedPR.Number, "APPROVE", string.Empty);
+            if (!success)
+                App.RaiseException(string.Empty, $"Failed to approve: {error}");
+            else
+                await LoadPullRequestDetail(_selectedPR);
         }
 
         public async Task RequestChangesAsync()
@@ -165,8 +168,11 @@ namespace SourceGit.ViewModels
             if (_client == null || _selectedPR == null)
                 return;
 
-            await _client.SubmitReviewAsync(_selectedPR.Number, "REQUEST_CHANGES", "Changes requested");
-            await LoadPullRequestDetail(_selectedPR);
+            var (success, error) = await _client.SubmitReviewAsync(_selectedPR.Number, "REQUEST_CHANGES", "Changes requested");
+            if (!success)
+                App.RaiseException(string.Empty, $"Failed to request changes: {error}");
+            else
+                await LoadPullRequestDetail(_selectedPR);
         }
 
         public async Task MergeAsync(string method)

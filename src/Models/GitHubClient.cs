@@ -149,11 +149,10 @@ namespace SourceGit.Models
             return json != null ? JsonSerializer.Deserialize<List<GitHubReview>>(json) : [];
         }
 
-        public async Task<bool> SubmitReviewAsync(int prNumber, string eventType, string body)
+        public async Task<(bool success, string error)> SubmitReviewAsync(int prNumber, string eventType, string body)
         {
             var payload = JsonSerializer.Serialize(new { @event = eventType, body });
-            var json = await PostAsync($"/repos/{Owner}/{Repo}/pulls/{prNumber}/reviews", payload);
-            return json != null;
+            return await PostWithErrorAsync($"/repos/{Owner}/{Repo}/pulls/{prNumber}/reviews", payload);
         }
 
         public async Task<bool> CreateReviewCommentAsync(int prNumber, string body, string commitId, string path, int line)
@@ -256,6 +255,23 @@ namespace SourceGit.Models
             }
             catch { }
             return null;
+        }
+
+        private async Task<(bool success, string error)> PostWithErrorAsync(string path, string jsonPayload)
+        {
+            try
+            {
+                var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync(path, content);
+                var responseBody = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                    return (true, null);
+                return (false, $"{response.StatusCode}: {responseBody}");
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
         }
 
         private async Task<string> PostAsync(string path, string jsonPayload)
