@@ -1,0 +1,179 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:m="using:SourceGit.Models"
+             xmlns:vm="using:SourceGit.ViewModels"
+             xmlns:v="using:SourceGit.Views"
+             xmlns:c="using:SourceGit.Converters"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
+             x:Class="SourceGit.Views.PullRequestsPage"
+             x:DataType="vm:PullRequestsPage">
+  <Grid ColumnDefinitions="250,1,*">
+    <!-- Left: PR List -->
+    <Grid Grid.Column="0" RowDefinitions="Auto,*" Background="{DynamicResource Brush.Contents}">
+      <Border Grid.Row="0" Padding="8,6" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="0,0,0,1">
+        <Grid ColumnDefinitions="*,Auto">
+          <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4">
+            <RadioButton Content="Open" IsChecked="True" GroupName="PRFilter" Click="OnFilterOpen"/>
+            <RadioButton Content="Closed" GroupName="PRFilter" Click="OnFilterClosed"/>
+            <RadioButton Content="All" GroupName="PRFilter" Click="OnFilterAll"/>
+          </StackPanel>
+          <Button Grid.Column="1" Classes="icon_button" Width="28" Height="28" Click="OnRefresh" ToolTip.Tip="Refresh">
+            <Path Width="12" Height="12" Data="{StaticResource Icons.Loading}"/>
+          </Button>
+        </Grid>
+      </Border>
+
+      <ListBox Grid.Row="1"
+               Background="Transparent"
+               BorderThickness="0"
+               ItemsSource="{Binding PullRequests}"
+               SelectedItem="{Binding SelectedPullRequest, Mode=TwoWay}"
+               SelectionMode="Single"
+               ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListBox.Styles>
+          <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+          </Style>
+        </ListBox.Styles>
+        <ListBox.ItemsPanel>
+          <ItemsPanelTemplate>
+            <VirtualizingStackPanel Orientation="Vertical"/>
+          </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+        <ListBox.ItemTemplate>
+          <DataTemplate DataType="m:GitHubPullRequest">
+            <StackPanel Spacing="2">
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <TextBlock Text="{Binding Number, StringFormat=#{0}}" Foreground="{DynamicResource Brush.FG2}" FontSize="11"/>
+                <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="12" TextTrimming="CharacterEllipsis"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Text="{Binding User.Login}" FontSize="11" Foreground="{DynamicResource Brush.FG2}"/>
+                <TextBlock Text="{Binding Head.Ref}" FontSize="11" Foreground="{DynamicResource Brush.Accent}" FontFamily="{DynamicResource Fonts.Monospace}" TextTrimming="CharacterEllipsis"/>
+                <TextBlock Text="DRAFT" FontSize="10" Foreground="Orange" IsVisible="{Binding IsDraft}"/>
+              </StackPanel>
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Grid>
+
+    <!-- Splitter -->
+    <GridSplitter Grid.Column="1" Width="1" Background="{DynamicResource Brush.Border0}" ResizeDirection="Columns"/>
+
+    <!-- Right: Detail -->
+    <Grid Grid.Column="2">
+      <!-- Empty state -->
+      <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                 Foreground="{DynamicResource Brush.FG2}"
+                 Text="Select a pull request"
+                 IsVisible="{Binding SelectedPullRequest, Converter={x:Static ObjectConverters.IsNull}}"/>
+
+      <!-- Not a GitHub repo -->
+      <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                 Foreground="{DynamicResource Brush.FG2}"
+                 Text="Configure GitHub authentication (gh auth login) to view Pull Requests"
+                 IsVisible="{Binding !IsGitHubRepo}"/>
+
+      <!-- PR Detail -->
+      <Grid RowDefinitions="Auto,*"
+            IsVisible="{Binding SelectedPullRequest, Converter={x:Static ObjectConverters.IsNotNull}}">
+
+        <!-- Header Bar -->
+        <Border Grid.Row="0" Padding="12,8" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="0,0,0,1" Background="{DynamicResource Brush.ToolBar}">
+          <Grid RowDefinitions="Auto,Auto,Auto">
+            <!-- Title -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="6">
+              <TextBlock Text="{Binding SelectedPullRequest.Number, StringFormat=#{0}}" FontSize="14" Foreground="{DynamicResource Brush.FG2}"/>
+              <TextBlock Text="{Binding SelectedPullRequest.Title}" FontSize="14" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+            </StackPanel>
+
+            <!-- Branch info -->
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="4" Margin="0,4,0,0">
+              <TextBlock Text="{Binding SelectedPullRequest.User.Login}" FontSize="11" Foreground="{DynamicResource Brush.FG2}"/>
+              <TextBlock Text="wants to merge" FontSize="11" Foreground="{DynamicResource Brush.FG2}"/>
+              <Border Padding="4,1" CornerRadius="3" Background="{DynamicResource Brush.Accent}" Opacity="0.2">
+                <TextBlock Text="{Binding SelectedPullRequest.Head.Ref}" FontSize="11" FontFamily="{DynamicResource Fonts.Monospace}"/>
+              </Border>
+              <TextBlock Text="into" FontSize="11" Foreground="{DynamicResource Brush.FG2}"/>
+              <Border Padding="4,1" CornerRadius="3" Background="{DynamicResource Brush.Accent}" Opacity="0.2">
+                <TextBlock Text="{Binding SelectedPullRequest.Base.Ref}" FontSize="11" FontFamily="{DynamicResource Fonts.Monospace}"/>
+              </Border>
+            </StackPanel>
+
+            <!-- Action buttons -->
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="4" Margin="0,6,0,0">
+              <Button Classes="flat primary" Content="Approve" Click="OnApprove" Height="24" Padding="10,0" FontSize="11"/>
+              <Button Classes="flat" Content="Request Changes" Click="OnRequestChanges" Height="24" Padding="10,0" FontSize="11"/>
+              <Button Classes="flat" Content="Comment" Click="OnCommentReview" Height="24" Padding="10,0" FontSize="11"/>
+              <Border Width="1" Height="16" Background="{DynamicResource Brush.Border0}" Margin="4,0"/>
+              <Button Classes="flat" Click="OnMerge" Height="24" Padding="10,0" FontSize="11">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                  <Path Width="10" Height="10" Data="{StaticResource Icons.Merge}"/>
+                  <TextBlock Text="Merge"/>
+                </StackPanel>
+              </Button>
+              <Button Classes="flat" Content="Squash" Click="OnSquash" Height="24" Padding="10,0" FontSize="11"/>
+              <Button Classes="flat" Content="Rebase" Click="OnRebase" Height="24" Padding="10,0" FontSize="11"/>
+            </StackPanel>
+          </Grid>
+        </Border>
+
+        <!-- Content: Files + Diff + Comments -->
+        <Grid Grid.Row="1" ColumnDefinitions="200,1,*">
+          <!-- File list -->
+          <Grid Grid.Column="0" RowDefinitions="Auto,*" Background="{DynamicResource Brush.Contents}">
+            <Border Grid.Row="0" Padding="8,4" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="0,0,0,1">
+              <TextBlock Text="Changed Files" FontWeight="Bold" FontSize="11" Foreground="{DynamicResource Brush.FG2}"/>
+            </Border>
+            <v:ChangeCollectionView Grid.Row="1"
+                                    Background="Transparent"
+                                    Changes="{Binding Changes}"
+                                    SelectedChanges="{Binding SelectedChanges, Mode=TwoWay}"/>
+          </Grid>
+
+          <!-- Splitter -->
+          <GridSplitter Grid.Column="1" Width="1" Background="{DynamicResource Brush.Border0}" ResizeDirection="Columns"/>
+
+          <!-- Diff + Review -->
+          <Grid Grid.Column="2" RowDefinitions="*,Auto">
+            <!-- Diff View -->
+            <v:DiffView Grid.Row="0" DataContext="{Binding DiffContext}"/>
+
+            <!-- Review comment panel -->
+            <Border Grid.Row="1" Padding="8" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="0,1,0,0" Background="{DynamicResource Brush.Contents}">
+              <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
+                <!-- Review body -->
+                <TextBox Grid.Row="0" Grid.ColumnSpan="2"
+                         Text="{Binding ReviewBody, Mode=TwoWay}"
+                         Watermark="Leave a review comment..."
+                         MinHeight="28"
+                         MaxHeight="80"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         Padding="8,4"/>
+                <!-- Quick comment -->
+                <TextBox Grid.Row="1" Grid.Column="0"
+                         Text="{Binding NewComment, Mode=TwoWay}"
+                         Watermark="Add a comment..."
+                         Height="28"
+                         Padding="8,0"
+                         Margin="0,4,0,0"/>
+                <Button Grid.Row="1" Grid.Column="1"
+                        Classes="flat primary"
+                        Content="Comment"
+                        Click="OnAddComment"
+                        Height="28"
+                        Margin="4,4,0,0"
+                        Padding="12,0"/>
+              </Grid>
+            </Border>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
+  </Grid>
+</UserControl>

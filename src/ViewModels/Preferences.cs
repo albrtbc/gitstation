@@ -325,6 +325,12 @@ namespace SourceGit.ViewModels
             set => SetProperty(ref _dashboardSort, value);
         }
 
+        public string GitHubToken
+        {
+            get => _gitHubToken;
+            set => SetProperty(ref _gitHubToken, value);
+        }
+
         public string GitInstallPath
         {
             get => Native.OS.GitExecutable;
@@ -817,6 +823,7 @@ namespace SourceGit.ViewModels
         private Models.ChangeViewMode _stashChangeViewMode = Models.ChangeViewMode.List;
 
         private DashboardSortMode _dashboardSort = DashboardSortMode.Alphabetical;
+        private string _gitHubToken = string.Empty;
         private string _gitDefaultCloneDir = string.Empty;
         private int _shellOrTerminalType = -1;
         private uint _statisticsSampleColor = 0xFF00FF00;
