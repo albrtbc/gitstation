@@ -202,56 +202,10 @@ namespace SourceGit.ViewModels
                 Preferences.Instance.Save();
                 Refresh();
 
-                // Phase 2: query status with diagnostic logging
-                var logPath = Path.Combine(Path.GetDirectoryName(folderPath) ?? folderPath, "gitstation_debug.log");
-                var log = new System.Text.StringBuilder();
-                log.AppendLine($"[{DateTime.Now:HH:mm:ss}] Git executable: {Native.OS.GitExecutable}");
-                log.AppendLine($"[{DateTime.Now:HH:mm:ss}] Git configured: {Preferences.Instance.IsGitConfigured()}");
-                log.AppendLine($"[{DateTime.Now:HH:mm:ss}] Repos found: {addedNodes.Count}");
-                log.AppendLine();
-
+                // Phase 2: query status for all found repos
                 foreach (var node in addedNodes)
-                {
-                    log.Append($"[{DateTime.Now:HH:mm:ss}] {node.Id} ... ");
-                    try
-                    {
-                        var status = await new Commands.QueryRepositoryStatus(node.Id).GetResultAsync();
-                        if (status != null)
-                        {
-                            node.Status = status;
-                            log.AppendLine($"OK branch={status.CurrentBranch} changes={status.LocalChanges}");
-                        }
-                        else
-                        {
-                            // Run git directly to capture the actual error
-                            var psi = new System.Diagnostics.ProcessStartInfo
-                            {
-                                FileName = Native.OS.GitExecutable,
-                                Arguments = "branch -l -v --format=\"%(refname:short)%00%(HEAD)%00%(upstream:track,nobracket)\"",
-                                WorkingDirectory = node.Id,
-                                UseShellExecute = false,
-                                RedirectStandardOutput = true,
-                                RedirectStandardError = true,
-                                CreateNoWindow = true,
-                            };
-                            using var proc = System.Diagnostics.Process.Start(psi);
-                            var stdout = await proc.StandardOutput.ReadToEndAsync();
-                            var stderr = await proc.StandardError.ReadToEndAsync();
-                            await proc.WaitForExitAsync();
-                            log.AppendLine($"FAILED exit={proc.ExitCode}");
-                            log.AppendLine($"  stdout: [{stdout.Trim()}]");
-                            log.AppendLine($"  stderr: [{stderr.Trim()}]");
-                            log.AppendLine($"  dir_exists: {Directory.Exists(node.Id)}");
-                            log.AppendLine($"  git_exists: {File.Exists(Native.OS.GitExecutable)}");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        log.AppendLine($"EXCEPTION: {ex.GetType().Name}: {ex.Message}");
-                    }
-                }
+                    await node.UpdateStatusAsync(true, null);
 
-                File.WriteAllText(logPath, log.ToString());
                 Preferences.Instance.Save();
                 Refresh();
             }
