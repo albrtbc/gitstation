@@ -1075,6 +1075,8 @@ namespace SourceGit.ViewModels
 
                     var hasPendingPullOrPush = CurrentBranch?.IsTrackStatusVisible ?? false;
                     GetOwnerPage()?.ChangeDirtyState(Models.DirtyState.HasPendingPullOrPush, !hasPendingPullOrPush);
+
+                    UpdateDashboardStatus();
                 });
             }, token);
         }
@@ -1241,6 +1243,8 @@ namespace SourceGit.ViewModels
                     LocalChangesCount = changes.Count;
                     OnPropertyChanged(nameof(InProgressContext));
                     GetOwnerPage()?.ChangeDirtyState(Models.DirtyState.HasLocalChanges, changes.Count == 0);
+
+                    UpdateDashboardStatus();
                 });
             }, token);
         }
@@ -1584,6 +1588,20 @@ namespace SourceGit.ViewModels
             }
 
             return null;
+        }
+
+        private void UpdateDashboardStatus()
+        {
+            var dashboard = Dashboard.Instance;
+            if (dashboard.ActiveRepository != this || dashboard.ActiveNode == null)
+                return;
+
+            var status = new Models.RepositoryStatus();
+            status.CurrentBranch = CurrentBranch?.Name ?? string.Empty;
+            status.LocalChanges = LocalChangesCount;
+            status.Ahead = CurrentBranch?.Ahead?.Count ?? 0;
+            status.Behind = CurrentBranch?.Behind?.Count ?? 0;
+            dashboard.ActiveNode.Status = status;
         }
 
         private BranchTreeNode.Builder BuildBranchTree(List<Models.Branch> branches, List<Models.Remote> remotes)
