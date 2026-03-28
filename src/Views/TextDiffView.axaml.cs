@@ -663,7 +663,10 @@ namespace SourceGit.Views
 
         private void OnTextViewPointerChanged(object sender, PointerEventArgs e)
         {
-            if (DataContext is not ViewModels.TextDiffContext { Option: { WorkingCopyChange: { } } })
+            if (DataContext is not ViewModels.TextDiffContext ctx)
+                return;
+
+            if (ctx.Option?.WorkingCopyChange == null && !ctx.IsPullRequestDiff)
                 return;
 
             if (sender is not TextView view)
@@ -706,7 +709,10 @@ namespace SourceGit.Views
 
         private void OnTextViewPointerWheelChanged(object sender, PointerWheelEventArgs e)
         {
-            if (DataContext is not ViewModels.TextDiffContext { Option: { WorkingCopyChange: { } } })
+            if (DataContext is not ViewModels.TextDiffContext ctx)
+                return;
+
+            if (ctx.Option?.WorkingCopyChange == null && !ctx.IsPullRequestDiff)
                 return;
 
             if (sender is not TextView view)
@@ -1544,6 +1550,40 @@ namespace SourceGit.Views
 
             vm.BlockNavigation.UpdateByChunk(chunk);
             repo.MarkWorkingCopyDirtyManually();
+        }
+
+        private void OnAddReviewComment(object _1, RoutedEventArgs _2)
+        {
+            if (DataContext is not ViewModels.TextDiffContext { IsPullRequestDiff: true, SelectedChunk: { } chunk, Data: { } diff, Option: { } option } vm)
+                return;
+
+            var repoView = this.FindAncestorOfType<Repository>();
+            if (repoView?.DataContext is not ViewModels.Repository repo)
+                return;
+
+            var prPage = repo.PullRequestsPage;
+            if (prPage == null)
+                return;
+
+            // Find the new-file line number at the end of the selected chunk
+            int commentLine = 0;
+            for (int i = chunk.EndIdx; i >= chunk.StartIdx; i--)
+            {
+                if (i < diff.Lines.Count && diff.Lines[i].NewLineNumber > 0)
+                {
+                    commentLine = diff.Lines[i].NewLineNumber;
+                    break;
+                }
+            }
+
+            if (commentLine <= 0)
+                return;
+
+            var launcher = App.GetLauncher();
+            if (launcher?.ActivePage is not { } page || !page.CanCreatePopup())
+                return;
+
+            page.Popup = new ViewModels.AddPRComment(prPage, option.Path, commentLine);
         }
 
         private async void OnDiscardChunk(object _1, RoutedEventArgs _2)

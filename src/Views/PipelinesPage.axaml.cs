@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 
 namespace SourceGit.Views
@@ -21,6 +22,39 @@ namespace SourceGit.Views
         {
             if (DataContext is ViewModels.PipelinesPage vm)
                 await vm.RefreshAsync();
+        }
+
+        private void OnRunContextRequested(object sender, ContextRequestedEventArgs e)
+        {
+            if (sender is Grid { DataContext: Models.GitHubWorkflowRun run } grid &&
+                DataContext is ViewModels.PipelinesPage vm)
+            {
+                var menu = new ContextMenu();
+
+                var rerun = new MenuItem();
+                rerun.Header = "Re-run Workflow";
+                rerun.Icon = App.CreateMenuIcon("Icons.Loading");
+                rerun.Click += async (_, ev) =>
+                {
+                    await vm.RerunWorkflowAsync(run);
+                    ev.Handled = true;
+                };
+                menu.Items.Add(rerun);
+
+                var openBrowser = new MenuItem();
+                openBrowser.Header = "Open in Browser";
+                openBrowser.Icon = App.CreateMenuIcon("Icons.Link");
+                openBrowser.Click += (_, ev) =>
+                {
+                    vm.OpenInBrowser(run);
+                    ev.Handled = true;
+                };
+                menu.Items.Add(openBrowser);
+
+                menu.Open(grid);
+            }
+
+            e.Handled = true;
         }
     }
 }

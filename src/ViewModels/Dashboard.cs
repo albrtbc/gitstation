@@ -123,7 +123,12 @@ namespace SourceGit.ViewModels
             if (_activeNode?.Id == node.Id && _activeRepository != null)
                 return;
 
-            CloseActiveRepository();
+            // Close previous repo without clearing ActiveNode (avoids selection loop)
+            if (_activeRepository != null)
+            {
+                _activeRepository.Close();
+                ActiveRepository = null;
+            }
 
             if (!Path.Exists(node.Id))
             {

@@ -81,6 +81,8 @@ namespace SourceGit.ViewModels
             set => SetProperty(ref _selectedView, value);
         }
 
+        public PullRequestsPage PullRequestsPage => _pullRequestsPage;
+
         public bool EnableTopoOrderInHistory
         {
             get => _uiStates.EnableTopoOrderInHistory;

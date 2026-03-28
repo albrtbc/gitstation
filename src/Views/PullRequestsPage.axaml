@@ -138,40 +138,8 @@
           <!-- Splitter -->
           <GridSplitter Grid.Column="1" Width="1" Background="{DynamicResource Brush.Border0}" ResizeDirection="Columns"/>
 
-          <!-- Diff + Review -->
-          <Grid Grid.Column="2" RowDefinitions="*,Auto">
-            <!-- Diff View -->
-            <v:DiffView Grid.Row="0" DataContext="{Binding DiffContext}"/>
-
-            <!-- Review comment panel -->
-            <Border Grid.Row="1" Padding="8" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="0,1,0,0" Background="{DynamicResource Brush.Contents}">
-              <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
-                <!-- Review body -->
-                <TextBox Grid.Row="0" Grid.ColumnSpan="2"
-                         Text="{Binding ReviewBody, Mode=TwoWay}"
-                         Watermark="Leave a review comment..."
-                         MinHeight="28"
-                         MaxHeight="80"
-                         AcceptsReturn="True"
-                         TextWrapping="Wrap"
-                         Padding="8,4"/>
-                <!-- Quick comment -->
-                <TextBox Grid.Row="1" Grid.Column="0"
-                         Text="{Binding NewComment, Mode=TwoWay}"
-                         Watermark="Add a comment..."
-                         Height="28"
-                         Padding="8,0"
-                         Margin="0,4,0,0"/>
-                <Button Grid.Row="1" Grid.Column="1"
-                        Classes="flat primary"
-                        Content="Comment"
-                        Click="OnAddComment"
-                        Height="28"
-                        Margin="4,4,0,0"
-                        Padding="12,0"/>
-              </Grid>
-            </Border>
-          </Grid>
+          <!-- Diff View -->
+          <v:DiffView Grid.Column="2" DataContext="{Binding DiffContext}"/>
         </Grid>
       </Grid>
     </Grid>

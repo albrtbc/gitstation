@@ -33,12 +33,6 @@ namespace SourceGit.Views
                 await vm.RefreshAsync();
         }
 
-        private async void OnAddComment(object s, RoutedEventArgs e)
-        {
-            if (DataContext is ViewModels.PullRequestsPage vm)
-                await vm.AddCommentAsync();
-        }
-
         private async void OnApprove(object s, RoutedEventArgs e)
         {
             if (DataContext is ViewModels.PullRequestsPage vm)

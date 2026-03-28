@@ -13,6 +13,12 @@ namespace SourceGit.ViewModels
             get;
         }
 
+        public bool IsPullRequestDiff
+        {
+            get => _isPullRequestDiff;
+            set => SetProperty(ref _isPullRequestDiff, value);
+        }
+
         public bool IgnoreWhitespace
         {
             get => Preferences.Instance.IgnoreWhitespaceChangesInDiff;
@@ -273,9 +279,9 @@ namespace SourceGit.ViewModels
                         IsTextDiff = true;
 
                         if (Preferences.Instance.UseSideBySideDiff)
-                            Content = new TwoSideTextDiff(_option, cur, _content as TextDiffContext);
+                            Content = new TwoSideTextDiff(_option, cur, _content as TextDiffContext, _isPullRequestDiff);
                         else
-                            Content = new CombinedTextDiff(_option, cur, _content as TextDiffContext);
+                            Content = new CombinedTextDiff(_option, cur, _content as TextDiffContext, _isPullRequestDiff);
                     }
                     else
                     {
@@ -333,6 +339,7 @@ namespace SourceGit.ViewModels
         private string _fileModeChange = string.Empty;
         private int _unifiedLines = 4;
         private bool _isTextDiff = false;
+        private bool _isPullRequestDiff = false;
         private object _content = null;
         private Info _info = null;
     }

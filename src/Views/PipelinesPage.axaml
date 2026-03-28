@@ -42,7 +42,7 @@
         </ListBox.ItemsPanel>
         <ListBox.ItemTemplate>
           <DataTemplate DataType="m:GitHubWorkflowRun">
-            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" ContextRequested="OnRunContextRequested">
               <!-- Status icon -->
               <TextBlock Grid.Column="0" Grid.RowSpan="2"
                          Text="{Binding Conclusion, Converter={x:Static c:GitHubConverters.ConclusionToIcon}}"

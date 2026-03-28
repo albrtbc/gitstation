@@ -78,6 +78,21 @@ namespace SourceGit.ViewModels
             }
         }
 
+        public async Task RerunWorkflowAsync(Models.GitHubWorkflowRun run)
+        {
+            if (_client == null || run == null)
+                return;
+
+            await _client.RerunWorkflowAsync(run.Id);
+            await RefreshAsync();
+        }
+
+        public void OpenInBrowser(Models.GitHubWorkflowRun run)
+        {
+            if (!string.IsNullOrEmpty(run?.HtmlUrl))
+                Native.OS.OpenBrowser(run.HtmlUrl);
+        }
+
         private async void LoadRunDetail(long runId)
         {
             if (_client == null)

@@ -92,7 +92,8 @@
                ScrollViewer.VerticalScrollBarVisibility="Auto"
                ItemsSource="{Binding Repositories}"
                SelectedItem="{Binding ActiveNode, Mode=OneWay}"
-               SelectionMode="Single">
+               SelectionMode="Single"
+               SelectionChanged="OnRepoSelectionChanged">
         <ListBox.Styles>
           <Style Selector="ListBox">
             <Setter Property="FocusAdorner">
@@ -127,7 +128,6 @@
                   Height="36"
                   ColumnDefinitions="8,*,Auto,4"
                   ClipToBounds="True"
-                  DoubleTapped="OnDoubleTappedRow"
                   ContextRequested="OnRowContextRequested">
 
               <!-- Name + Branch -->

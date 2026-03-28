@@ -40,14 +40,26 @@ namespace SourceGit.Views
             }
         }
 
-        private void OnDoubleTappedRow(object sender, TappedEventArgs e)
+        private void OnRepoSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is Grid { DataContext: ViewModels.RepositoryNode node } && node.IsRepository)
+            if (_isSelecting)
+                return;
+
+            _isSelecting = true;
+            try
             {
-                ViewModels.Dashboard.Instance.SelectRepository(node);
-                e.Handled = true;
+                if (sender is ListBox lb && lb.SelectedItem is ViewModels.RepositoryNode node && node.IsRepository)
+                {
+                    ViewModels.Dashboard.Instance.SelectRepository(node);
+                }
+            }
+            finally
+            {
+                _isSelecting = false;
             }
         }
+
+        private bool _isSelecting;
 
         private void OnRowContextRequested(object sender, ContextRequestedEventArgs e)
         {

@@ -192,6 +192,12 @@ namespace SourceGit.Models
             return string.Empty;
         }
 
+        public async Task<bool> RerunWorkflowAsync(long runId)
+        {
+            var json = await PostAsync($"/repos/{Owner}/{Repo}/actions/runs/{runId}/rerun", "{}");
+            return json != null;
+        }
+
         // Helper to extract owner/repo from a git remote URL
         public static (string owner, string repo) ParseRemoteUrl(string url)
         {

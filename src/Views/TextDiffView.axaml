@@ -111,7 +111,13 @@
         </TextBlock>
       </Button>
 
-      <Button Classes="flat" BorderBrush="{DynamicResource Brush.FlatButton.FloatingBorder}" Click="OnUnstageChunk" HotKey="{OnPlatform Ctrl+U, macOS=⌘+U}" IsVisible="{Binding Option.IsUnstaged, Converter={x:Static BoolConverters.Not}}">
+      <Button Classes="flat" BorderBrush="{DynamicResource Brush.FlatButton.FloatingBorder}" Click="OnUnstageChunk" HotKey="{OnPlatform Ctrl+U, macOS=⌘+U}">
+        <Button.IsVisible>
+          <MultiBinding Converter="{x:Static BoolConverters.And}">
+            <Binding Path="Option.IsUnstaged" Converter="{x:Static BoolConverters.Not}"/>
+            <Binding Path="IsPullRequestDiff" Converter="{x:Static BoolConverters.Not}"/>
+          </MultiBinding>
+        </Button.IsVisible>
         <TextBlock>
           <Run Text="{DynamicResource Text.Hunk.Unstage}"/>
           <Run Text=" "/>
@@ -131,6 +137,16 @@
                FontSize="11"
                Text="{OnPlatform Ctrl+D, macOS=⌘+D}"/>
         </TextBlock>
+      </Button>
+
+      <Button Classes="flat"
+              BorderBrush="{DynamicResource Brush.FlatButton.FloatingBorder}"
+              Click="OnAddReviewComment"
+              Height="20"
+              Margin="8,0,0,0"
+              Padding="8,0"
+              IsVisible="{Binding IsPullRequestDiff}">
+        <TextBlock Foreground="{DynamicResource Brush.FG1}" FontSize="12" Text="Comment"/>
       </Button>
     </StackPanel>
   </Grid>

@@ -45,7 +45,9 @@ namespace SourceGit.ViewModels
                         var change = value[0];
                         var baseRef = $"origin/{_selectedPR.Base.Ref}";
                         var headRef = $"origin/{_selectedPR.Head.Ref}";
-                        DiffContext = new DiffContext(_repo.FullPath, new Models.DiffOption(baseRef, headRef, change));
+                        var dc = new DiffContext(_repo.FullPath, new Models.DiffOption(baseRef, headRef, change));
+                        dc.IsPullRequestDiff = true;
+                        DiffContext = dc;
                     }
                     else
                     {
@@ -121,6 +123,19 @@ namespace SourceGit.ViewModels
             {
                 IsLoading = false;
             }
+        }
+
+        public async Task AddInlineCommentAsync(string filePath, int line, string comment)
+        {
+            if (_client == null || _selectedPR == null || string.IsNullOrWhiteSpace(comment))
+                return;
+
+            await _client.CreateReviewCommentAsync(
+                _selectedPR.Number,
+                comment,
+                _selectedPR.Head.Sha,
+                filePath,
+                line);
         }
 
         public async Task AddCommentAsync()
