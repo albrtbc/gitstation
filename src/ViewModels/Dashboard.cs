@@ -38,11 +38,15 @@ namespace SourceGit.ViewModels
 
         public DashboardSortMode SortMode
         {
-            get => _sortMode;
+            get => Preferences.Instance.DashboardSort;
             set
             {
-                if (SetProperty(ref _sortMode, value))
+                if (Preferences.Instance.DashboardSort != value)
+                {
+                    Preferences.Instance.DashboardSort = value;
+                    OnPropertyChanged();
                     Refresh();
+                }
             }
         }
 
@@ -58,7 +62,7 @@ namespace SourceGit.ViewModels
             CollectRepositories(repos, Preferences.Instance.RepositoryNodes);
 
             // Sort based on current mode
-            if (_sortMode == DashboardSortMode.LastModified)
+            if (Preferences.Instance.DashboardSort == DashboardSortMode.LastModified)
             {
                 repos.Sort((a, b) =>
                 {
@@ -382,7 +386,6 @@ namespace SourceGit.ViewModels
         }
 
         private string _searchFilter = string.Empty;
-        private DashboardSortMode _sortMode = DashboardSortMode.Alphabetical;
         private Repository _activeRepository = null;
         private RepositoryNode _activeNode = null;
     }
