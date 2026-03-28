@@ -151,24 +151,40 @@
                 </StackPanel>
               </StackPanel>
 
-              <!-- Changes badge -->
+              <!-- Status indicators -->
               <ContentControl Grid.Column="2"
+                              Margin="0,0,8,0"
                               VerticalAlignment="Center"
                               Content="{Binding Status, Mode=OneWay}"
                               IsVisible="{Binding Status, Converter={x:Static ObjectConverters.IsNotNull}}">
                 <ContentControl.DataTemplates>
                   <DataTemplate DataType="m:RepositoryStatus">
-                    <Border Height="18"
-                            CornerRadius="9"
-                            Padding="6,0"
-                            Background="{DynamicResource Brush.FG1}"
+                    <StackPanel Orientation="Horizontal" Spacing="3" VerticalAlignment="Center">
+                      <!-- Push pending (ahead) -->
+                      <Path Width="10" Height="10"
+                            Data="{StaticResource Icons.Up}"
+                            Fill="{DynamicResource Brush.Accent}"
                             VerticalAlignment="Center"
-                            IsVisible="{Binding LocalChanges, Converter={x:Static c:IntConverters.IsGreaterThanZero}}">
-                      <TextBlock Text="{Binding LocalChanges}"
-                                 FontFamily="{DynamicResource Fonts.Monospace}"
-                                 FontSize="10"
-                                 Foreground="{DynamicResource Brush.Window}"/>
-                    </Border>
+                            IsVisible="{Binding Ahead, Converter={x:Static c:IntConverters.IsGreaterThanZero}}"/>
+                      <!-- Pull pending (behind) -->
+                      <Path Width="10" Height="10"
+                            Data="{StaticResource Icons.Down}"
+                            Fill="Orange"
+                            VerticalAlignment="Center"
+                            IsVisible="{Binding Behind, Converter={x:Static c:IntConverters.IsGreaterThanZero}}"/>
+                      <!-- Local changes badge -->
+                      <Border Height="18"
+                              CornerRadius="9"
+                              Padding="6,0"
+                              Background="{DynamicResource Brush.FG1}"
+                              VerticalAlignment="Center"
+                              IsVisible="{Binding LocalChanges, Converter={x:Static c:IntConverters.IsGreaterThanZero}}">
+                        <TextBlock Text="{Binding LocalChanges}"
+                                   FontFamily="{DynamicResource Fonts.Monospace}"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource Brush.Window}"/>
+                      </Border>
+                    </StackPanel>
                   </DataTemplate>
                 </ContentControl.DataTemplates>
               </ContentControl>

@@ -27,7 +27,7 @@ obj/
 node_modules/
 package.json
 package-lock.json
-output/
+output*/
 
 
 # Flatpak
