@@ -50,6 +50,18 @@ namespace SourceGit.ViewModels
             }
         }
 
+        public Repository ActiveRepository
+        {
+            get => _activeRepository;
+            private set => SetProperty(ref _activeRepository, value);
+        }
+
+        public RepositoryNode ActiveNode
+        {
+            get => _activeNode;
+            private set => SetProperty(ref _activeNode, value);
+        }
+
         public Dashboard()
         {
             EnsureGitConfigured();
@@ -59,17 +71,17 @@ namespace SourceGit.ViewModels
         public void Refresh()
         {
             var repos = new List<RepositoryNode>();
-            CollectRepositories(repos, Preferences.Instance.RepositoryNodes);
+            CollectRepositories(repos, Preferences.Instance.RepositoryNodes, string.IsNullOrWhiteSpace(_searchFilter) ? null : _searchFilter);
 
-            // Sort based on current mode
             if (Preferences.Instance.DashboardSort == DashboardSortMode.LastModified)
             {
-                repos.Sort((a, b) =>
+                var timestamps = new Dictionary<string, DateTime>(repos.Count);
+                foreach (var r in repos)
                 {
-                    var timeA = Directory.Exists(a.Id) ? Directory.GetLastWriteTime(a.Id) : DateTime.MinValue;
-                    var timeB = Directory.Exists(b.Id) ? Directory.GetLastWriteTime(b.Id) : DateTime.MinValue;
-                    return timeB.CompareTo(timeA); // Most recent first
-                });
+                    var di = new DirectoryInfo(r.Id);
+                    timestamps[r.Id] = di.Exists ? di.LastWriteTime : DateTime.MinValue;
+                }
+                repos.Sort((a, b) => timestamps[b.Id].CompareTo(timestamps[a.Id]));
             }
             else
             {
@@ -84,9 +96,8 @@ namespace SourceGit.ViewModels
         {
             EnsureGitConfigured();
 
-            // Collect ALL repository nodes (not just filtered ones)
             var allRepos = new List<RepositoryNode>();
-            CollectAllRepositories(allRepos, Preferences.Instance.RepositoryNodes);
+            CollectRepositories(allRepos, Preferences.Instance.RepositoryNodes, null);
 
             foreach (var node in allRepos)
             {
@@ -96,7 +107,6 @@ namespace SourceGit.ViewModels
                 await node.UpdateStatusAsync(force, token);
             }
 
-            // Refresh the visible list to pick up status changes
             Refresh();
         }
 
@@ -105,33 +115,14 @@ namespace SourceGit.ViewModels
             SearchFilter = string.Empty;
         }
 
-        public Repository ActiveRepository
-        {
-            get => _activeRepository;
-            private set => SetProperty(ref _activeRepository, value);
-        }
-
-        public RepositoryNode ActiveNode
-        {
-            get => _activeNode;
-            private set => SetProperty(ref _activeNode, value);
-        }
-
-        public void OpenRepository(RepositoryNode node)
-        {
-            SelectRepository(node);
-        }
-
         public void SelectRepository(RepositoryNode node)
         {
             if (node == null || !node.IsRepository)
                 return;
 
-            // Already selected
             if (_activeNode?.Id == node.Id && _activeRepository != null)
                 return;
 
-            // Close previous
             CloseActiveRepository();
 
             if (!Path.Exists(node.Id))
@@ -217,7 +208,6 @@ namespace SourceGit.ViewModels
             var dir = new DirectoryInfo(folderPath);
             var addedNodes = new List<RepositoryNode>();
 
-            // Phase 1: discover and add repos (no git status yet)
             foreach (var subdir in dir.GetDirectories())
             {
                 if (subdir.Name.StartsWith(".", StringComparison.Ordinal))
@@ -234,10 +224,8 @@ namespace SourceGit.ViewModels
 
             if (addedNodes.Count > 0)
             {
-                Preferences.Instance.Save();
                 Refresh();
 
-                // Phase 2: query status for all found repos
                 foreach (var node in addedNodes)
                     await node.UpdateStatusAsync(true, null);
 
@@ -258,47 +246,42 @@ namespace SourceGit.ViewModels
             SortMode = DashboardSortMode.LastModified;
         }
 
-        private void CollectAllRepositories(List<RepositoryNode> result, List<RepositoryNode> nodes)
-        {
-            foreach (var node in nodes)
-            {
-                if (node.IsRepository)
-                    result.Add(node);
-                else
-                    CollectAllRepositories(result, node.SubNodes);
-            }
-        }
-
-        private void CollectRepositories(List<RepositoryNode> result, List<RepositoryNode> nodes)
+        private void CollectRepositories(List<RepositoryNode> result, List<RepositoryNode> nodes, string filter = null)
         {
             foreach (var node in nodes)
             {
                 if (node.IsRepository)
                 {
-                    if (string.IsNullOrWhiteSpace(_searchFilter) ||
-                        node.Name.Contains(_searchFilter, System.StringComparison.OrdinalIgnoreCase) ||
-                        node.Id.Contains(_searchFilter, System.StringComparison.OrdinalIgnoreCase))
+                    if (filter == null ||
+                        node.Name.Contains(filter, StringComparison.OrdinalIgnoreCase) ||
+                        node.Id.Contains(filter, StringComparison.OrdinalIgnoreCase))
                     {
                         result.Add(node);
                     }
                 }
                 else
                 {
-                    CollectRepositories(result, node.SubNodes);
+                    CollectRepositories(result, node.SubNodes, filter);
                 }
             }
         }
 
         private void EnsureGitConfigured()
         {
+            if (_gitConfigured) return;
+
             if (Preferences.Instance.IsGitConfigured())
+            {
+                _gitConfigured = true;
                 return;
+            }
 
             var found = Native.OS.FindGitExecutable();
             if (!string.IsNullOrEmpty(found) && File.Exists(found))
             {
                 Preferences.Instance.GitInstallPath = found;
                 Preferences.Instance.Save();
+                _gitConfigured = true;
                 return;
             }
 
@@ -320,10 +303,12 @@ namespace SourceGit.ViewModels
                 }
             }
 
-            // Mark all directories as safe to avoid "dubious ownership" errors
-            // (common when repos are cloned from WSL or run as different user)
             if (Preferences.Instance.IsGitConfigured())
             {
+                _gitConfigured = true;
+
+                // Mark all directories as safe to avoid "dubious ownership" errors
+                // (common when repos are cloned from WSL or run as different user)
                 try
                 {
                     var psi = new System.Diagnostics.ProcessStartInfo
@@ -385,6 +370,7 @@ namespace SourceGit.ViewModels
             return new Commands.QueryGitDir(repo).GetResult();
         }
 
+        private bool _gitConfigured;
         private string _searchFilter = string.Empty;
         private Repository _activeRepository = null;
         private RepositoryNode _activeNode = null;

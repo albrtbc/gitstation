@@ -91,7 +91,7 @@
                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                ScrollViewer.VerticalScrollBarVisibility="Auto"
                ItemsSource="{Binding Repositories}"
-               SelectedItem="{Binding ActiveNode, Mode=TwoWay}"
+               SelectedItem="{Binding ActiveNode, Mode=OneWay}"
                SelectionMode="Single">
         <ListBox.Styles>
           <Style Selector="ListBox">
