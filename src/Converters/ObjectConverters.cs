@@ -23,5 +23,8 @@ namespace SourceGit.Converters
         }
 
         public static readonly IsTypeOfConverter IsTypeOf = new IsTypeOfConverter();
+
+        public static readonly FuncValueConverter<object, bool> IsNotDashboard =
+            new(v => v is not ViewModels.Dashboard);
     }
 }

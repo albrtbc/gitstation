@@ -10,6 +10,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace SourceGit.ViewModels
 {
+    public enum DashboardSortMode
+    {
+        Alphabetical = 0,
+        LastModified = 1,
+    }
+
     public class Dashboard : ObservableObject
     {
         public static Dashboard Instance { get; } = new();
@@ -30,6 +36,16 @@ namespace SourceGit.ViewModels
             }
         }
 
+        public DashboardSortMode SortMode
+        {
+            get => _sortMode;
+            set
+            {
+                if (SetProperty(ref _sortMode, value))
+                    Refresh();
+            }
+        }
+
         public Dashboard()
         {
             EnsureGitConfigured();
@@ -40,6 +56,21 @@ namespace SourceGit.ViewModels
         {
             var repos = new List<RepositoryNode>();
             CollectRepositories(repos, Preferences.Instance.RepositoryNodes);
+
+            // Sort based on current mode
+            if (_sortMode == DashboardSortMode.LastModified)
+            {
+                repos.Sort((a, b) =>
+                {
+                    var timeA = Directory.Exists(a.Id) ? Directory.GetLastWriteTime(a.Id) : DateTime.MinValue;
+                    var timeB = Directory.Exists(b.Id) ? Directory.GetLastWriteTime(b.Id) : DateTime.MinValue;
+                    return timeB.CompareTo(timeA); // Most recent first
+                });
+            }
+            else
+            {
+                repos.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase));
+            }
 
             Repositories.Clear();
             Repositories.AddRange(repos);
@@ -213,6 +244,16 @@ namespace SourceGit.ViewModels
             return addedNodes.Count;
         }
 
+        public void SortByName()
+        {
+            SortMode = DashboardSortMode.Alphabetical;
+        }
+
+        public void SortByLastModified()
+        {
+            SortMode = DashboardSortMode.LastModified;
+        }
+
         private void CollectAllRepositories(List<RepositoryNode> result, List<RepositoryNode> nodes)
         {
             foreach (var node in nodes)
@@ -341,6 +382,7 @@ namespace SourceGit.ViewModels
         }
 
         private string _searchFilter = string.Empty;
+        private DashboardSortMode _sortMode = DashboardSortMode.Alphabetical;
         private Repository _activeRepository = null;
         private RepositoryNode _activeNode = null;
     }

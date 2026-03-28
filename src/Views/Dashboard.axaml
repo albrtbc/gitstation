@@ -11,9 +11,46 @@
              x:DataType="vm:Dashboard">
   <Grid ColumnDefinitions="280,1,*">
     <!-- Left Panel: Repository List -->
-    <Grid Grid.Column="0" RowDefinitions="Auto,*" Background="{DynamicResource Brush.Contents}">
+    <Grid Grid.Column="0" RowDefinitions="36,Auto,*" Background="{DynamicResource Brush.Contents}">
+      <!-- Header -->
+      <Border Grid.Row="0"
+              BorderBrush="{DynamicResource Brush.Border0}"
+              BorderThickness="0,0,0,1"
+              Background="{DynamicResource Brush.ToolBar}">
+        <Grid ColumnDefinitions="Auto,*,Auto" Margin="8,0">
+          <TextBlock Grid.Column="0"
+                     Text="Repositories"
+                     FontWeight="Bold"
+                     VerticalAlignment="Center"/>
+
+          <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+            <Button Classes="icon_button" Width="28" Height="28" Click="OnAddRepository" ToolTip.Tip="Add Repository">
+              <Path Width="12" Height="12" Data="{StaticResource Icons.Folder.Open}"/>
+            </Button>
+
+            <Button Classes="icon_button" Width="28" Height="28" Click="OnScanFolder" ToolTip.Tip="Scan Folder">
+              <Path Width="12" Height="12" Data="{StaticResource Icons.Scan}"/>
+            </Button>
+
+            <Button Classes="icon_button" Width="28" Height="28" Click="OnRefreshClicked" ToolTip.Tip="Refresh">
+              <Path Width="12" Height="12" Data="{StaticResource Icons.Loading}"/>
+            </Button>
+
+            <Button Classes="icon_button" Width="28" Height="28" ToolTip.Tip="Sort">
+              <Button.Flyout>
+                <MenuFlyout Placement="BottomEdgeAlignedRight">
+                  <MenuItem Header="Alphabetical" Click="OnSortAlphabetical"/>
+                  <MenuItem Header="Last Modified" Click="OnSortLastModified"/>
+                </MenuFlyout>
+              </Button.Flyout>
+              <Path Width="12" Height="12" Data="{StaticResource Icons.Filter}"/>
+            </Button>
+          </StackPanel>
+        </Grid>
+      </Border>
+
       <!-- Search Box -->
-      <TextBox Grid.Row="0"
+      <TextBox Grid.Row="1"
                x:Name="SearchBox"
                Height="32"
                Margin="8,8,8,4"
@@ -47,7 +84,7 @@
 
       <!-- Repository List -->
       <ListBox x:Name="RepoList"
-               Grid.Row="1"
+               Grid.Row="2"
                Margin="4,4,4,4"
                Background="Transparent"
                BorderThickness="0"
