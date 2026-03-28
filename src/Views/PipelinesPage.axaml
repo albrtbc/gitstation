@@ -42,7 +42,7 @@
         </ListBox.ItemsPanel>
         <ListBox.ItemTemplate>
           <DataTemplate DataType="m:GitHubWorkflowRun">
-            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" ContextRequested="OnRunContextRequested">
+            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" Background="Transparent" ContextRequested="OnRunContextRequested">
               <!-- Status icon -->
               <TextBlock Grid.Column="0" Grid.RowSpan="2"
                          Text="{Binding Conclusion, Converter={x:Static c:GitHubConverters.ConclusionToIcon}}"
@@ -76,7 +76,7 @@
                            FontSize="10"
                            Foreground="{DynamicResource Brush.FG2}"
                            FontFamily="{DynamicResource Fonts.Monospace}"/>
-                <TextBlock Text="{Binding Event}"
+                <TextBlock Text="{Binding Event, StringFormat=via {0}}"
                            FontSize="10"
                            Foreground="{DynamicResource Brush.FG2}"/>
               </StackPanel>
