@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
+using CommunityToolkit.Mvvm.ComponentModel;
+
 namespace SourceGit.Models
 {
     public class GitHubUser
@@ -170,5 +172,33 @@ namespace SourceGit.Models
         public DateTime? StartedAt { get; set; }
         [JsonPropertyName("completed_at")]
         public DateTime? CompletedAt { get; set; }
+    }
+
+    public class GitHubStepLog : ObservableObject
+    {
+        public GitHubStep Step { get; set; }
+        public string Log { get; set; } = string.Empty;
+
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set => SetProperty(ref _isExpanded, value);
+        }
+
+        private bool _isExpanded;
+    }
+
+    public class GitHubJobDetail : ObservableObject
+    {
+        public GitHubJob Job { get; set; }
+        public List<GitHubStepLog> StepLogs { get; set; } = [];
+
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set => SetProperty(ref _isExpanded, value);
+        }
+
+        private bool _isExpanded;
     }
 }

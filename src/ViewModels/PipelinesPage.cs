@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 using Avalonia.Collections;
@@ -18,27 +19,11 @@ namespace SourceGit.ViewModels
             set
             {
                 if (SetProperty(ref _selectedRun, value) && value != null)
-                    LoadRunDetail(value.Id);
+                    _ = LoadRunDetailAsync(value.Id);
             }
         }
 
-        public AvaloniaList<Models.GitHubJob> Jobs { get; } = [];
-
-        public Models.GitHubJob SelectedJob
-        {
-            get => _selectedJob;
-            set
-            {
-                if (SetProperty(ref _selectedJob, value) && value != null)
-                    LoadJobLogs(value.Id);
-            }
-        }
-
-        public string JobLogs
-        {
-            get => _jobLogs;
-            private set => SetProperty(ref _jobLogs, value);
-        }
+        public AvaloniaList<Models.GitHubJobDetail> JobDetails { get; } = [];
 
         public bool IsLoading
         {
@@ -96,28 +81,132 @@ namespace SourceGit.ViewModels
                 Native.OS.OpenBrowser(run.HtmlUrl);
         }
 
-        private async void LoadRunDetail(long runId)
+        private async Task LoadRunDetailAsync(long runId)
         {
             if (_client == null)
                 return;
 
             var jobs = await _client.GetJobsAsync(runId);
+            var details = new List<Models.GitHubJobDetail>();
+
+            // Fetch logs for all jobs in parallel
+            var logTasks = new List<Task<string>>();
+            foreach (var job in jobs)
+                logTasks.Add(_client.GetJobLogsAsync(job.Id));
+
+            await Task.WhenAll(logTasks);
+
+            for (int i = 0; i < jobs.Count; i++)
+            {
+                var job = jobs[i];
+                var rawLog = logTasks[i].Result;
+                var stepLogs = ParseLogsByStep(job.Steps, rawLog);
+
+                details.Add(new Models.GitHubJobDetail
+                {
+                    Job = job,
+                    StepLogs = stepLogs,
+                });
+            }
+
             Dispatcher.UIThread.Invoke(() =>
             {
-                Jobs.Clear();
-                Jobs.AddRange(jobs);
-                JobLogs = string.Empty;
-                SelectedJob = null;
+                JobDetails.Clear();
+                JobDetails.AddRange(details);
             });
         }
 
-        private async void LoadJobLogs(long jobId)
+        private static List<Models.GitHubStepLog> ParseLogsByStep(List<Models.GitHubStep> steps, string rawLog)
         {
-            if (_client == null)
-                return;
+            var result = new List<Models.GitHubStepLog>();
+            if (steps == null)
+                return result;
 
-            var logs = await _client.GetJobLogsAsync(jobId);
-            Dispatcher.UIThread.Invoke(() => JobLogs = logs);
+            if (string.IsNullOrEmpty(rawLog))
+            {
+                foreach (var step in steps)
+                    result.Add(new Models.GitHubStepLog { Step = step });
+                return result;
+            }
+
+            var lines = rawLog.Split('\n');
+
+            // Find step boundaries by matching ##[group] lines to step names in order
+            var boundaries = new List<int>();
+            int nextStepToFind = 0;
+
+            for (int i = 0; i < lines.Length && nextStepToFind < steps.Count; i++)
+            {
+                var cleaned = StripTimestamp(lines[i]);
+
+                if (cleaned.StartsWith("##[group]"))
+                {
+                    var groupName = cleaned[9..].Trim();
+                    if (nextStepToFind < steps.Count &&
+                        groupName.Contains(steps[nextStepToFind].Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        boundaries.Add(i);
+                        nextStepToFind++;
+                        continue;
+                    }
+                }
+
+                // First step often has no ##[group] marker
+                if (nextStepToFind == 0 && i == 0)
+                {
+                    boundaries.Add(0);
+                    nextStepToFind++;
+                }
+            }
+
+            for (int s = 0; s < steps.Count; s++)
+            {
+                var stepLog = new Models.GitHubStepLog { Step = steps[s] };
+
+                if (s < boundaries.Count)
+                {
+                    int start = boundaries[s];
+                    int end = (s + 1 < boundaries.Count) ? boundaries[s + 1] : lines.Length;
+
+                    var sb = new StringBuilder();
+                    for (int i = start; i < end; i++)
+                    {
+                        var line = StripTimestamp(lines[i]);
+
+                        if (line.StartsWith("##[group]"))
+                            line = line[9..];
+                        else if (line.StartsWith("##[endgroup]"))
+                            continue;
+                        else if (line.StartsWith("##[section]"))
+                            line = line[11..];
+                        else if (line.StartsWith("##[command]"))
+                            line = "$ " + line[11..];
+                        else if (line.StartsWith("##[error]"))
+                            line = "ERROR: " + line[9..];
+                        else if (line.StartsWith("##[warning]"))
+                            line = "WARN: " + line[11..];
+
+                        sb.AppendLine(line);
+                    }
+
+                    stepLog.Log = sb.ToString().TrimEnd();
+                }
+
+                result.Add(stepLog);
+            }
+
+            return result;
+        }
+
+        private static string StripTimestamp(string line)
+        {
+            if (line.Length > 20)
+            {
+                var spaceIdx = line.IndexOf(' ');
+                if (spaceIdx >= 20 && spaceIdx <= 35 && line[spaceIdx - 1] == 'Z')
+                    return line[(spaceIdx + 1)..];
+            }
+            return line;
         }
 
         private void InitializeClient()
@@ -130,8 +219,6 @@ namespace SourceGit.ViewModels
         private readonly Repository _repo;
         private Models.GitHubClient _client;
         private Models.GitHubWorkflowRun _selectedRun;
-        private Models.GitHubJob _selectedJob;
-        private string _jobLogs = string.Empty;
         private bool _isLoading;
     }
 }

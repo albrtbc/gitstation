@@ -104,7 +104,7 @@
                  IsVisible="{Binding !IsGitHubRepo}"/>
 
       <!-- Run Detail -->
-      <Grid RowDefinitions="Auto,Auto,*"
+      <Grid RowDefinitions="Auto,*"
             IsVisible="{Binding SelectedRun, Converter={x:Static ObjectConverters.IsNotNull}}">
 
         <!-- Run Header -->
@@ -129,87 +129,108 @@
           </Grid>
         </Border>
 
-        <!-- Jobs -->
-        <Border Grid.Row="1" Padding="4,4" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="0,0,0,1">
-          <ListBox Background="Transparent"
-                   BorderThickness="0"
-                   ItemsSource="{Binding Jobs}"
-                   SelectedItem="{Binding SelectedJob, Mode=TwoWay}"
-                   SelectionMode="Single"
-                   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            <ListBox.Styles>
-              <Style Selector="ListBoxItem">
-                <Setter Property="Padding" Value="8,4"/>
-                <Setter Property="Margin" Value="0,2"/>
-                <Setter Property="CornerRadius" Value="4"/>
-              </Style>
-            </ListBox.Styles>
-            <ListBox.ItemTemplate>
-              <DataTemplate DataType="m:GitHubJob">
-                <Grid ColumnDefinitions="Auto,*,Auto">
-                  <TextBlock Grid.Column="0"
-                             Text="{Binding Conclusion, Converter={x:Static c:GitHubConverters.ConclusionToIcon}}"
-                             Foreground="{Binding Conclusion, Converter={x:Static c:GitHubConverters.ConclusionToColor}}"
-                             FontWeight="Bold"
-                             VerticalAlignment="Center"
-                             Margin="0,0,8,0"/>
-                  <TextBlock Grid.Column="1" Text="{Binding Name}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
-                  <TextBlock Grid.Column="2"
-                             Text="{Binding StartedAt, Converter={x:Static c:DateTimeConverters.ToNullableRelativeTime}}"
-                             FontSize="10"
-                             Foreground="{DynamicResource Brush.FG2}"
-                             VerticalAlignment="Center"/>
-                </Grid>
+        <!-- Jobs with nested Steps -->
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+          <ItemsControl ItemsSource="{Binding JobDetails}" Margin="4">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate DataType="m:GitHubJobDetail">
+                <Border Margin="0,4" CornerRadius="6" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="1" ClipToBounds="True">
+                  <StackPanel>
+                    <!-- Job header (clickable to expand/collapse) -->
+                    <Border Padding="10,6" Background="{DynamicResource Brush.ToolBar}" Cursor="Hand" PointerPressed="OnToggleJob">
+                      <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding Job.Conclusion, Converter={x:Static c:GitHubConverters.ConclusionToIcon}}"
+                                   Foreground="{Binding Job.Conclusion, Converter={x:Static c:GitHubConverters.ConclusionToColor}}"
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,8,0"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Job.Name}" FontWeight="Bold" FontSize="13" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2"
+                                   Text="{Binding Job.StartedAt, Converter={x:Static c:DateTimeConverters.ToNullableRelativeTime}}"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource Brush.FG2}"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,8,0"/>
+                        <StackPanel Grid.Column="3" VerticalAlignment="Center">
+                          <Path Width="10" Height="10"
+                                Data="{StaticResource Icons.TriangleRight}"
+                                Fill="{DynamicResource Brush.FG2}"
+                                IsVisible="{Binding !IsExpanded}"/>
+                          <Path Width="10" Height="10"
+                                Data="{StaticResource Icons.Down}"
+                                Fill="{DynamicResource Brush.FG2}"
+                                IsVisible="{Binding IsExpanded}"/>
+                        </StackPanel>
+                      </Grid>
+                    </Border>
+
+                    <!-- Steps (nested under the job, visible when expanded) -->
+                    <ItemsControl ItemsSource="{Binding StepLogs}" IsVisible="{Binding IsExpanded}" Margin="0,0,0,0">
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="m:GitHubStepLog">
+                          <Border BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="0,1,0,0">
+                            <StackPanel>
+                              <!-- Step header -->
+                              <Border Padding="12,4,8,4" Background="{DynamicResource Brush.Contents}" Cursor="Hand" PointerPressed="OnToggleStepLog">
+                                <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto">
+                                  <TextBlock Grid.Column="0"
+                                             Text="{Binding Step.Conclusion, Converter={x:Static c:GitHubConverters.ConclusionToIcon}}"
+                                             Foreground="{Binding Step.Conclusion, Converter={x:Static c:GitHubConverters.ConclusionToColor}}"
+                                             FontSize="11"
+                                             FontWeight="Bold"
+                                             VerticalAlignment="Center"
+                                             Width="16"/>
+                                  <TextBlock Grid.Column="1"
+                                             Text="{Binding Step.Number, StringFormat=#{0}}"
+                                             FontSize="10"
+                                             Foreground="{DynamicResource Brush.FG2}"
+                                             FontFamily="{DynamicResource Fonts.Monospace}"
+                                             VerticalAlignment="Center"
+                                             Margin="4,0"/>
+                                  <TextBlock Grid.Column="2"
+                                             Text="{Binding Step.Name}"
+                                             FontSize="11"
+                                             VerticalAlignment="Center"/>
+                                  <StackPanel Grid.Column="4" VerticalAlignment="Center">
+                                    <Path Width="8" Height="8"
+                                          Data="{StaticResource Icons.TriangleRight}"
+                                          Fill="{DynamicResource Brush.FG2}"
+                                          IsVisible="{Binding !IsExpanded}"/>
+                                    <Path Width="8" Height="8"
+                                          Data="{StaticResource Icons.Down}"
+                                          Fill="{DynamicResource Brush.FG2}"
+                                          IsVisible="{Binding IsExpanded}"/>
+                                  </StackPanel>
+                                </Grid>
+                              </Border>
+
+                              <!-- Step log (collapsible) -->
+                              <Border Background="{DynamicResource Brush.Window}"
+                                      IsVisible="{Binding IsExpanded}"
+                                      MaxHeight="400">
+                                <TextBox Text="{Binding Log, Mode=OneWay}"
+                                         IsReadOnly="True"
+                                         FontFamily="{DynamicResource Fonts.Monospace}"
+                                         FontSize="11"
+                                         BorderThickness="0"
+                                         Background="Transparent"
+                                         Padding="16,4"
+                                         TextWrapping="NoWrap"
+                                         AcceptsReturn="True"/>
+                              </Border>
+                            </StackPanel>
+                          </Border>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </StackPanel>
+                </Border>
               </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
-        </Border>
-
-        <!-- Steps + Logs -->
-        <Grid Grid.Row="2" RowDefinitions="Auto,*"
-              IsVisible="{Binding SelectedJob, Converter={x:Static ObjectConverters.IsNotNull}}">
-
-          <!-- Steps list -->
-          <Border Grid.Row="0" Padding="8,4" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="0,0,0,1" MaxHeight="150">
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-              <ItemsControl ItemsSource="{Binding SelectedJob.Steps}">
-                <ItemsControl.ItemTemplate>
-                  <DataTemplate DataType="m:GitHubStep">
-                    <Grid ColumnDefinitions="Auto,Auto,*" Margin="0,1">
-                      <TextBlock Grid.Column="0"
-                                 Width="16"
-                                 Text="{Binding Conclusion, Converter={x:Static c:GitHubConverters.ConclusionToIcon}}"
-                                 Foreground="{Binding Conclusion, Converter={x:Static c:GitHubConverters.ConclusionToColor}}"
-                                 FontSize="11"
-                                 HorizontalAlignment="Center"/>
-                      <TextBlock Grid.Column="1"
-                                 Text="{Binding Number, StringFormat=#{0}}"
-                                 FontSize="10"
-                                 Width="30"
-                                 Foreground="{DynamicResource Brush.FG2}"
-                                 FontFamily="{DynamicResource Fonts.Monospace}"/>
-                      <TextBlock Grid.Column="2"
-                                 Text="{Binding Name}"
-                                 FontSize="11"
-                                 TextTrimming="CharacterEllipsis"/>
-                    </Grid>
-                  </DataTemplate>
-                </ItemsControl.ItemTemplate>
-              </ItemsControl>
-            </ScrollViewer>
-          </Border>
-
-          <!-- Logs -->
-          <Border Grid.Row="1" Margin="4" CornerRadius="4" Background="{DynamicResource Brush.Window}" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="1" ClipToBounds="True">
-            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-              <TextBlock Text="{Binding JobLogs}"
-                         FontFamily="{DynamicResource Fonts.Monospace}"
-                         FontSize="11"
-                         Margin="8"
-                         TextWrapping="NoWrap"/>
-            </ScrollViewer>
-          </Border>
-        </Grid>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
       </Grid>
     </Grid>
   </Grid>

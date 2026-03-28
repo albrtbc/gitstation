@@ -24,6 +24,24 @@ namespace SourceGit.Views
                 await vm.RefreshAsync();
         }
 
+        private void OnToggleJob(object sender, PointerPressedEventArgs e)
+        {
+            if (sender is Border { DataContext: Models.GitHubJobDetail jobDetail })
+            {
+                jobDetail.IsExpanded = !jobDetail.IsExpanded;
+                e.Handled = true;
+            }
+        }
+
+        private void OnToggleStepLog(object sender, PointerPressedEventArgs e)
+        {
+            if (sender is Border { DataContext: Models.GitHubStepLog stepLog })
+            {
+                stepLog.IsExpanded = !stepLog.IsExpanded;
+                e.Handled = true;
+            }
+        }
+
         private void OnRunContextRequested(object sender, ContextRequestedEventArgs e)
         {
             if (sender is Grid { DataContext: Models.GitHubWorkflowRun run } grid &&
