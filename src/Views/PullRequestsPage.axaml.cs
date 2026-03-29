@@ -62,5 +62,6 @@ namespace SourceGit.Views
             if (DataContext is ViewModels.PullRequestsPage vm)
                 await vm.MergeAsync("rebase");
         }
+
     }
 }

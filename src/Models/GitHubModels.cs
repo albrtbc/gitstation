@@ -22,7 +22,7 @@ namespace SourceGit.Models
         public string Color { get; set; } = string.Empty;
     }
 
-    public class GitHubPullRequest
+    public class GitHubPullRequest : ObservableObject
     {
         [JsonPropertyName("number")]
         public int Number { get; set; }
@@ -58,6 +58,27 @@ namespace SourceGit.Models
         public DateTime? MergedAt { get; set; }
         [JsonPropertyName("html_url")]
         public string HtmlUrl { get; set; } = string.Empty;
+
+        [JsonIgnore]
+        public string CIConclusion
+        {
+            get => _ciConclusion;
+            set
+            {
+                SetProperty(ref _ciConclusion, value);
+                if (!_hasCI)
+                {
+                    _hasCI = true;
+                    OnPropertyChanged(nameof(HasCI));
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public bool HasCI => _hasCI;
+
+        private string _ciConclusion;
+        private bool _hasCI;
     }
 
     public class GitHubBranchRef
@@ -202,6 +223,35 @@ namespace SourceGit.Models
         private bool _isExpanded;
     }
 
+    public class GitHubCheckRun
+    {
+        [JsonPropertyName("id")]
+        public long Id { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = string.Empty;
+        [JsonPropertyName("status")]
+        public string Status { get; set; } = string.Empty;
+        [JsonPropertyName("conclusion")]
+        public string Conclusion { get; set; }
+        [JsonPropertyName("started_at")]
+        public DateTime? StartedAt { get; set; }
+        [JsonPropertyName("completed_at")]
+        public DateTime? CompletedAt { get; set; }
+        [JsonPropertyName("html_url")]
+        public string HtmlUrl { get; set; } = string.Empty;
+
+        [JsonIgnore]
+        public string EffectiveConclusion => Status == "completed" ? Conclusion : null;
+    }
+
+    public class GitHubCheckRunsResponse
+    {
+        [JsonPropertyName("total_count")]
+        public int TotalCount { get; set; }
+        [JsonPropertyName("check_runs")]
+        public List<GitHubCheckRun> CheckRuns { get; set; } = [];
+    }
+
     // Request payloads for GitHub API
     public class CreatePullRequestPayload
     {
@@ -264,6 +314,7 @@ namespace SourceGit.Models
     [JsonSerializable(typeof(List<GitHubReview>))]
     [JsonSerializable(typeof(GitHubWorkflowRunsResponse))]
     [JsonSerializable(typeof(GitHubJobsResponse))]
+    [JsonSerializable(typeof(GitHubCheckRunsResponse))]
     [JsonSerializable(typeof(CreatePullRequestPayload))]
     [JsonSerializable(typeof(UpdatePullRequestPayload))]
     [JsonSerializable(typeof(MergePullRequestPayload))]

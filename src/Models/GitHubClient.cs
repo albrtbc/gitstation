@@ -202,6 +202,16 @@ namespace SourceGit.Models
             return json != null;
         }
 
+        // Check Runs (CI status for a commit)
+        public async Task<List<GitHubCheckRun>> GetCheckRunsAsync(string commitSha)
+        {
+            var json = await GetAsync($"/repos/{Owner}/{Repo}/commits/{commitSha}/check-runs?per_page=100");
+            if (json == null)
+                return [];
+            var response = JsonSerializer.Deserialize(json, GitHubJsonContext.Default.GitHubCheckRunsResponse);
+            return response?.CheckRuns ?? [];
+        }
+
         // Workflow Runs (Pipelines)
         public async Task<List<GitHubWorkflowRun>> GetWorkflowRunsAsync(int perPage = 30)
         {
