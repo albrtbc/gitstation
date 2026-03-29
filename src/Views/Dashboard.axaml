@@ -125,7 +125,6 @@
         <ListBox.ItemTemplate>
           <DataTemplate DataType="vm:RepositoryNode">
             <Grid Background="Transparent"
-                  Height="{Binding Source={x:Static vm:Preferences.Instance}, Path=DefaultFontSize, Converter={x:Static c:DoubleConverters.ToRowHeight}}"
                   ColumnDefinitions="8,*,Auto,4"
                   ClipToBounds="True"
                   ContextRequested="OnRowContextRequested">
