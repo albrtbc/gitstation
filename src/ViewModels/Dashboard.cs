@@ -273,7 +273,8 @@ namespace SourceGit.ViewModels
 
         private void EnsureGitConfigured()
         {
-            if (_gitConfigured) return;
+            if (_gitConfigured)
+                return;
 
             if (Preferences.Instance.IsGitConfigured())
             {
