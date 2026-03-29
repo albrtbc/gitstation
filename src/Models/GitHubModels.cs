@@ -202,6 +202,61 @@ namespace SourceGit.Models
         private bool _isExpanded;
     }
 
+    // Request payloads for GitHub API
+    public class CreatePullRequestPayload
+    {
+        [JsonPropertyName("title")]
+        public string Title { get; set; }
+        [JsonPropertyName("body")]
+        public string Body { get; set; }
+        [JsonPropertyName("head")]
+        public string Head { get; set; }
+        [JsonPropertyName("base")]
+        public string Base { get; set; }
+    }
+
+    public class UpdatePullRequestPayload
+    {
+        [JsonPropertyName("title")]
+        public string Title { get; set; }
+        [JsonPropertyName("body")]
+        public string Body { get; set; }
+    }
+
+    public class MergePullRequestPayload
+    {
+        [JsonPropertyName("merge_method")]
+        public string MergeMethod { get; set; }
+    }
+
+    public class CommentPayload
+    {
+        [JsonPropertyName("body")]
+        public string Body { get; set; }
+    }
+
+    public class SubmitReviewPayload
+    {
+        [JsonPropertyName("event")]
+        public string Event { get; set; }
+        [JsonPropertyName("body")]
+        public string Body { get; set; }
+    }
+
+    public class ReviewCommentPayload
+    {
+        [JsonPropertyName("body")]
+        public string Body { get; set; }
+        [JsonPropertyName("commit_id")]
+        public string CommitId { get; set; }
+        [JsonPropertyName("path")]
+        public string Path { get; set; }
+        [JsonPropertyName("line")]
+        public int Line { get; set; }
+        [JsonPropertyName("side")]
+        public string Side { get; set; }
+    }
+
     [JsonSerializable(typeof(List<GitHubPullRequest>))]
     [JsonSerializable(typeof(GitHubPullRequest))]
     [JsonSerializable(typeof(List<GitHubComment>))]
@@ -209,6 +264,12 @@ namespace SourceGit.Models
     [JsonSerializable(typeof(List<GitHubReview>))]
     [JsonSerializable(typeof(GitHubWorkflowRunsResponse))]
     [JsonSerializable(typeof(GitHubJobsResponse))]
+    [JsonSerializable(typeof(CreatePullRequestPayload))]
+    [JsonSerializable(typeof(UpdatePullRequestPayload))]
+    [JsonSerializable(typeof(MergePullRequestPayload))]
+    [JsonSerializable(typeof(CommentPayload))]
+    [JsonSerializable(typeof(SubmitReviewPayload))]
+    [JsonSerializable(typeof(ReviewCommentPayload))]
     internal partial class GitHubJsonContext : JsonSerializerContext
     {
     }

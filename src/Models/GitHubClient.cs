@@ -139,20 +139,20 @@ namespace SourceGit.Models
 
         public async Task<GitHubPullRequest> CreatePullRequestAsync(string title, string body, string head, string baseBranch)
         {
-            var payload = JsonSerializer.Serialize(new { title, body, head, @base = baseBranch }, _serializeOptions);
+            var payload = JsonSerializer.Serialize(new CreatePullRequestPayload { Title = title, Body = body, Head = head, Base = baseBranch }, GitHubJsonContext.Default.CreatePullRequestPayload);
             var json = await PostAsync($"/repos/{Owner}/{Repo}/pulls", payload);
             return json != null ? JsonSerializer.Deserialize(json, GitHubJsonContext.Default.GitHubPullRequest) : null;
         }
 
         public async Task<bool> UpdatePullRequestAsync(int number, string title, string body)
         {
-            var payload = JsonSerializer.Serialize(new { title, body }, _serializeOptions);
+            var payload = JsonSerializer.Serialize(new UpdatePullRequestPayload { Title = title, Body = body }, GitHubJsonContext.Default.UpdatePullRequestPayload);
             return await PatchAsync($"/repos/{Owner}/{Repo}/pulls/{number}", payload);
         }
 
         public async Task<(bool success, string error)> MergePullRequestAsync(int number, string mergeMethod)
         {
-            var payload = JsonSerializer.Serialize(new { merge_method = mergeMethod }, _serializeOptions);
+            var payload = JsonSerializer.Serialize(new MergePullRequestPayload { MergeMethod = mergeMethod }, GitHubJsonContext.Default.MergePullRequestPayload);
             try
             {
                 var content = new StringContent(payload, Encoding.UTF8, "application/json");
@@ -177,7 +177,7 @@ namespace SourceGit.Models
 
         public async Task<GitHubComment> AddCommentAsync(int prNumber, string body)
         {
-            var payload = JsonSerializer.Serialize(new { body }, _serializeOptions);
+            var payload = JsonSerializer.Serialize(new CommentPayload { Body = body }, GitHubJsonContext.Default.CommentPayload);
             var json = await PostAsync($"/repos/{Owner}/{Repo}/issues/{prNumber}/comments", payload);
             return json != null ? JsonSerializer.Deserialize(json, GitHubJsonContext.Default.GitHubComment) : null;
         }
@@ -191,13 +191,13 @@ namespace SourceGit.Models
 
         public async Task<(bool success, string error)> SubmitReviewAsync(int prNumber, string eventType, string body)
         {
-            var payload = JsonSerializer.Serialize(new { @event = eventType, body }, _serializeOptions);
+            var payload = JsonSerializer.Serialize(new SubmitReviewPayload { Event = eventType, Body = body }, GitHubJsonContext.Default.SubmitReviewPayload);
             return await PostWithErrorAsync($"/repos/{Owner}/{Repo}/pulls/{prNumber}/reviews", payload);
         }
 
         public async Task<bool> CreateReviewCommentAsync(int prNumber, string body, string commitId, string path, int line)
         {
-            var payload = JsonSerializer.Serialize(new { body, commit_id = commitId, path, line, side = "RIGHT" }, _serializeOptions);
+            var payload = JsonSerializer.Serialize(new ReviewCommentPayload { Body = body, CommitId = commitId, Path = path, Line = line, Side = "RIGHT" }, GitHubJsonContext.Default.ReviewCommentPayload);
             var json = await PostAsync($"/repos/{Owner}/{Repo}/pulls/{prNumber}/comments", payload);
             return json != null;
         }
@@ -342,10 +342,5 @@ namespace SourceGit.Models
         }
 
         private readonly HttpClient _client;
-
-        private static readonly JsonSerializerOptions _serializeOptions = new()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-        };
     }
 }
