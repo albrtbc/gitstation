@@ -39,7 +39,7 @@ mkdir -p GitStation.AppDir/usr/share/metainfo
 mkdir -p GitStation.AppDir/usr/share/applications
 
 cp -r GitStation GitStation.AppDir/opt/gitstation
-desktop-file-install resources/_common/applications/sourcegit.desktop --dir GitStation.AppDir/usr/share/applications \
+desktop-file-install resources/_common/applications/gitstation.desktop --dir GitStation.AppDir/usr/share/applications \
     --set-icon com.albrtbc.GitStation --set-key=Exec --set-value=AppRun
 mv GitStation.AppDir/usr/share/applications/{sourcegit,com.albrtbc.GitStation}.desktop
 cp resources/_common/icons/gitstation.png GitStation.AppDir/com.albrtbc.GitStation.png
