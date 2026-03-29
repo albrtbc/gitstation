@@ -247,11 +247,7 @@ namespace SourceGit.Views
                     return;
                 }
 
-                var repo = vm.ActivePage.Data is ViewModels.Repository r ? r
-                    : vm.ActivePage.Data is ViewModels.Dashboard { ActiveRepository: { } dr } ? dr
-                    : null;
-
-                if (repo != null)
+                if (vm.ActivePage.Data is ViewModels.Repository repo)
                 {
                     switch (e.Key)
                     {
@@ -277,6 +273,21 @@ namespace SourceGit.Views
                             return;
                         case Key.P when e.KeyModifiers.HasFlag(KeyModifiers.Shift):
                             vm.CommandPalette = new ViewModels.RepositoryCommandPalette(repo);
+                            e.Handled = true;
+                            return;
+                    }
+                }
+                else if (vm.ActivePage.Data is ViewModels.Dashboard { ActiveRepository: { } dashRepo }
+                         && e.KeyModifiers.HasFlag(KeyModifiers.Shift))
+                {
+                    switch (e.Key)
+                    {
+                        case Key.F:
+                            dashRepo.IsSearchingCommits = true;
+                            e.Handled = true;
+                            return;
+                        case Key.H:
+                            dashRepo.IsSearchingCommits = false;
                             e.Handled = true;
                             return;
                     }
