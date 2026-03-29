@@ -247,7 +247,11 @@ namespace SourceGit.Views
                     return;
                 }
 
-                if (vm.ActivePage.Data is ViewModels.Repository repo)
+                var repo = vm.ActivePage.Data is ViewModels.Repository r ? r
+                    : vm.ActivePage.Data is ViewModels.Dashboard { ActiveRepository: { } dr } ? dr
+                    : null;
+
+                if (repo != null)
                 {
                     switch (e.Key)
                     {
