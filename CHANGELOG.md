@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.4...gitstation-v0.2.5) (2026-03-29)
+
+
+### Bug Fixes
+
+* about dialog shows correct version and URLs ([c9eb991](https://github.com/albrtbc/gitstation/commit/c9eb99125e54d9fd290b215cbe67ce4553fcc6fe))
+
 ## [0.2.4](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.3...gitstation-v0.2.4) (2026-03-29)
 
 
