@@ -85,7 +85,8 @@ namespace SourceGit.Models
                         CreateNoWindow = true,
                     };
                     using var proc = Process.Start(psi);
-                    if (proc == null) continue;
+                    if (proc == null)
+                        continue;
                     var output = proc.StandardOutput.ReadToEnd().Trim();
                     proc.WaitForExit();
                     if (proc.ExitCode == 0 && !string.IsNullOrEmpty(output))
@@ -205,7 +206,8 @@ namespace SourceGit.Models
         public async Task<List<GitHubWorkflowRun>> GetWorkflowRunsAsync(int perPage = 30)
         {
             var json = await GetAsync($"/repos/{Owner}/{Repo}/actions/runs?per_page={perPage}");
-            if (json == null) return [];
+            if (json == null)
+                return [];
             var response = JsonSerializer.Deserialize<GitHubWorkflowRunsResponse>(json);
             return response?.WorkflowRuns ?? [];
         }
@@ -213,7 +215,8 @@ namespace SourceGit.Models
         public async Task<List<GitHubJob>> GetJobsAsync(long runId)
         {
             var json = await GetAsync($"/repos/{Owner}/{Repo}/actions/runs/{runId}/jobs");
-            if (json == null) return [];
+            if (json == null)
+                return [];
             var response = JsonSerializer.Deserialize<GitHubJobsResponse>(json);
             return response?.Jobs ?? [];
         }
