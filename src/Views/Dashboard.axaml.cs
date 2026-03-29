@@ -144,6 +144,20 @@ namespace SourceGit.Views
                 };
                 menu.Items.Add(terminal);
 
+                var remoteUrl = GetRemoteUrl(node.Id);
+                if (remoteUrl != null)
+                {
+                    var browser = new MenuItem();
+                    browser.Header = "Open in Browser";
+                    browser.Icon = App.CreateMenuIcon("Icons.Link");
+                    browser.Click += (_, ev) =>
+                    {
+                        Native.OS.OpenBrowser(remoteUrl);
+                        ev.Handled = true;
+                    };
+                    menu.Items.Add(browser);
+                }
+
                 menu.Items.Add(new MenuItem() { Header = "-" });
 
                 var remove = new MenuItem();
@@ -242,6 +256,33 @@ namespace SourceGit.Views
         private void OnSortLastModified(object sender, RoutedEventArgs e)
         {
             ViewModels.Dashboard.Instance.SortByLastModified();
+        }
+
+        private static string GetRemoteUrl(string repoPath)
+        {
+            try
+            {
+                var config = new Commands.Config(repoPath).Get("remote.origin.url");
+                if (string.IsNullOrEmpty(config))
+                    return null;
+
+                var url = config.Trim();
+
+                // SSH format: git@github.com:owner/repo.git
+                if (url.StartsWith("git@", StringComparison.Ordinal))
+                {
+                    url = url.Replace(':', '/').Replace("git@", "https://");
+                }
+
+                if (url.EndsWith(".git", StringComparison.OrdinalIgnoreCase))
+                    url = url[..^4];
+
+                return url.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? url : null;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private CancellationTokenSource _cancellation = new CancellationTokenSource();
