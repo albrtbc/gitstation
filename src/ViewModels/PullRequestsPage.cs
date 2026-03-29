@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Avalonia.Collections;
@@ -106,6 +107,8 @@ namespace SourceGit.ViewModels
                     PullRequests.Clear();
                     PullRequests.AddRange(prs);
                 });
+
+                _ = LoadCIStatusForAllAsync(prs);
             }
             catch (Exception ex)
             {
@@ -164,6 +167,53 @@ namespace SourceGit.ViewModels
                 App.RaiseException(string.Empty, $"Failed to merge: {error}");
             else
                 await RefreshAsync();
+        }
+
+        private async Task LoadCIStatusForAllAsync(List<Models.GitHubPullRequest> prs)
+        {
+            try
+            {
+                var tasks = prs
+                    .Where(pr => pr.Head?.Sha != null)
+                    .Select(async pr =>
+                    {
+                        var checkRuns = await _client.GetCheckRunsAsync(pr.Head.Sha);
+                        var conclusion = ComputeCombinedConclusion(checkRuns);
+                        if (conclusion != null)
+                        {
+                            Dispatcher.UIThread.Invoke(() =>
+                            {
+                                pr.CIConclusion = conclusion;
+                            });
+                        }
+                    });
+                await Task.WhenAll(tasks);
+            }
+            catch
+            {
+                // CI status is best-effort
+            }
+        }
+
+        private static string ComputeCombinedConclusion(List<Models.GitHubCheckRun> checkRuns)
+        {
+            if (checkRuns == null || checkRuns.Count == 0)
+                return null;
+
+            bool hasRunning = false;
+            bool hasFailed = false;
+
+            foreach (var cr in checkRuns)
+            {
+                if (cr.Status != "completed")
+                    hasRunning = true;
+                else if (cr.Conclusion == "failure")
+                    hasFailed = true;
+            }
+
+            if (hasFailed) return "failure";
+            if (hasRunning) return "in_progress";
+            return "success";
         }
 
         private async Task LoadPullRequestDetail(Models.GitHubPullRequest pr)

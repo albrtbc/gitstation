@@ -47,6 +47,10 @@
           <DataTemplate DataType="m:GitHubPullRequest">
             <StackPanel Spacing="2">
               <StackPanel Orientation="Horizontal" Spacing="4">
+                <TextBlock Text="{Binding CIConclusion, Converter={x:Static c:GitHubConverters.ConclusionToIcon}}"
+                           Foreground="{Binding CIConclusion, Converter={x:Static c:GitHubConverters.ConclusionToColor}}"
+                           FontSize="11" FontWeight="Bold" VerticalAlignment="Center"
+                           IsVisible="{Binding HasCI}"/>
                 <TextBlock Text="{Binding Number, StringFormat=#{0}}" Foreground="{DynamicResource Brush.FG2}" FontSize="11"/>
                 <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="12" TextTrimming="CharacterEllipsis"/>
               </StackPanel>
@@ -85,8 +89,12 @@
         <!-- Header Bar -->
         <Border Grid.Row="0" Padding="12,8" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="0,0,0,1" Background="{DynamicResource Brush.ToolBar}">
           <Grid RowDefinitions="Auto,Auto,Auto">
-            <!-- Title -->
+            <!-- Title + CI Status -->
             <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="6">
+              <TextBlock Text="{Binding SelectedPullRequest.CIConclusion, Converter={x:Static c:GitHubConverters.ConclusionToIcon}}"
+                         Foreground="{Binding SelectedPullRequest.CIConclusion, Converter={x:Static c:GitHubConverters.ConclusionToColor}}"
+                         FontSize="14" FontWeight="Bold" VerticalAlignment="Center"
+                         IsVisible="{Binding SelectedPullRequest.HasCI}"/>
               <TextBlock Text="{Binding SelectedPullRequest.Number, StringFormat=#{0}}" FontSize="14" Foreground="{DynamicResource Brush.FG2}"/>
               <TextBlock Text="{Binding SelectedPullRequest.Title}" FontSize="14" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
             </StackPanel>
