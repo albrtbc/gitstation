@@ -49,6 +49,21 @@ namespace SourceGit.Converters
 
         public static readonly ToThemeConverter ToTheme = new ToThemeConverter();
 
+        public class ToThemePresetConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                return Models.ThemePresets.Find(value as string);
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                return (value as Models.ThemePreset)?.Name;
+            }
+        }
+
+        public static readonly ToThemePresetConverter ToThemePreset = new ToThemePresetConverter();
+
         public class FormatByResourceKeyConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

@@ -196,14 +196,9 @@
                       MinHeight="28"
                       Padding="8,0"
                       HorizontalAlignment="Stretch"
-                      DisplayMemberBinding="{Binding Key, x:DataType=ThemeVariant}"
-                      SelectedItem="{Binding Theme, Mode=TwoWay, Converter={x:Static c:StringConverters.ToTheme}}">
-              <ComboBox.Items>
-                <ThemeVariant>Default</ThemeVariant>
-                <ThemeVariant>Dark</ThemeVariant>
-                <ThemeVariant>Light</ThemeVariant>
-              </ComboBox.Items>
-            </ComboBox>
+                      ItemsSource="{x:Static m:ThemePresets.All}"
+                      DisplayMemberBinding="{Binding Name}"
+                      SelectedItem="{Binding Theme, Mode=TwoWay, Converter={x:Static c:StringConverters.ToThemePreset}}"/>
 
             <TextBlock Grid.Row="1" Grid.Column="0"
                        Text="{DynamicResource Text.Preferences.Appearance.DefaultFont}"

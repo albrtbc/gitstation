@@ -253,24 +253,43 @@ namespace SourceGit
             if (Current is not App app)
                 return;
 
-            if (theme.Equals("Light", StringComparison.OrdinalIgnoreCase))
-                app.RequestedThemeVariant = ThemeVariant.Light;
-            else if (theme.Equals("Dark", StringComparison.OrdinalIgnoreCase))
-                app.RequestedThemeVariant = ThemeVariant.Dark;
-            else
-                app.RequestedThemeVariant = ThemeVariant.Default;
-
+            // Remove previous overrides
             if (app._themeOverrides != null)
             {
                 app.Resources.MergedDictionaries.Remove(app._themeOverrides);
                 app._themeOverrides = null;
             }
 
+            // Resolve preset
+            var preset = Models.ThemePresets.Find(theme);
+
+            // Set base theme variant
+            if (preset.Name == "Default")
+                app.RequestedThemeVariant = ThemeVariant.Default;
+            else if (preset.IsDark)
+                app.RequestedThemeVariant = ThemeVariant.Dark;
+            else
+                app.RequestedThemeVariant = ThemeVariant.Light;
+
+            // Apply preset colors
+            var resDic = new ResourceDictionary();
+
+            if (preset.Colors != null)
+            {
+                foreach (var kv in preset.Colors)
+                {
+                    if (kv.Key.Equals("SystemAccentColor", StringComparison.Ordinal))
+                        resDic["SystemAccentColor"] = kv.Value;
+                    else
+                        resDic[kv.Key] = kv.Value;
+                }
+            }
+
+            // Apply file overrides on top
             if (!string.IsNullOrEmpty(themeOverridesFile) && File.Exists(themeOverridesFile))
             {
                 try
                 {
-                    var resDic = new ResourceDictionary();
                     using var stream = File.OpenRead(themeOverridesFile);
                     var overrides = JsonSerializer.Deserialize(stream, JsonCodeGen.Default.ThemeOverrides);
                     foreach (var kv in overrides.BasicColors)
@@ -285,9 +304,6 @@ namespace SourceGit
                         Models.CommitGraph.SetPens(overrides.GraphColors, overrides.GraphPenThickness);
                     else
                         Models.CommitGraph.SetDefaultPens(overrides.GraphPenThickness);
-
-                    app.Resources.MergedDictionaries.Add(resDic);
-                    app._themeOverrides = resDic;
                 }
                 catch
                 {
@@ -297,6 +313,12 @@ namespace SourceGit
             else
             {
                 Models.CommitGraph.SetDefaultPens();
+            }
+
+            if (resDic.Count > 0)
+            {
+                app.Resources.MergedDictionaries.Add(resDic);
+                app._themeOverrides = resDic;
             }
         }
 
