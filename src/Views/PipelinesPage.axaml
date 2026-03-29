@@ -210,7 +210,15 @@
                               <Border Background="{DynamicResource Brush.Window}"
                                       IsVisible="{Binding IsExpanded}"
                                       MaxHeight="400">
-                                <v:LogViewer LogText="{Binding Log, Mode=OneWay}"/>
+                                <TextBox Text="{Binding Log, Mode=OneWay}"
+                                         IsReadOnly="True"
+                                         FontFamily="{DynamicResource Fonts.Monospace}"
+                                         FontSize="11"
+                                         BorderThickness="0"
+                                         Background="Transparent"
+                                         Padding="16,4"
+                                         TextWrapping="NoWrap"
+                                         AcceptsReturn="True"/>
                               </Border>
                             </StackPanel>
                           </Border>

@@ -21,8 +21,6 @@ namespace SourceGit.Views
             IsReadOnly = true;
             ShowLineNumbers = false;
             WordWrap = false;
-            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto;
-            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto;
             FontFamily = new FontFamily("fonts:GitStation#JetBrains Mono");
             FontSize = 11;
             Background = Brushes.Transparent;
@@ -36,7 +34,7 @@ namespace SourceGit.Views
 
             if (change.Property == LogTextProperty)
             {
-                Text = change.GetNewValue<string>() ?? string.Empty;
+                Document.Text = change.GetNewValue<string>() ?? string.Empty;
             }
         }
     }

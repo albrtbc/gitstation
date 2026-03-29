@@ -54,7 +54,10 @@ namespace SourceGit.Views
             }
             else if (e.Key == Key.Escape)
             {
-                repo.SearchCommitContext.ClearSuggestions();
+                if (repo.SearchCommitContext.Suggestions is { Count: > 0 })
+                    repo.SearchCommitContext.ClearSuggestions();
+                else
+                    repo.IsSearchingCommits = false;
                 e.Handled = true;
             }
         }
