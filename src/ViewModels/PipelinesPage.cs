@@ -57,6 +57,10 @@ namespace SourceGit.ViewModels
                     Runs.AddRange(runs);
                 });
             }
+            catch (Exception ex)
+            {
+                App.RaiseException(string.Empty, $"Failed to load pipelines: {ex.Message}");
+            }
             finally
             {
                 IsLoading = false;

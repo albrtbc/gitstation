@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -105,6 +106,10 @@ namespace SourceGit.ViewModels
                     PullRequests.Clear();
                     PullRequests.AddRange(prs);
                 });
+            }
+            catch (Exception ex)
+            {
+                App.RaiseException(string.Empty, $"Failed to load pull requests: {ex.Message}");
             }
             finally
             {

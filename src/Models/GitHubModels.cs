@@ -201,4 +201,15 @@ namespace SourceGit.Models
 
         private bool _isExpanded;
     }
+
+    [JsonSerializable(typeof(List<GitHubPullRequest>))]
+    [JsonSerializable(typeof(GitHubPullRequest))]
+    [JsonSerializable(typeof(List<GitHubComment>))]
+    [JsonSerializable(typeof(GitHubComment))]
+    [JsonSerializable(typeof(List<GitHubReview>))]
+    [JsonSerializable(typeof(GitHubWorkflowRunsResponse))]
+    [JsonSerializable(typeof(GitHubJobsResponse))]
+    internal partial class GitHubJsonContext : JsonSerializerContext
+    {
+    }
 }
