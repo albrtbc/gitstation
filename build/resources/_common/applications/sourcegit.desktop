@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=SourceGit
+Name=GitStation
 Comment=Open-source & Free Git GUI Client
-Exec=/opt/sourcegit/sourcegit
-Icon=/usr/share/icons/sourcegit.png
+Exec=/opt/gitstation/gitstation
+Icon=/usr/share/icons/gitstation.png
 Terminal=false
 Type=Application
 Categories=Development
