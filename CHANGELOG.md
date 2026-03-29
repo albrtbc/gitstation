@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.0...gitstation-v0.2.1) (2026-03-29)
+
+
+### Bug Fixes
+
+* repo list updates instantly via FileSystemWatcher, not polling ([bb87553](https://github.com/albrtbc/gitstation/commit/bb8755307e43980e2bf28cc7b88c0322196df3dd))
+* update stale sourcegit references in packaging script and slnx ([86bad9a](https://github.com/albrtbc/gitstation/commit/86bad9acdf8e614e26c23642d1f6ebdcb301c60a))
+
 ## [0.2.0](https://github.com/albrtbc/gitstation/compare/gitstation-v0.1.0...gitstation-v0.2.0) (2026-03-29)
 
 
