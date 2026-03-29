@@ -30,17 +30,27 @@ package-lock.json
 output*/
 
 
-# Flatpak
-!build/resources/flatpak
-
 build/resources/
-build/SourceGit/
-build/SourceGit.app/
+# Keep build resource files needed for packaging
+!build/resources/_common/
+!build/resources/_common/**
+!build/resources/app/
+!build/resources/app/**
+!build/resources/appimage/
+!build/resources/appimage/**
+!build/resources/deb/
+!build/resources/deb/**
+!build/resources/flatpak/
+!build/resources/flatpak/**
+!build/resources/rpm/
+!build/resources/rpm/**
+build/GitStation/
+build/GitStation.app/
 build/*.zip
 build/*.tar.gz
 build/*.deb
 build/*.rpm
 build/*.AppImage
-SourceGit.app/
+GitStation.app/
 build.command
 src/Properties/launchSettings.json
