@@ -106,7 +106,7 @@
           <Style Selector="ListBoxItem" x:DataType="vm:RepositoryNode">
             <Setter Property="Margin" Value="0,0,0,1"/>
             <Setter Property="Padding" Value="0"/>
-            <Setter Property="Height" Value="36"/>
+            <Setter Property="Height" Value="{Binding Source={x:Static vm:Preferences.Instance}, Path=DefaultFontSize, Converter={x:Static c:DoubleConverters.ToRowHeight}}"/>
             <Setter Property="CornerRadius" Value="4"/>
             <Setter Property="FocusAdorner">
               <FocusAdornerTemplate>
@@ -125,7 +125,7 @@
         <ListBox.ItemTemplate>
           <DataTemplate DataType="vm:RepositoryNode">
             <Grid Background="Transparent"
-                  Height="36"
+                  Height="{Binding Source={x:Static vm:Preferences.Instance}, Path=DefaultFontSize, Converter={x:Static c:DoubleConverters.ToRowHeight}}"
                   ColumnDefinitions="8,*,Auto,4"
                   ClipToBounds="True"
                   ContextRequested="OnRowContextRequested">
@@ -134,7 +134,7 @@
               <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" ClipToBounds="True">
                 <TextBlock Text="{Binding Name}"
                            FontWeight="Bold"
-                           FontSize="12"
+                           FontSize="{Binding Source={x:Static vm:Preferences.Instance}, Path=DefaultFontSize, Converter={x:Static c:DoubleConverters.Decrease}}"
                            TextTrimming="CharacterEllipsis"/>
                 <StackPanel Orientation="Horizontal">
                   <ContentControl Content="{Binding Status, Mode=OneWay}"
@@ -143,7 +143,7 @@
                       <DataTemplate DataType="m:RepositoryStatus">
                         <StackPanel Orientation="Horizontal">
                           <Path Width="10" Height="10" Margin="0,0,3,0" Data="{StaticResource Icons.Branch}" Fill="{DynamicResource Brush.FG2}"/>
-                          <TextBlock Text="{Binding CurrentBranch}" FontSize="11" Foreground="{DynamicResource Brush.FG2}" TextTrimming="CharacterEllipsis"/>
+                          <TextBlock Text="{Binding CurrentBranch}" FontSize="{Binding Source={x:Static vm:Preferences.Instance}, Path=DefaultFontSize, Converter={x:Static c:DoubleConverters.DecreaseBy2}}" Foreground="{DynamicResource Brush.FG2}" TextTrimming="CharacterEllipsis"/>
                         </StackPanel>
                       </DataTemplate>
                     </ContentControl.DataTemplates>
