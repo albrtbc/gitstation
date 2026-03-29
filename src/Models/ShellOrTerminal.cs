@@ -17,7 +17,7 @@ namespace SourceGit.Models
         {
             get
             {
-                var icon = AssetLoader.Open(new Uri($"avares://SourceGit/Resources/Images/ShellIcons/{Type}.png", UriKind.RelativeOrAbsolute));
+                var icon = AssetLoader.Open(new Uri($"avares://GitStation/Resources/Images/ShellIcons/{Type}.png", UriKind.RelativeOrAbsolute));
                 return new Bitmap(icon);
             }
         }

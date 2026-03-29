@@ -1,10 +1,10 @@
 # GitStation - Opensource Git GUI client.
 
-[![stars](https://img.shields.io/github/stars/sourcegit-scm/sourcegit.svg)](https://github.com/sourcegit-scm/sourcegit/stargazers)
-[![forks](https://img.shields.io/github/forks/sourcegit-scm/sourcegit.svg)](https://github.com/sourcegit-scm/sourcegit/forks)
-[![license](https://img.shields.io/github/license/sourcegit-scm/sourcegit.svg)](LICENSE)
-[![latest](https://img.shields.io/github/v/release/sourcegit-scm/sourcegit.svg)](https://github.com/sourcegit-scm/sourcegit/releases/latest)
-[![downloads](https://img.shields.io/github/downloads/sourcegit-scm/sourcegit/total)](https://github.com/sourcegit-scm/sourcegit/releases)
+[![stars](https://img.shields.io/github/stars/albrtbc/gitstation.svg)](https://github.com/albrtbc/gitstation/stargazers)
+[![forks](https://img.shields.io/github/forks/albrtbc/gitstation.svg)](https://github.com/albrtbc/gitstation/forks)
+[![license](https://img.shields.io/github/license/albrtbc/gitstation.svg)](LICENSE)
+[![latest](https://img.shields.io/github/v/release/albrtbc/gitstation.svg)](https://github.com/albrtbc/gitstation/releases/latest)
+[![downloads](https://img.shields.io/github/downloads/albrtbc/gitstation/total)](https://github.com/albrtbc/gitstation/releases)
 
 ## Screenshots
 
@@ -18,7 +18,7 @@
 
 * Custom
 
-  You can find custom themes from [sourcegit-theme](https://github.com/sourcegit-scm/sourcegit-theme.git). And welcome to share your own themes.
+  You can find custom themes from [gitstation-theme](https://github.com/albrtbc/gitstation-theme.git). And welcome to share your own themes.
 
 ## Highlights
 
@@ -68,7 +68,7 @@
 
 **To use this tool, you need to install Git(>=2.25.1) first.**
 
-You can download the latest stable from [Releases](https://github.com/sourcegit-scm/sourcegit/releases/latest) or download workflow artifacts from [GitHub Actions](https://github.com/sourcegit-scm/sourcegit/actions) to try this app based on latest commits.
+You can download the latest stable from [Releases](https://github.com/albrtbc/gitstation/releases/latest) or download workflow artifacts from [GitHub Actions](https://github.com/albrtbc/gitstation/actions) to try this app based on latest commits.
 
 This software creates a folder, which is platform-dependent, to store user settings, downloaded avatars and crash logs.
 
@@ -80,7 +80,7 @@ This software creates a folder, which is platform-dependent, to store user setti
 
 > [!TIP]
 > * You can open this data storage directory from the main menu `Open Data Storage Directory`.
-> * You can create a `data` folder next to the `SourceGit` executable to force this app to store data (user settings, downloaded avatars and crash logs) into it (Portable-Mode). Only works with Windows packages and Linux AppImages.
+> * You can create a `data` folder next to the `GitStation` executable to force this app to store data (user settings, downloaded avatars and crash logs) into it (Portable-Mode). Only works with Windows packages and Linux AppImages.
 
 For **Windows** users:
 
@@ -88,9 +88,9 @@ For **Windows** users:
 * You can install the latest stable by `scoop` with follow commands:
   ```shell
   scoop bucket add extras
-  scoop install sourcegit
+  scoop install gitstation
   ```
-* Pre-built binaries can be found in [Releases](https://github.com/sourcegit-scm/sourcegit/releases/latest)
+* Pre-built binaries can be found in [Releases](https://github.com/albrtbc/gitstation/releases/latest)
 
 > [!NOTE]
 > `git-flow` is no longer shipped with **Git for Windows** since `2.51.1`. You can use it by following these steps:
@@ -100,19 +100,19 @@ For **Windows** users:
 
 For **macOS** users:
 
-* Thanks [@ybeapps](https://github.com/ybeapps) for making `SourceGit` available on `Homebrew`:
+* Thanks [@ybeapps](https://github.com/ybeapps) for making `GitStation` available on `Homebrew`:
   ```shell
-  brew install --cask sourcegit
+  brew install --cask gitstation
   ```
-* If you want to install `SourceGit.app` from GitHub Release manually, you need run following command to make sure it works:
+* If you want to install `GitStation.app` from GitHub Release manually, you need run following command to make sure it works:
   ```shell
-  sudo xattr -cr /Applications/SourceGit.app
+  sudo xattr -cr /Applications/GitStation.app
   ```
 > [!NOTE]
-> macOS packages in the `Release` page of this project are all unsigned. If you are worried about potential security issues with the above command, you can download the signed package from the [distribution repository](https://github.com/ybeapps/homebrew-sourcegit/releases) provided by [@ybeapps](https://github.com/ybeapps) (there is no need to execute the above command while installing `SourceGit`).
+> macOS packages in the `Release` page of this project are all unsigned. If you are worried about potential security issues with the above command, you can download the signed package from the [distribution repository](https://github.com/ybeapps/homebrew-gitstation/releases) provided by [@ybeapps](https://github.com/ybeapps) (there is no need to execute the above command while installing `GitStation`).
 
 * Make sure [git-credential-manager](https://github.com/git-ecosystem/git-credential-manager/releases) is installed on your mac.
-* You can run `echo $PATH > ~/Library/Application\ Support/SourceGit/PATH` to generate a custom PATH env file to introduce `PATH` env to SourceGit.
+* You can run `echo $PATH > ~/Library/Application\ Support/GitStation/PATH` to generate a custom PATH env file to introduce `PATH` env to GitStation.
 
 For **Linux** users:
 
@@ -120,38 +120,38 @@ For **Linux** users:
 
   `deb` how to:
   ```shell
-  curl https://codeberg.org/api/packages/yataro/debian/repository.key | sudo tee /etc/apt/keyrings/sourcegit.asc
-  echo "deb [signed-by=/etc/apt/keyrings/sourcegit.asc, arch=amd64,arm64] https://codeberg.org/api/packages/yataro/debian generic main" | sudo tee /etc/apt/sources.list.d/sourcegit.list
+  curl https://codeberg.org/api/packages/yataro/debian/repository.key | sudo tee /etc/apt/keyrings/gitstation.asc
+  echo "deb [signed-by=/etc/apt/keyrings/gitstation.asc, arch=amd64,arm64] https://codeberg.org/api/packages/yataro/debian generic main" | sudo tee /etc/apt/sources.list.d/gitstation.list
   sudo apt update
-  sudo apt install sourcegit
+  sudo apt install gitstation
   ```
 
   `rpm` how to:
   ```shell
-  curl https://codeberg.org/api/packages/yataro/rpm.repo | sed -e 's/gpgcheck=1/gpgcheck=0/' > sourcegit.repo
+  curl https://codeberg.org/api/packages/yataro/rpm.repo | sed -e 's/gpgcheck=1/gpgcheck=0/' > gitstation.repo
 
   # Fedora 41 and newer
-  sudo dnf config-manager addrepo --from-repofile=./sourcegit.repo
+  sudo dnf config-manager addrepo --from-repofile=./gitstation.repo
   # Fedora 40 and earlier
-  sudo dnf config-manager --add-repo ./sourcegit.repo
+  sudo dnf config-manager --add-repo ./gitstation.repo
 
-  sudo dnf install sourcegit
+  sudo dnf install gitstation
   ```
 
   If your distribution isn't using `dnf`, please refer to the documentation of your distribution on how to add an `rpm` repository.
-* `AppImage` files can be found on [AppImage hub](https://appimage.github.io/SourceGit/), `xdg-open` (`xdg-utils`) must be installed to support open native file manager.
+* `AppImage` files can be found on [AppImage hub](https://appimage.github.io/GitStation/), `xdg-open` (`xdg-utils`) must be installed to support open native file manager.
 * Make sure [git-credential-manager](https://github.com/git-ecosystem/git-credential-manager/releases) or [git-credential-libsecret](https://pkgs.org/search/?q=git-credential-libsecret) is installed on your Linux.
 * Maybe you need to set environment variable `AVALONIA_SCREEN_SCALE_FACTORS`. See https://github.com/AvaloniaUI/Avalonia/wiki/Configuring-X11-per-monitor-DPI.
 * If you can NOT type accented characters, such as `ê`, `ó`, try to set the environment variable `AVALONIA_IM_MODULE` to `none`.
 
 ## Commandline arguments
 
-Users can also launcher `SourceGit` from commandline. Usage:
+Users can also launcher `GitStation` from commandline. Usage:
 
 ```
-<SOURCEGIT_EXEC> <DIR>                       // Open repository in existing `SourceGit` instance or a new one
-<SOURCEGIT_EXEC> --file-history <FILE_PATH>  // Launch `SourceGit` to see the history of a file
-<SOURCEGIT_EXEC> --blame <FILE_PATH>         // Launch `SourceGit` to blame a file (HEAD version only) 
+<GITSTATION_EXEC> <DIR>                       // Open repository in existing `GitStation` instance or a new one
+<GITSTATION_EXEC> --file-history <FILE_PATH>  // Launch `GitStation` to see the history of a file
+<GITSTATION_EXEC> --blame <FILE_PATH>         // Launch `GitStation` to blame a file (HEAD version only) 
 ```
 
 ## OpenAI
@@ -233,16 +233,16 @@ In short, here are the commands to get started once [.NET tools are installed](h
 dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org
 dotnet restore
 dotnet build
-dotnet run --project src/SourceGit.csproj
+dotnet run --project src/GitStation.csproj
 ```
 
 Thanks to all the people who contribute.
 
-[![Contributors](https://contrib.rocks/image?repo=sourcegit-scm/sourcegit&columns=20)](https://github.com/sourcegit-scm/sourcegit/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=albrtbc/gitstation&columns=20)](https://github.com/albrtbc/gitstation/graphs/contributors)
 
 ## Translation Status
 
-You can find the current translation status in [TRANSLATION.md](https://github.com/sourcegit-scm/sourcegit/blob/develop/TRANSLATION.md)
+You can find the current translation status in [TRANSLATION.md](https://github.com/albrtbc/gitstation/blob/develop/TRANSLATION.md)
 
 ### Translate Utility Script
 

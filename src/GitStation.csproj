@@ -5,6 +5,7 @@
     <ApplicationManifest>App.manifest</ApplicationManifest>
     <ApplicationIcon>App.ico</ApplicationIcon>
     <Version>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)\\..\\VERSION"))</Version>
+    <RootNamespace>SourceGit</RootNamespace>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
 
@@ -64,7 +65,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TrimmerRootAssembly Include="SourceGit" />
+    <TrimmerRootAssembly Include="GitStation" />
     <TrimmerRootAssembly Include="Avalonia.Themes.Fluent" />
   </ItemGroup>
 </Project>

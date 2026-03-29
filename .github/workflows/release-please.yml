@@ -52,7 +52,7 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Publish
-        run: dotnet publish src/SourceGit.csproj -c Release -r ${{ matrix.runtime }} -o publish /p:DisableAOT=true
+        run: dotnet publish src/GitStation.csproj -c Release -r ${{ matrix.runtime }} -o publish /p:DisableAOT=true
 
       - name: Package (Windows)
         if: runner.os == 'Windows'
