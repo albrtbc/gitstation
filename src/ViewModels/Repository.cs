@@ -1436,10 +1436,6 @@ namespace SourceGit.ViewModels
 
         public void OpenSubmodule(string submodule)
         {
-            var selfPage = GetOwnerPage();
-            if (selfPage == null)
-                return;
-
             var root = Path.GetFullPath(Path.Combine(FullPath, submodule));
             var normalizedPath = root.Replace('\\', '/').TrimEnd('/');
 
@@ -1448,11 +1444,11 @@ namespace SourceGit.ViewModels
                 {
                     Id = normalizedPath,
                     Name = Path.GetFileName(normalizedPath),
-                    Bookmark = selfPage.Node.Bookmark,
+                    Bookmark = 0,
                     IsRepository = true,
                 };
 
-            App.GetLauncher().OpenRepositoryInTab(node, null);
+            Dashboard.Instance.SelectRepository(node, FullPath);
         }
 
         public void AddWorktree()
