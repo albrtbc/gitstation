@@ -128,31 +128,31 @@ namespace SourceGit.Models
         public async Task<List<GitHubPullRequest>> GetPullRequestsAsync(string state = "open")
         {
             var json = await GetAsync($"/repos/{Owner}/{Repo}/pulls?state={state}&per_page=50");
-            return json != null ? JsonSerializer.Deserialize<List<GitHubPullRequest>>(json) : [];
+            return json != null ? JsonSerializer.Deserialize(json, GitHubJsonContext.Default.ListGitHubPullRequest) : [];
         }
 
         public async Task<GitHubPullRequest> GetPullRequestAsync(int number)
         {
             var json = await GetAsync($"/repos/{Owner}/{Repo}/pulls/{number}");
-            return json != null ? JsonSerializer.Deserialize<GitHubPullRequest>(json) : null;
+            return json != null ? JsonSerializer.Deserialize(json, GitHubJsonContext.Default.GitHubPullRequest) : null;
         }
 
         public async Task<GitHubPullRequest> CreatePullRequestAsync(string title, string body, string head, string baseBranch)
         {
-            var payload = JsonSerializer.Serialize(new { title, body, head, @base = baseBranch });
+            var payload = JsonSerializer.Serialize(new { title, body, head, @base = baseBranch }, _serializeOptions);
             var json = await PostAsync($"/repos/{Owner}/{Repo}/pulls", payload);
-            return json != null ? JsonSerializer.Deserialize<GitHubPullRequest>(json) : null;
+            return json != null ? JsonSerializer.Deserialize(json, GitHubJsonContext.Default.GitHubPullRequest) : null;
         }
 
         public async Task<bool> UpdatePullRequestAsync(int number, string title, string body)
         {
-            var payload = JsonSerializer.Serialize(new { title, body });
+            var payload = JsonSerializer.Serialize(new { title, body }, _serializeOptions);
             return await PatchAsync($"/repos/{Owner}/{Repo}/pulls/{number}", payload);
         }
 
         public async Task<(bool success, string error)> MergePullRequestAsync(int number, string mergeMethod)
         {
-            var payload = JsonSerializer.Serialize(new { merge_method = mergeMethod });
+            var payload = JsonSerializer.Serialize(new { merge_method = mergeMethod }, _serializeOptions);
             try
             {
                 var content = new StringContent(payload, Encoding.UTF8, "application/json");
@@ -172,32 +172,32 @@ namespace SourceGit.Models
         public async Task<List<GitHubComment>> GetCommentsAsync(int prNumber)
         {
             var json = await GetAsync($"/repos/{Owner}/{Repo}/issues/{prNumber}/comments?per_page=100");
-            return json != null ? JsonSerializer.Deserialize<List<GitHubComment>>(json) : [];
+            return json != null ? JsonSerializer.Deserialize(json, GitHubJsonContext.Default.ListGitHubComment) : [];
         }
 
         public async Task<GitHubComment> AddCommentAsync(int prNumber, string body)
         {
-            var payload = JsonSerializer.Serialize(new { body });
+            var payload = JsonSerializer.Serialize(new { body }, _serializeOptions);
             var json = await PostAsync($"/repos/{Owner}/{Repo}/issues/{prNumber}/comments", payload);
-            return json != null ? JsonSerializer.Deserialize<GitHubComment>(json) : null;
+            return json != null ? JsonSerializer.Deserialize(json, GitHubJsonContext.Default.GitHubComment) : null;
         }
 
         // Reviews
         public async Task<List<GitHubReview>> GetReviewsAsync(int prNumber)
         {
             var json = await GetAsync($"/repos/{Owner}/{Repo}/pulls/{prNumber}/reviews?per_page=100");
-            return json != null ? JsonSerializer.Deserialize<List<GitHubReview>>(json) : [];
+            return json != null ? JsonSerializer.Deserialize(json, GitHubJsonContext.Default.ListGitHubReview) : [];
         }
 
         public async Task<(bool success, string error)> SubmitReviewAsync(int prNumber, string eventType, string body)
         {
-            var payload = JsonSerializer.Serialize(new { @event = eventType, body });
+            var payload = JsonSerializer.Serialize(new { @event = eventType, body }, _serializeOptions);
             return await PostWithErrorAsync($"/repos/{Owner}/{Repo}/pulls/{prNumber}/reviews", payload);
         }
 
         public async Task<bool> CreateReviewCommentAsync(int prNumber, string body, string commitId, string path, int line)
         {
-            var payload = JsonSerializer.Serialize(new { body, commit_id = commitId, path, line, side = "RIGHT" });
+            var payload = JsonSerializer.Serialize(new { body, commit_id = commitId, path, line, side = "RIGHT" }, _serializeOptions);
             var json = await PostAsync($"/repos/{Owner}/{Repo}/pulls/{prNumber}/comments", payload);
             return json != null;
         }
@@ -208,7 +208,7 @@ namespace SourceGit.Models
             var json = await GetAsync($"/repos/{Owner}/{Repo}/actions/runs?per_page={perPage}");
             if (json == null)
                 return [];
-            var response = JsonSerializer.Deserialize<GitHubWorkflowRunsResponse>(json);
+            var response = JsonSerializer.Deserialize(json, GitHubJsonContext.Default.GitHubWorkflowRunsResponse);
             return response?.WorkflowRuns ?? [];
         }
 
@@ -217,7 +217,7 @@ namespace SourceGit.Models
             var json = await GetAsync($"/repos/{Owner}/{Repo}/actions/runs/{runId}/jobs");
             if (json == null)
                 return [];
-            var response = JsonSerializer.Deserialize<GitHubJobsResponse>(json);
+            var response = JsonSerializer.Deserialize(json, GitHubJsonContext.Default.GitHubJobsResponse);
             return response?.Jobs ?? [];
         }
 
@@ -342,5 +342,10 @@ namespace SourceGit.Models
         }
 
         private readonly HttpClient _client;
+
+        private static readonly JsonSerializerOptions _serializeOptions = new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+        };
     }
 }
