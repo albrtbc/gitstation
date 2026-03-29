@@ -62,20 +62,20 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y llvm gcc-aarch64-linux-gnu
       - name: Build
-        run: dotnet build -c Release
+        run: dotnet build src/GitStation.csproj -c Release
       - name: Publish
-        run: dotnet publish src/SourceGit.csproj -c Release -o publish -r ${{ matrix.runtime }}
+        run: dotnet publish src/GitStation.csproj -c Release -o publish -r ${{ matrix.runtime }}
       - name: Rename executable file
         if: startsWith(matrix.runtime, 'linux-')
-        run: mv publish/SourceGit publish/sourcegit
+        run: mv publish/GitStation publish/gitstation
       - name: Tar artifact
         if: startsWith(matrix.runtime, 'linux-') || startsWith(matrix.runtime, 'osx-')
         run: |
-          tar -cvf "sourcegit.${{ matrix.runtime }}.tar" -C publish .
+          tar -cvf "gitstation.${{ matrix.runtime }}.tar" -C publish .
           rm -r publish/*
-          mv "sourcegit.${{ matrix.runtime }}.tar" publish
+          mv "gitstation.${{ matrix.runtime }}.tar" publish
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sourcegit.${{ matrix.runtime }}
+          name: gitstation.${{ matrix.runtime }}
           path: publish/*

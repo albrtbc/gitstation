@@ -34,19 +34,19 @@ namespace SourceGit.Views
 
         private void OnVisitReleaseNotes(object _, RoutedEventArgs e)
         {
-            Native.OS.OpenBrowser($"https://github.com/sourcegit-scm/sourcegit/releases/tag/v{TxtVersion.Text}");
+            Native.OS.OpenBrowser($"https://github.com/gitstation-scm/gitstation/releases/tag/v{TxtVersion.Text}");
             e.Handled = true;
         }
 
         private void OnVisitWebsite(object _, RoutedEventArgs e)
         {
-            Native.OS.OpenBrowser("https://sourcegit-scm.github.io/");
+            Native.OS.OpenBrowser("https://gitstation-scm.github.io/");
             e.Handled = true;
         }
 
         private void OnVisitSourceCode(object _, RoutedEventArgs e)
         {
-            Native.OS.OpenBrowser("https://github.com/sourcegit-scm/sourcegit");
+            Native.OS.OpenBrowser("https://github.com/gitstation-scm/gitstation");
             e.Handled = true;
         }
     }

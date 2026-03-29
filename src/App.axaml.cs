@@ -69,8 +69,8 @@ namespace SourceGit
             builder.ConfigureFonts(manager =>
             {
                 var monospace = new EmbeddedFontCollection(
-                    new Uri("fonts:SourceGit", UriKind.Absolute),
-                    new Uri("avares://SourceGit/Resources/Fonts", UriKind.Absolute));
+                    new Uri("fonts:GitStation", UriKind.Absolute),
+                    new Uri("avares://GitStation/Resources/Fonts", UriKind.Absolute));
                 manager.AddFontCollection(monospace);
             });
 
@@ -322,7 +322,7 @@ namespace SourceGit
             {
                 if (!string.IsNullOrEmpty(defaultFont))
                 {
-                    monospaceFont = $"fonts:SourceGit#JetBrains Mono,{defaultFont}";
+                    monospaceFont = $"fonts:GitStation#JetBrains Mono,{defaultFont}";
                     resDic.Add("Fonts.Monospace", FontFamily.Parse(monospaceFont));
                 }
             }

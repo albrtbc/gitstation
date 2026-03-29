@@ -57,7 +57,7 @@
 	</Folder>
 
 	<Folder Name="/src/">
-		<Project Path="src/SourceGit.csproj" />
+		<Project Path="src/GitStation.csproj" />
 	</Folder>
 
 	<Folder Name="/files/">
