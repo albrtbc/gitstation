@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.3](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.2...gitstation-v0.2.3) (2026-03-29)
+
+
+### Bug Fixes
+
+* case-insensitive version tag parsing ([b162034](https://github.com/albrtbc/gitstation/commit/b1620343b97c73fe09229a675d74d73d4fa5e756))
+* parse version tag with project prefix for update check ([c80aa14](https://github.com/albrtbc/gitstation/commit/c80aa1433ee5b3c5d509e6f7a0f8ef372cb3be87))
+
 ## [0.2.2](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.1...gitstation-v0.2.2) (2026-03-29)
 
 
