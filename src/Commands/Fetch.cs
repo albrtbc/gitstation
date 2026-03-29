@@ -13,7 +13,7 @@ namespace SourceGit.Commands
             Context = repo;
 
             var builder = new StringBuilder(512);
-            builder.Append("fetch --progress --verbose ");
+            builder.Append("fetch --progress --verbose --prune ");
             builder.Append(noTags ? "--no-tags " : "--tags ");
             if (force)
                 builder.Append("--force ");
@@ -30,7 +30,7 @@ namespace SourceGit.Commands
             Context = repo;
             RaiseError = false;
 
-            Args = $"fetch --progress --verbose {remote}";
+            Args = $"fetch --progress --verbose --prune {remote}";
         }
 
         public Fetch(string repo, Models.Branch local, Models.Branch remote)
@@ -39,7 +39,7 @@ namespace SourceGit.Commands
 
             WorkingDirectory = repo;
             Context = repo;
-            Args = $"fetch --progress --verbose {remote.Remote} {remote.Name}:{local.Name}";
+            Args = $"fetch --progress --verbose --prune {remote.Remote} {remote.Name}:{local.Name}";
         }
 
         public async Task<bool> RunAsync()
