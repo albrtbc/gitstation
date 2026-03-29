@@ -15,7 +15,7 @@ namespace SourceGit.Views
             var assembly = Assembly.GetExecutingAssembly();
             var ver = assembly.GetName().Version;
             if (ver != null)
-                TxtVersion.Text = $"{ver.Major}.{ver.Minor:D2}";
+                TxtVersion.Text = $"{ver.Major}.{ver.Minor}.{ver.Build}";
 
             var meta = assembly.GetCustomAttributes<AssemblyMetadataAttribute>();
             foreach (var attr in meta)
@@ -34,19 +34,19 @@ namespace SourceGit.Views
 
         private void OnVisitReleaseNotes(object _, RoutedEventArgs e)
         {
-            Native.OS.OpenBrowser($"https://github.com/gitstation-scm/gitstation/releases/tag/v{TxtVersion.Text}");
+            Native.OS.OpenBrowser($"https://github.com/albrtbc/gitstation/releases/tag/gitstation-v{TxtVersion.Text}");
             e.Handled = true;
         }
 
         private void OnVisitWebsite(object _, RoutedEventArgs e)
         {
-            Native.OS.OpenBrowser("https://gitstation-scm.github.io/");
+            Native.OS.OpenBrowser("https://github.com/albrtbc/gitstation");
             e.Handled = true;
         }
 
         private void OnVisitSourceCode(object _, RoutedEventArgs e)
         {
-            Native.OS.OpenBrowser("https://github.com/gitstation-scm/gitstation");
+            Native.OS.OpenBrowser("https://github.com/albrtbc/gitstation");
             e.Handled = true;
         }
     }
