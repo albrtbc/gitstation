@@ -9,15 +9,11 @@
 	</Folder>
 
 	<Folder Name="/build/resources/_common/applications/">
-		<File Path="build/resources/_common/applications/sourcegit.desktop"/>
+		<File Path="build/resources/_common/applications/gitstation.desktop"/>
 	</Folder>
 
 	<Folder Name="/build/resources/_common/icons/">
-		<File Path="build/resources/_common/icons/sourcegit.png"/>
-	</Folder>
-
-	<Folder Name="/build/resources/_common/">
-		<File Path="build/resources/_common/sourcegit"/>
+		<File Path="build/resources/_common/icons/gitstation.png"/>
 	</Folder>
 
 	<Folder Name="/build/resources/app/">
@@ -26,8 +22,7 @@
 	</Folder>
 
 	<Folder Name="/build/resources/appimage/">
-		<File Path="build/resources/appimage/sourcegit"/>
-		<File Path="build/resources/appimage/sourcegit.appdata.xml"/>
+		<File Path="build/resources/appimage/gitstation.appdata.xml"/>
 	</Folder>
 
 	<Folder Name="/build/resources/deb/DEBIAN/">
