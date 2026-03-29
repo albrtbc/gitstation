@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.6](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.5...gitstation-v0.2.6) (2026-03-29)
+
+
+### Features
+
+* add GitLab Dark, GitLab Light, Dracula, Nord and Monokai themes ([269cc34](https://github.com/albrtbc/gitstation/commit/269cc34d71aa35a676086108f7db59892029c5e4))
+* add Open in Browser to repository context menu ([7201b22](https://github.com/albrtbc/gitstation/commit/7201b226163c57444c0c601b4e83664838259557))
+* add Solarized Dark and Solarized Light themes ([82cfc3c](https://github.com/albrtbc/gitstation/commit/82cfc3c160ca4062e6610733249b8e50dbc10d80))
+
 ## [0.2.5](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.4...gitstation-v0.2.5) (2026-03-29)
 
 
