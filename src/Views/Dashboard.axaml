@@ -218,10 +218,44 @@
       </StackPanel>
 
       <!-- Repository content when selected -->
-      <Grid RowDefinitions="36,*"
+      <Grid RowDefinitions="Auto,36,*"
             IsVisible="{Binding ActiveRepository, Converter={x:Static ObjectConverters.IsNotNull}}">
-        <!-- Repository Toolbar -->
+        <!-- Submodule Breadcrumb -->
         <Border Grid.Row="0"
+                Height="28"
+                Padding="8,0"
+                Background="{DynamicResource Brush.Accent}"
+                IsVisible="{Binding IsSubmodule}">
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <Button Classes="icon_button"
+                    Width="20" Height="20"
+                    Margin="0,0,4,0"
+                    Command="{Binding GoBackToParent}"
+                    ToolTip.Tip="Go back to parent repository">
+              <Path Width="12" Height="12" Data="{StaticResource Icons.Up}" Fill="White">
+                <Path.RenderTransform>
+                  <RotateTransform Angle="-90"/>
+                </Path.RenderTransform>
+              </Path>
+            </Button>
+            <TextBlock Foreground="White"
+                       Opacity="0.7"
+                       VerticalAlignment="Center"
+                       Text="{Binding ParentRepositoryName}"/>
+            <TextBlock Foreground="White"
+                       Opacity="0.7"
+                       VerticalAlignment="Center"
+                       Margin="4,0"
+                       Text="›"/>
+            <TextBlock Foreground="White"
+                       FontWeight="Bold"
+                       VerticalAlignment="Center"
+                       Text="{Binding ActiveNode.Name}"/>
+          </StackPanel>
+        </Border>
+
+        <!-- Repository Toolbar -->
+        <Border Grid.Row="1"
                 BorderBrush="{DynamicResource Brush.Border0}"
                 BorderThickness="0,0,0,1"
                 Background="{DynamicResource Brush.ToolBar}">
@@ -235,7 +269,7 @@
         </Border>
 
         <!-- Repository View -->
-        <ContentControl Grid.Row="1" Content="{Binding ActiveRepository}">
+        <ContentControl Grid.Row="2" Content="{Binding ActiveRepository}">
           <ContentControl.DataTemplates>
             <DataTemplate DataType="vm:Repository">
               <v:Repository/>

@@ -62,6 +62,20 @@ namespace SourceGit.ViewModels
             private set => SetProperty(ref _activeNode, value);
         }
 
+        public string ParentRepositoryPath
+        {
+            get => _parentRepositoryPath;
+            private set => SetProperty(ref _parentRepositoryPath, value);
+        }
+
+        public string ParentRepositoryName
+        {
+            get => _parentRepositoryName;
+            private set => SetProperty(ref _parentRepositoryName, value);
+        }
+
+        public bool IsSubmodule => !string.IsNullOrEmpty(_parentRepositoryPath);
+
         public Dashboard()
         {
             EnsureGitConfigured();
@@ -115,7 +129,7 @@ namespace SourceGit.ViewModels
             SearchFilter = string.Empty;
         }
 
-        public void SelectRepository(RepositoryNode node)
+        public void SelectRepository(RepositoryNode node, string parentRepoPath = null)
         {
             if (node == null || !node.IsRepository)
                 return;
@@ -147,8 +161,29 @@ namespace SourceGit.ViewModels
             var repo = new Repository(isBare, node.Id, gitDir);
             repo.Open();
 
+            ParentRepositoryPath = parentRepoPath;
+            ParentRepositoryName = parentRepoPath != null ? Path.GetFileName(parentRepoPath) : null;
+            OnPropertyChanged(nameof(IsSubmodule));
+
             ActiveNode = node;
             ActiveRepository = repo;
+        }
+
+        public void GoBackToParent()
+        {
+            if (string.IsNullOrEmpty(_parentRepositoryPath))
+                return;
+
+            var parentNode = Preferences.Instance.FindNode(_parentRepositoryPath) ??
+                new RepositoryNode
+                {
+                    Id = _parentRepositoryPath,
+                    Name = Path.GetFileName(_parentRepositoryPath),
+                    Bookmark = 0,
+                    IsRepository = true,
+                };
+
+            SelectRepository(parentNode);
         }
 
         public void CloseActiveRepository()
@@ -380,5 +415,7 @@ namespace SourceGit.ViewModels
         private string _searchFilter = string.Empty;
         private Repository _activeRepository = null;
         private RepositoryNode _activeNode = null;
+        private string _parentRepositoryPath = null;
+        private string _parentRepositoryName = null;
     }
 }
