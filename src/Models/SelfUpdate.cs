@@ -51,7 +51,7 @@ namespace SourceGit.Models
                         return false;
 
                     var tagVer = TagName;
-                    var vIdx = tagVer.LastIndexOf('v');
+                    var vIdx = tagVer.LastIndexOf("v", StringComparison.OrdinalIgnoreCase);
                     if (vIdx >= 0)
                         tagVer = tagVer[(vIdx + 1)..];
 
