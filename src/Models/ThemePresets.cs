@@ -24,6 +24,8 @@ namespace SourceGit.Models
             new() { Name = "Dracula", IsDark = true, Colors = Dracula() },
             new() { Name = "Nord", IsDark = true, Colors = Nord() },
             new() { Name = "Monokai", IsDark = true, Colors = Monokai() },
+            new() { Name = "Solarized Dark", IsDark = true, Colors = SolarizedDark() },
+            new() { Name = "Solarized Light", IsDark = false, Colors = SolarizedLight() },
         ];
 
         public static ThemePreset Find(string name)
@@ -194,6 +196,72 @@ namespace SourceGit.Models
             ["Color.InlineCodeFG"] = Color.Parse("#FFF8F8F2"),
             ["Color.DataGridHeaderBG"] = Color.Parse("#FF2D2E27"),
             ["SystemAccentColor"] = Color.Parse("#FFA6E22E"),
+        };
+
+        private static Dictionary<string, Color> SolarizedDark() => new()
+        {
+            ["Color.Window"] = Color.Parse("#FF002B36"),
+            ["Color.WindowBorder"] = Color.Parse("#FF073642"),
+            ["Color.TitleBar"] = Color.Parse("#FF00252E"),
+            ["Color.ToolBar"] = Color.Parse("#FF073642"),
+            ["Color.Popup"] = Color.Parse("#FF073642"),
+            ["Color.Contents"] = Color.Parse("#FF002028"),
+            ["Color.Badge"] = Color.Parse("#FF268BD2"),
+            ["Color.BadgeFG"] = Color.Parse("#FFFDF6E3"),
+            ["Color.Conflict"] = Color.Parse("#FFB58900"),
+            ["Color.Conflict.Foreground"] = Color.Parse("#FF002B36"),
+            ["Color.Border0"] = Color.Parse("#FF001E27"),
+            ["Color.Border1"] = Color.Parse("#FF586E75"),
+            ["Color.Border2"] = Color.Parse("#FF073642"),
+            ["Color.FlatButton.Background"] = Color.Parse("#FF073642"),
+            ["Color.FlatButton.BackgroundHovered"] = Color.Parse("#FF0A4050"),
+            ["Color.FlatButton.FloatingBorder"] = Color.Parse("#FF586E75"),
+            ["Color.FG1"] = Color.Parse("#FF839496"),
+            ["Color.FG2"] = Color.Parse("#FF586E75"),
+            ["Color.Diff.EmptyBG"] = Color.Parse("#3C000000"),
+            ["Color.Diff.AddedBG"] = Color.Parse("#C0194D2E"),
+            ["Color.Diff.DeletedBG"] = Color.Parse("#C05B2131"),
+            ["Color.Diff.AddedHighlight"] = Color.Parse("#A0859900"),
+            ["Color.Diff.DeletedHighlight"] = Color.Parse("#A0DC322F"),
+            ["Color.Diff.BlockBorderHighlight"] = Color.Parse("#FF2AA198"),
+            ["Color.Link"] = Color.Parse("#FF2AA198"),
+            ["Color.InlineCode"] = Color.Parse("#FF073642"),
+            ["Color.InlineCodeFG"] = Color.Parse("#FF93A1A1"),
+            ["Color.DataGridHeaderBG"] = Color.Parse("#FF073642"),
+            ["SystemAccentColor"] = Color.Parse("#FF268BD2"),
+        };
+
+        private static Dictionary<string, Color> SolarizedLight() => new()
+        {
+            ["Color.Window"] = Color.Parse("#FFFDF6E3"),
+            ["Color.WindowBorder"] = Color.Parse("#FFEEE8D5"),
+            ["Color.TitleBar"] = Color.Parse("#FFEEE8D5"),
+            ["Color.ToolBar"] = Color.Parse("#FFFDF6E3"),
+            ["Color.Popup"] = Color.Parse("#FFFDF6E3"),
+            ["Color.Contents"] = Color.Parse("#FFEEE8D5"),
+            ["Color.Badge"] = Color.Parse("#FF268BD2"),
+            ["Color.BadgeFG"] = Color.Parse("#FFFDF6E3"),
+            ["Color.Conflict"] = Color.Parse("#FFB58900"),
+            ["Color.Conflict.Foreground"] = Color.Parse("#FFFDF6E3"),
+            ["Color.Border0"] = Color.Parse("#FFD3CBB8"),
+            ["Color.Border1"] = Color.Parse("#FF93A1A1"),
+            ["Color.Border2"] = Color.Parse("#FFEEE8D5"),
+            ["Color.FlatButton.Background"] = Color.Parse("#FFEEE8D5"),
+            ["Color.FlatButton.BackgroundHovered"] = Color.Parse("#FFFDF6E3"),
+            ["Color.FlatButton.FloatingBorder"] = Color.Parse("#FF93A1A1"),
+            ["Color.FG1"] = Color.Parse("#FF657B83"),
+            ["Color.FG2"] = Color.Parse("#FF93A1A1"),
+            ["Color.Diff.EmptyBG"] = Color.Parse("#10000000"),
+            ["Color.Diff.AddedBG"] = Color.Parse("#80C5E4B8"),
+            ["Color.Diff.DeletedBG"] = Color.Parse("#80F0B4B4"),
+            ["Color.Diff.AddedHighlight"] = Color.Parse("#B0D4E89C"),
+            ["Color.Diff.DeletedHighlight"] = Color.Parse("#B0F1A0A0"),
+            ["Color.Diff.BlockBorderHighlight"] = Color.Parse("#FF2AA198"),
+            ["Color.Link"] = Color.Parse("#FF268BD2"),
+            ["Color.InlineCode"] = Color.Parse("#FFEEE8D5"),
+            ["Color.InlineCodeFG"] = Color.Parse("#FF586E75"),
+            ["Color.DataGridHeaderBG"] = Color.Parse("#FFEEE8D5"),
+            ["SystemAccentColor"] = Color.Parse("#FF268BD2"),
         };
     }
 }
