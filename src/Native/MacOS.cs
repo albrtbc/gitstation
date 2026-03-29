@@ -48,7 +48,7 @@ namespace SourceGit.Native
         {
             return Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "SourceGit");
+                "GitStation");
         }
 
         public string FindGitExecutable()

@@ -44,14 +44,14 @@ namespace SourceGit.Native
                     return portableDir;
             }
 
-            // Runtime data dir: ~/.sourcegit
+            // Runtime data dir: ~/.gitstation
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var dataDir = Path.Combine(home, ".sourcegit");
+            var dataDir = Path.Combine(home, ".gitstation");
             if (Directory.Exists(dataDir))
                 return dataDir;
 
-            // Migrate old data: ~/.config/SourceGit
-            var oldDataDir = Path.Combine(home, ".config", "SourceGit");
+            // Migrate old data: ~/.config/GitStation
+            var oldDataDir = Path.Combine(home, ".config", "GitStation");
             if (Directory.Exists(oldDataDir))
             {
                 try

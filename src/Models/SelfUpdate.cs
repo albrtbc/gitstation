@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Text.Json.Serialization;
 
 namespace SourceGit.Models
@@ -18,23 +17,55 @@ namespace SourceGit.Models
         [JsonPropertyName("body")]
         public string Body { get; set; }
 
-        [JsonIgnore]
-        public System.Version CurrentVersion { get; }
+        [JsonPropertyName("html_url")]
+        public string HtmlUrl { get; set; }
 
         [JsonIgnore]
-        public string CurrentVersionStr => $"v{CurrentVersion.Major}.{CurrentVersion.Minor:D2}";
+        public System.Version CurrentVersion
+        {
+            get
+            {
+                try
+                {
+                    return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
 
         [JsonIgnore]
-        public bool IsNewVersion => CurrentVersion.CompareTo(new System.Version(TagName.Substring(1))) < 0;
+        public string CurrentVersionStr => $"v{CurrentVersion?.ToString(3) ?? "0.0.0"}";
+
+        [JsonIgnore]
+        public bool IsNewVersion
+        {
+            get
+            {
+                try
+                {
+                    var current = CurrentVersion;
+                    if (current == null)
+                        return false;
+
+                    var tagVer = TagName;
+                    if (tagVer.StartsWith("v", StringComparison.OrdinalIgnoreCase))
+                        tagVer = tagVer[1..];
+
+                    var remote = new System.Version(tagVer);
+                    return remote > current;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
 
         [JsonIgnore]
         public string ReleaseDateStr => DateTimeFormat.Format(PublishedAt, true);
-
-        public Version()
-        {
-            var assembly = Assembly.GetExecutingAssembly().GetName();
-            CurrentVersion = assembly.Version ?? new System.Version();
-        }
     }
 
     public class AlreadyUpToDate;

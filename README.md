@@ -1,4 +1,4 @@
-# SourceGit - Opensource Git GUI client.
+# GitStation - Opensource Git GUI client.
 
 [![stars](https://img.shields.io/github/stars/sourcegit-scm/sourcegit.svg)](https://github.com/sourcegit-scm/sourcegit/stargazers)
 [![forks](https://img.shields.io/github/forks/sourcegit-scm/sourcegit.svg)](https://github.com/sourcegit-scm/sourcegit/forks)
@@ -74,9 +74,9 @@ This software creates a folder, which is platform-dependent, to store user setti
 
 | OS      | PATH                                      |
 |---------|-------------------------------------------|
-| Windows | `%APPDATA%\SourceGit`                     |
-| Linux   | `~/.sourcegit`                            |
-| macOS   | `~/Library/Application Support/SourceGit` |
+| Windows | `%APPDATA%\GitStation`                     |
+| Linux   | `~/.gitstation`                            |
+| macOS   | `~/Library/Application Support/GitStation` |
 
 > [!TIP]
 > * You can open this data storage directory from the main menu `Open Data Storage Directory`.

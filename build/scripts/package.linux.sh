@@ -31,30 +31,30 @@ if [[ ! -f "appimagetool" ]]; then
     chmod +x appimagetool
 fi
 
-rm -f SourceGit/*.dbg
-rm -f SourceGit/*.pdb
+rm -f GitStation/*.dbg
+rm -f GitStation/*.pdb
 
-mkdir -p SourceGit.AppDir/opt
-mkdir -p SourceGit.AppDir/usr/share/metainfo
-mkdir -p SourceGit.AppDir/usr/share/applications
+mkdir -p GitStation.AppDir/opt
+mkdir -p GitStation.AppDir/usr/share/metainfo
+mkdir -p GitStation.AppDir/usr/share/applications
 
-cp -r SourceGit SourceGit.AppDir/opt/sourcegit
-desktop-file-install resources/_common/applications/sourcegit.desktop --dir SourceGit.AppDir/usr/share/applications \
-    --set-icon com.sourcegit_scm.SourceGit --set-key=Exec --set-value=AppRun
-mv SourceGit.AppDir/usr/share/applications/{sourcegit,com.sourcegit_scm.SourceGit}.desktop
-cp resources/_common/icons/sourcegit.png SourceGit.AppDir/com.sourcegit_scm.SourceGit.png
-ln -rsf SourceGit.AppDir/opt/sourcegit/sourcegit SourceGit.AppDir/AppRun
-ln -rsf SourceGit.AppDir/usr/share/applications/com.sourcegit_scm.SourceGit.desktop SourceGit.AppDir
-cp resources/appimage/sourcegit.appdata.xml SourceGit.AppDir/usr/share/metainfo/com.sourcegit_scm.SourceGit.appdata.xml
+cp -r GitStation GitStation.AppDir/opt/gitstation
+desktop-file-install resources/_common/applications/sourcegit.desktop --dir GitStation.AppDir/usr/share/applications \
+    --set-icon com.albrtbc.GitStation --set-key=Exec --set-value=AppRun
+mv GitStation.AppDir/usr/share/applications/{sourcegit,com.albrtbc.GitStation}.desktop
+cp resources/_common/icons/gitstation.png GitStation.AppDir/com.albrtbc.GitStation.png
+ln -rsf GitStation.AppDir/opt/gitstation/gitstation GitStation.AppDir/AppRun
+ln -rsf GitStation.AppDir/usr/share/applications/com.albrtbc.GitStation.desktop GitStation.AppDir
+cp resources/appimage/gitstation.appdata.xml GitStation.AppDir/usr/share/metainfo/com.albrtbc.GitStation.appdata.xml
 
-ARCH="$appimage_arch" ./appimagetool -v SourceGit.AppDir "sourcegit-$VERSION.linux.$arch.AppImage"
+ARCH="$appimage_arch" ./appimagetool -v GitStation.AppDir "gitstation-$VERSION.linux.$arch.AppImage"
 
-mkdir -p resources/deb/opt/sourcegit/
+mkdir -p resources/deb/opt/gitstation/
 mkdir -p resources/deb/usr/bin
 mkdir -p resources/deb/usr/share/applications
 mkdir -p resources/deb/usr/share/icons
-cp -f SourceGit/* resources/deb/opt/sourcegit
-ln -rsf resources/deb/opt/sourcegit/sourcegit resources/deb/usr/bin
+cp -f GitStation/* resources/deb/opt/gitstation
+ln -rsf resources/deb/opt/gitstation/gitstation resources/deb/usr/bin
 cp -r resources/_common/applications resources/deb/usr/share
 cp -r resources/_common/icons resources/deb/usr/share
 # Calculate installed size in KB
@@ -65,7 +65,7 @@ sed -i -e "s/^Version:.*/Version: $VERSION/" \
     -e "s/^Installed-Size:.*/Installed-Size: $installed_size/" \
     resources/deb/DEBIAN/control
 # Build deb package with gzip compression
-dpkg-deb -Zgzip --root-owner-group --build resources/deb "sourcegit_$VERSION-1_$arch.deb"
+dpkg-deb -Zgzip --root-owner-group --build resources/deb "gitstation_$VERSION-1_$arch.deb"
 
 rpmbuild -bb --target="$target" resources/rpm/SPECS/build.spec --define "_topdir $(pwd)/resources/rpm" --define "_version $VERSION"
-mv "resources/rpm/RPMS/$target/sourcegit-$VERSION-1.$target.rpm" ./
+mv "resources/rpm/RPMS/$target/gitstation-$VERSION-1.$target.rpm" ./
