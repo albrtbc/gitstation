@@ -4,9 +4,7 @@
   "packages": {
     ".": {
       "component": "gitstation",
-      "extra-files": [
-        "VERSION"
-      ]
+      "version-file": "VERSION"
     }
   },
   "include-v-in-tag": true,
