@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.2.2](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.1...gitstation-v0.2.2) (2026-03-29)
+
+
+### Features
+
+* show CI status on pull requests ([d5a8d42](https://github.com/albrtbc/gitstation/commit/d5a8d4253d76c18ccda831c93777c44a83c56494))
+
+
+### Bug Fixes
+
+* add breadcrumb bar when viewing a submodule repository ([2bc3383](https://github.com/albrtbc/gitstation/commit/2bc33837ab93a9f60d7cd174732d278c416ea0f1))
+* dashboard repo list font size follows DefaultFontSize preference ([13c63c6](https://github.com/albrtbc/gitstation/commit/13c63c63cbaa30373fb3169eb3bc93a47fa077a4))
+* open submodules in Dashboard instead of creating a new tab ([feec212](https://github.com/albrtbc/gitstation/commit/feec212f385812557602e3236b1b4b23d19709f4))
+* prune stale remote branches on fetch ([cd8af7f](https://github.com/albrtbc/gitstation/commit/cd8af7f35f69f83c00d8c1da6524285d0d0f718f))
+* replace anonymous types with concrete payloads for JSON serialization ([a5a7c41](https://github.com/albrtbc/gitstation/commit/a5a7c41fbb0dc6f2d85fbc0d892fbbdc61cc5fb0))
+* show active repository name in title bar ([53cdd53](https://github.com/albrtbc/gitstation/commit/53cdd53ecdb27bbe1353cfb968ae1cd08d379b16))
+* use JSON source generators for GitHub API serialization ([091546f](https://github.com/albrtbc/gitstation/commit/091546f4b281f58c30f6c01b7dbd366bdc74de2d))
+
 ## [0.2.1](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.0...gitstation-v0.2.1) (2026-03-29)
 
 
