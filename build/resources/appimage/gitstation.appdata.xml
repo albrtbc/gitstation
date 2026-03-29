@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+	<id>com.gitstation_scm.GitStation</id>
+	<metadata_license>MIT</metadata_license>
+	<project_license>MIT</project_license>
+	<name>GitStation</name>
+	<summary>Open-source GUI client for git users</summary>
+	<description>
+		<p>Open-source GUI client for git users</p>
+	</description>
+  <url type="homepage">https://github.com/albrtbc/gitstation</url>
+	<launchable type="desktop-id">com.gitstation_scm.GitStation.desktop</launchable>
+	<provides>
+		<id>com.gitstation_scm.GitStation.desktop</id>
+	</provides>
+</component>
