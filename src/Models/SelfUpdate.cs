@@ -51,8 +51,9 @@ namespace SourceGit.Models
                         return false;
 
                     var tagVer = TagName;
-                    if (tagVer.StartsWith("v", StringComparison.OrdinalIgnoreCase))
-                        tagVer = tagVer[1..];
+                    var vIdx = tagVer.LastIndexOf('v');
+                    if (vIdx >= 0)
+                        tagVer = tagVer[(vIdx + 1)..];
 
                     var remote = new System.Version(tagVer);
                     return remote > current;
