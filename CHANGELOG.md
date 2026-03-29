@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.4](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.3...gitstation-v0.2.4) (2026-03-29)
+
+
+### Bug Fixes
+
+* sync VERSION file with release-please manifest (0.2.3) ([ccc2039](https://github.com/albrtbc/gitstation/commit/ccc20390a733d241fb05a4be2e152dcd36690cff))
+* use version-file instead of extra-files for release-please ([797523d](https://github.com/albrtbc/gitstation/commit/797523d6835f11151d8676bddcb0d1187c3eab5c))
+
 ## [0.2.3](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.2...gitstation-v0.2.3) (2026-03-29)
 
 
