@@ -65,14 +65,17 @@ namespace SourceGit.ViewModels
         public string ParentRepositoryPath
         {
             get => _parentRepositoryPath;
-            private set => SetProperty(ref _parentRepositoryPath, value);
+            private set
+            {
+                if (SetProperty(ref _parentRepositoryPath, value))
+                {
+                    OnPropertyChanged(nameof(ParentRepositoryName));
+                    OnPropertyChanged(nameof(IsSubmodule));
+                }
+            }
         }
 
-        public string ParentRepositoryName
-        {
-            get => _parentRepositoryName;
-            private set => SetProperty(ref _parentRepositoryName, value);
-        }
+        public string ParentRepositoryName => _parentRepositoryPath != null ? Path.GetFileName(_parentRepositoryPath) : null;
 
         public bool IsSubmodule => !string.IsNullOrEmpty(_parentRepositoryPath);
 
@@ -162,8 +165,6 @@ namespace SourceGit.ViewModels
             repo.Open();
 
             ParentRepositoryPath = parentRepoPath;
-            ParentRepositoryName = parentRepoPath != null ? Path.GetFileName(parentRepoPath) : null;
-            OnPropertyChanged(nameof(IsSubmodule));
 
             ActiveNode = node;
             ActiveRepository = repo;
@@ -416,6 +417,5 @@ namespace SourceGit.ViewModels
         private Repository _activeRepository = null;
         private RepositoryNode _activeNode = null;
         private string _parentRepositoryPath = null;
-        private string _parentRepositoryName = null;
     }
 }
