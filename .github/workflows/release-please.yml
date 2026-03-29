@@ -26,48 +26,32 @@ jobs:
   build:
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created }}
-    strategy:
-      matrix:
-        include:
-          - os: windows-latest
-            runtime: win-x64
-            artifact: gitstation-win-x64
-          - os: ubuntu-latest
-            runtime: linux-x64
-            artifact: gitstation-linux-x64
-          - os: macos-latest
-            runtime: osx-arm64
-            artifact: gitstation-osx-arm64
-          - os: macos-13
-            runtime: osx-x64
-            artifact: gitstation-osx-x64
-    runs-on: ${{ matrix.os }}
+    name: Build
+    uses: ./.github/workflows/build.yml
+
+  package:
+    needs: [release-please, build]
+    if: ${{ needs.release-please.outputs.release_created }}
+    name: Package
+    uses: ./.github/workflows/package.yml
+    with:
+      version: ${{ needs.release-please.outputs.version }}
+
+  upload:
+    needs: [release-please, package]
+    if: ${{ needs.release-please.outputs.release_created }}
+    name: Upload Release Assets
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Download all packages
+        uses: actions/download-artifact@v4
         with:
-          submodules: recursive
+          pattern: package.*
+          path: packages
+          merge-multiple: true
 
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
-
-      - name: Publish
-        run: dotnet publish src/GitStation.csproj -c Release -r ${{ matrix.runtime }} -o publish /p:DisableAOT=true
-
-      - name: Package (Windows)
-        if: runner.os == 'Windows'
-        run: Compress-Archive -Path publish/* -DestinationPath ${{ matrix.artifact }}.zip
-
-      - name: Package (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: |
-          cd publish
-          tar czf ../${{ matrix.artifact }}.tar.gz *
-
-      - name: Upload to Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ needs.release-please.outputs.tag_name }}
-          files: |
-            ${{ matrix.artifact }}.zip
-            ${{ matrix.artifact }}.tar.gz
+      - name: Upload to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.release-please.outputs.tag_name }}
+        run: gh release upload "$TAG" packages/* --repo ${{ github.repository }}
