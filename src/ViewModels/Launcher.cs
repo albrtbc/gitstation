@@ -52,6 +52,12 @@ namespace SourceGit.ViewModels
             Pages = new AvaloniaList<LauncherPage>();
             AddNewTab();
 
+            Dashboard.Instance.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(Dashboard.ActiveNode))
+                    PostActivePageChanged();
+            };
+
             var pref = Preferences.Instance;
             ActiveWorkspace = pref.GetActiveWorkspace();
 
@@ -429,7 +435,11 @@ namespace SourceGit.ViewModels
                 _activeWorkspace.ActiveIdx = _activeWorkspace.Repositories.IndexOf(repo.FullPath);
 
             var builder = new StringBuilder(512);
-            builder.Append(string.IsNullOrEmpty(_activePage.Node.Name) ? "Repositories" : _activePage.Node.Name);
+            var dashboardNode = Dashboard.Instance.ActiveNode;
+            if (_activePage?.Data is Dashboard && dashboardNode != null)
+                builder.Append(dashboardNode.Name);
+            else
+                builder.Append(string.IsNullOrEmpty(_activePage?.Node.Name) ? "GitStation" : _activePage.Node.Name);
 
             var workspaces = Preferences.Instance.Workspaces;
             if (workspaces.Count == 0 || workspaces.Count > 1 || workspaces[0] != _activeWorkspace)

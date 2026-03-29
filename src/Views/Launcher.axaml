@@ -105,8 +105,14 @@
         <Path Width="13" Height="13" Margin="0,2,0,0" Data="{StaticResource Icons.Tabs}"/>
       </Button>
 
-      <!-- Pages Tabs -->
-      <v:LauncherTabBar Grid.Column="3" Height="30" Margin="0,0,16,0" VerticalAlignment="Bottom" IsVisible="False"/>
+      <!-- Title -->
+      <TextBlock Grid.Column="3"
+                 Text="{Binding Title}"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 FontSize="12"
+                 Foreground="{DynamicResource Brush.FG2}"
+                 IsHitTestVisible="False"/>
 
       <!-- Caption Buttons (Windows/Linux) -->
       <Border Grid.Column="4" Margin="16,0,0,0" IsVisible="{Binding #ThisControl.HasRightCaptionButton}">
