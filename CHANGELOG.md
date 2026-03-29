@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.7](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.6...gitstation-v0.2.7) (2026-03-29)
+
+
+### Bug Fixes
+
+* Ctrl+Shift+F search works in Dashboard, add Ctrl+F search in pipeline logs ([8d145d9](https://github.com/albrtbc/gitstation/commit/8d145d92c8a27e236a55f8b7d5404fa71ed7c918))
+* revert pipeline logs to TextBox, add Escape to close search ([5abc7ab](https://github.com/albrtbc/gitstation/commit/5abc7abd4754a6a08f95f26f5d055d570f8b8f4f))
+* scope Dashboard shortcut fallback to search only ([872e1f4](https://github.com/albrtbc/gitstation/commit/872e1f47bcc3b8e222c4211bfccf88243d3e8e75))
+
 ## [0.2.6](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.5...gitstation-v0.2.6) (2026-03-29)
 
 
