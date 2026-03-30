@@ -63,5 +63,10 @@ namespace SourceGit.Views
                 await vm.MergeAsync("rebase");
         }
 
+        private void OnOpenInBrowser(object s, RoutedEventArgs e)
+        {
+            if (DataContext is ViewModels.PullRequestsPage vm && vm.SelectedPullRequest != null)
+                Native.OS.OpenBrowser(vm.SelectedPullRequest.HtmlUrl);
+        }
     }
 }

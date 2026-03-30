@@ -124,6 +124,13 @@ namespace SourceGit.Models
             return null;
         }
 
+        // Repository settings
+        public async Task<GitHubRepoSettings> GetRepoSettingsAsync()
+        {
+            var json = await GetAsync($"/repos/{Owner}/{Repo}");
+            return json != null ? JsonSerializer.Deserialize(json, GitHubJsonContext.Default.GitHubRepoSettings) : new GitHubRepoSettings();
+        }
+
         // Pull Requests
         public async Task<List<GitHubPullRequest>> GetPullRequestsAsync(string state = "open")
         {

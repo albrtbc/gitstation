@@ -153,14 +153,21 @@
                 <Button Classes="flat primary" Content="Approve" Click="OnApprove" Height="28" Padding="12,0" FontSize="11"/>
                 <Button Classes="flat" Content="Request Changes" Click="OnRequestChanges" Height="28" Padding="12,0" FontSize="11"/>
                 <Border Width="1" Height="16" Background="{DynamicResource Brush.Border0}" Margin="4,0"/>
-                <Button Classes="flat" Click="OnMerge" Height="28" Padding="12,0" FontSize="11">
+                <Button Classes="flat" Click="OnMerge" Height="28" Padding="12,0" FontSize="11" IsVisible="{Binding AllowMerge}">
                   <StackPanel Orientation="Horizontal" Spacing="4">
                     <Path Width="10" Height="10" Data="{StaticResource Icons.Merge}"/>
                     <TextBlock Text="Merge"/>
                   </StackPanel>
                 </Button>
-                <Button Classes="flat" Content="Squash" Click="OnSquash" Height="28" Padding="12,0" FontSize="11"/>
-                <Button Classes="flat" Content="Rebase" Click="OnRebase" Height="28" Padding="12,0" FontSize="11"/>
+                <Button Classes="flat" Content="Squash" Click="OnSquash" Height="28" Padding="12,0" FontSize="11" IsVisible="{Binding AllowSquash}"/>
+                <Button Classes="flat" Content="Rebase" Click="OnRebase" Height="28" Padding="12,0" FontSize="11" IsVisible="{Binding AllowRebase}"/>
+                <Border Width="1" Height="16" Background="{DynamicResource Brush.Border0}" Margin="4,0"/>
+                <Button Classes="flat" Click="OnOpenInBrowser" Height="28" Padding="12,0" FontSize="11">
+                  <StackPanel Orientation="Horizontal" Spacing="4">
+                    <Path Width="10" Height="10" Data="{StaticResource Icons.Link}"/>
+                    <TextBlock Text="Open in Browser"/>
+                  </StackPanel>
+                </Button>
               </StackPanel>
 
               <!-- Separator -->

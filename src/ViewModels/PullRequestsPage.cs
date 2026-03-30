@@ -91,6 +91,24 @@ namespace SourceGit.ViewModels
 
         public AvaloniaList<Models.GitHubCheckRun> CheckRuns { get; } = [];
 
+        public bool AllowMerge
+        {
+            get => _allowMerge;
+            private set => SetProperty(ref _allowMerge, value);
+        }
+
+        public bool AllowSquash
+        {
+            get => _allowSquash;
+            private set => SetProperty(ref _allowSquash, value);
+        }
+
+        public bool AllowRebase
+        {
+            get => _allowRebase;
+            private set => SetProperty(ref _allowRebase, value);
+        }
+
         public bool IsGitHubRepo => _client != null;
 
         public PullRequestsPage(Repository repo)
@@ -278,7 +296,28 @@ namespace SourceGit.ViewModels
         {
             _client = Models.GitHubClient.TryCreate(_repo.Remotes);
             if (_client != null)
+            {
                 OnPropertyChanged(nameof(IsGitHubRepo));
+                _ = LoadRepoSettingsAsync();
+            }
+        }
+
+        private async Task LoadRepoSettingsAsync()
+        {
+            try
+            {
+                var settings = await _client.GetRepoSettingsAsync();
+                Dispatcher.UIThread.Invoke(() =>
+                {
+                    AllowMerge = settings.AllowMergeCommit;
+                    AllowSquash = settings.AllowSquashMerge;
+                    AllowRebase = settings.AllowRebaseMerge;
+                });
+            }
+            catch
+            {
+                // Default to all allowed if we can't fetch settings
+            }
         }
 
         private readonly Repository _repo;
@@ -289,6 +328,9 @@ namespace SourceGit.ViewModels
         private DiffContext _diffContext;
         private bool _isLoading;
         private int _activeTabIndex;
+        private bool _allowMerge = true;
+        private bool _allowSquash = true;
+        private bool _allowRebase = true;
         private string _filterState = "open";
     }
 }

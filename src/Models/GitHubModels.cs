@@ -307,6 +307,17 @@ namespace SourceGit.Models
         public string Side { get; set; }
     }
 
+    public class GitHubRepoSettings
+    {
+        [JsonPropertyName("allow_merge_commit")]
+        public bool AllowMergeCommit { get; set; } = true;
+        [JsonPropertyName("allow_squash_merge")]
+        public bool AllowSquashMerge { get; set; } = true;
+        [JsonPropertyName("allow_rebase_merge")]
+        public bool AllowRebaseMerge { get; set; } = true;
+    }
+
+    [JsonSerializable(typeof(GitHubRepoSettings))]
     [JsonSerializable(typeof(List<GitHubPullRequest>))]
     [JsonSerializable(typeof(GitHubPullRequest))]
     [JsonSerializable(typeof(List<GitHubComment>))]
