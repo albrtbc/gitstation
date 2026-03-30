@@ -253,10 +253,12 @@ namespace SourceGit.ViewModels
                 var baseRef = $"origin/{pr.Base.Ref}";
                 var headRef = $"origin/{pr.Head.Ref}";
                 var changes = await new Commands.CompareRevisions(_repo.FullPath, baseRef, headRef).ReadAsync();
+                if (_selectedPR != pr) return;
                 Dispatcher.UIThread.Invoke(() => Changes = changes);
             }
             catch
             {
+                if (_selectedPR != pr) return;
                 Dispatcher.UIThread.Invoke(() => Changes = []);
             }
 
@@ -267,6 +269,9 @@ namespace SourceGit.ViewModels
                 ? _client.GetCheckRunsAsync(pr.Head.Sha)
                 : Task.FromResult(new List<Models.GitHubCheckRun>());
             await Task.WhenAll(commentsTask, reviewsTask, checkRunsTask);
+
+            if (_selectedPR != pr) return;
+
             var comments = commentsTask.Result;
             var reviews = reviewsTask.Result;
             var checkRuns = checkRunsTask.Result;
@@ -307,12 +312,15 @@ namespace SourceGit.ViewModels
             try
             {
                 var settings = await _client.GetRepoSettingsAsync();
-                Dispatcher.UIThread.Invoke(() =>
+                if (settings != null)
                 {
-                    AllowMerge = settings.AllowMergeCommit;
-                    AllowSquash = settings.AllowSquashMerge;
-                    AllowRebase = settings.AllowRebaseMerge;
-                });
+                    Dispatcher.UIThread.Invoke(() =>
+                    {
+                        AllowMerge = settings.AllowMergeCommit;
+                        AllowSquash = settings.AllowSquashMerge;
+                        AllowRebase = settings.AllowRebaseMerge;
+                    });
+                }
             }
             catch
             {

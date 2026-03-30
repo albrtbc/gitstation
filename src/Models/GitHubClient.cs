@@ -128,7 +128,7 @@ namespace SourceGit.Models
         public async Task<GitHubRepoSettings> GetRepoSettingsAsync()
         {
             var json = await GetAsync($"/repos/{Owner}/{Repo}");
-            return json != null ? JsonSerializer.Deserialize(json, GitHubJsonContext.Default.GitHubRepoSettings) : new GitHubRepoSettings();
+            return json != null ? JsonSerializer.Deserialize(json, GitHubJsonContext.Default.GitHubRepoSettings) : null;
         }
 
         // Pull Requests
