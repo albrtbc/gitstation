@@ -82,73 +82,198 @@
                  Text="Configure GitHub authentication (gh auth login) to view Pull Requests"
                  IsVisible="{Binding !IsGitHubRepo}"/>
 
-      <!-- PR Detail -->
-      <Grid RowDefinitions="Auto,*"
-            IsVisible="{Binding SelectedPullRequest, Converter={x:Static ObjectConverters.IsNotNull}}">
+      <!-- PR Detail with Tabs -->
+      <TabControl SelectedIndex="{Binding ActiveTabIndex, Mode=TwoWay}" Padding="0,4"
+                  IsVisible="{Binding SelectedPullRequest, Converter={x:Static ObjectConverters.IsNotNull}}">
 
-        <!-- Header Bar -->
-        <Border Grid.Row="0" Padding="12,8" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="0,0,0,1" Background="{DynamicResource Brush.ToolBar}">
-          <Grid RowDefinitions="Auto,Auto,Auto">
-            <!-- Title + CI Status -->
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="6">
-              <TextBlock Text="{Binding SelectedPullRequest.CIConclusion, Converter={x:Static c:GitHubConverters.ConclusionToIcon}}"
-                         Foreground="{Binding SelectedPullRequest.CIConclusion, Converter={x:Static c:GitHubConverters.ConclusionToColor}}"
-                         FontSize="14" FontWeight="Bold" VerticalAlignment="Center"
-                         IsVisible="{Binding SelectedPullRequest.HasCI}"/>
-              <TextBlock Text="{Binding SelectedPullRequest.Number, StringFormat=#{0}}" FontSize="14" Foreground="{DynamicResource Brush.FG2}"/>
-              <TextBlock Text="{Binding SelectedPullRequest.Title}" FontSize="14" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+        <!-- Info Tab -->
+        <TabItem>
+          <TabItem.Header>
+            <TextBlock Classes="tab_header" Text="Info"/>
+          </TabItem.Header>
+
+          <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="16,8,16,16" Spacing="12">
+
+              <!-- Title + CI Status -->
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Text="{Binding SelectedPullRequest.CIConclusion, Converter={x:Static c:GitHubConverters.ConclusionToIcon}}"
+                           Foreground="{Binding SelectedPullRequest.CIConclusion, Converter={x:Static c:GitHubConverters.ConclusionToColor}}"
+                           FontSize="16" FontWeight="Bold" VerticalAlignment="Center"
+                           IsVisible="{Binding SelectedPullRequest.HasCI}"/>
+                <TextBlock Text="{Binding SelectedPullRequest.Number, StringFormat=#{0}}" FontSize="16" Foreground="{DynamicResource Brush.FG2}"/>
+                <TextBlock Text="{Binding SelectedPullRequest.Title}" FontSize="16" FontWeight="Bold" TextWrapping="Wrap"/>
+              </StackPanel>
+
+              <!-- Branch info -->
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <TextBlock Text="{Binding SelectedPullRequest.User.Login}" FontSize="12" Foreground="{DynamicResource Brush.FG2}"/>
+                <TextBlock Text="wants to merge" FontSize="12" Foreground="{DynamicResource Brush.FG2}"/>
+                <Border Padding="4,1" CornerRadius="3" Background="{DynamicResource Brush.Accent}" Opacity="0.2">
+                  <TextBlock Text="{Binding SelectedPullRequest.Head.Ref}" FontSize="12" FontFamily="{DynamicResource Fonts.Monospace}"/>
+                </Border>
+                <TextBlock Text="into" FontSize="12" Foreground="{DynamicResource Brush.FG2}"/>
+                <Border Padding="4,1" CornerRadius="3" Background="{DynamicResource Brush.Accent}" Opacity="0.2">
+                  <TextBlock Text="{Binding SelectedPullRequest.Base.Ref}" FontSize="12" FontFamily="{DynamicResource Fonts.Monospace}"/>
+                </Border>
+              </StackPanel>
+
+              <!-- State and dates -->
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Border Padding="6,2" CornerRadius="4" Background="{DynamicResource Brush.Badge}">
+                  <TextBlock Text="{Binding SelectedPullRequest.State}" FontSize="11" Foreground="{DynamicResource Brush.BadgeFG}" FontWeight="Bold"/>
+                </Border>
+                <TextBlock Text="{Binding SelectedPullRequest.IsDraft}" FontSize="11" Foreground="Orange" IsVisible="{Binding SelectedPullRequest.IsDraft}">
+                  <TextBlock.Text>DRAFT</TextBlock.Text>
+                </TextBlock>
+                <TextBlock FontSize="11" Foreground="{DynamicResource Brush.FG2}">
+                  <TextBlock.Text>
+                    <MultiBinding StringFormat="Created {0:yyyy-MM-dd HH:mm}  ·  Updated {1:yyyy-MM-dd HH:mm}">
+                      <Binding Path="SelectedPullRequest.CreatedAt"/>
+                      <Binding Path="SelectedPullRequest.UpdatedAt"/>
+                    </MultiBinding>
+                  </TextBlock.Text>
+                </TextBlock>
+              </StackPanel>
+
+              <!-- Description -->
+              <StackPanel Spacing="4"
+                          IsVisible="{Binding SelectedPullRequest.Body, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                <TextBlock Text="Description" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Brush.FG2}"/>
+                <Border Padding="10,8" CornerRadius="4" Background="{DynamicResource Brush.Contents}" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="1">
+                  <TextBlock Text="{Binding SelectedPullRequest.Body}" TextWrapping="Wrap" FontSize="12"/>
+                </Border>
+              </StackPanel>
+
+              <!-- Separator -->
+              <Rectangle Height=".65" Fill="{DynamicResource Brush.Border2}"/>
+
+              <!-- Action buttons -->
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <Button Classes="flat primary" Content="Approve" Click="OnApprove" Height="28" Padding="12,0" FontSize="11"/>
+                <Button Classes="flat" Content="Request Changes" Click="OnRequestChanges" Height="28" Padding="12,0" FontSize="11"/>
+                <Border Width="1" Height="16" Background="{DynamicResource Brush.Border0}" Margin="4,0"/>
+                <Button Classes="flat" Click="OnMerge" Height="28" Padding="12,0" FontSize="11">
+                  <StackPanel Orientation="Horizontal" Spacing="4">
+                    <Path Width="10" Height="10" Data="{StaticResource Icons.Merge}"/>
+                    <TextBlock Text="Merge"/>
+                  </StackPanel>
+                </Button>
+                <Button Classes="flat" Content="Squash" Click="OnSquash" Height="28" Padding="12,0" FontSize="11"/>
+                <Button Classes="flat" Content="Rebase" Click="OnRebase" Height="28" Padding="12,0" FontSize="11"/>
+              </StackPanel>
+
+              <!-- Separator -->
+              <Rectangle Height=".65" Fill="{DynamicResource Brush.Border2}"/>
+
+              <!-- Reviews -->
+              <StackPanel Spacing="4"
+                          IsVisible="{Binding Reviews.Count, Converter={x:Static c:IntConverters.IsGreaterThanZero}}">
+                <TextBlock Text="Reviews" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Brush.FG2}"/>
+                <ItemsControl ItemsSource="{Binding Reviews}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="m:GitHubReview">
+                      <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,2">
+                        <TextBlock Text="{Binding State}" FontSize="11" FontWeight="Bold"
+                                   Foreground="{DynamicResource Brush.Accent}"/>
+                        <TextBlock Text="{Binding User.Login}" FontSize="11" Foreground="{DynamicResource Brush.FG2}"/>
+                      </StackPanel>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+
+              <!-- Check Runs -->
+              <StackPanel Spacing="4"
+                          IsVisible="{Binding CheckRuns.Count, Converter={x:Static c:IntConverters.IsGreaterThanZero}}">
+                <TextBlock Text="Checks" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Brush.FG2}"/>
+                <ItemsControl ItemsSource="{Binding CheckRuns}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="m:GitHubCheckRun">
+                      <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,2">
+                        <TextBlock Text="{Binding EffectiveConclusion, Converter={x:Static c:GitHubConverters.ConclusionToIcon}}"
+                                   Foreground="{Binding EffectiveConclusion, Converter={x:Static c:GitHubConverters.ConclusionToColor}}"
+                                   FontSize="11" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding Name}" FontSize="11"/>
+                      </StackPanel>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+
+              <!-- Separator -->
+              <Rectangle Height=".65" Fill="{DynamicResource Brush.Border2}"/>
+
+              <!-- Comments -->
+              <StackPanel Spacing="4"
+                          IsVisible="{Binding Comments.Count, Converter={x:Static c:IntConverters.IsGreaterThanZero}}">
+                <TextBlock Text="{Binding Comments.Count, StringFormat='Comments ({0})'}" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Brush.FG2}"/>
+                <ItemsControl ItemsSource="{Binding Comments}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="m:GitHubComment">
+                      <Border Padding="10,8" Margin="0,2" CornerRadius="4" Background="{DynamicResource Brush.Contents}" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="1">
+                        <StackPanel Spacing="4">
+                          <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="{Binding User.Login}" FontSize="11" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding CreatedAt, Converter={x:Static c:DateTimeConverters.ToRelativeTime}}" FontSize="11" Foreground="{DynamicResource Brush.FG2}"/>
+                          </StackPanel>
+                          <TextBlock Text="{Binding Body}" TextWrapping="Wrap" FontSize="12"/>
+                        </StackPanel>
+                      </Border>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+
+              <!-- Separator -->
+              <Rectangle Height=".65" Fill="{DynamicResource Brush.Border2}"/>
+
+              <!-- Changed Files -->
+              <StackPanel Spacing="4">
+                <TextBlock Text="{Binding Changes.Count, StringFormat='Changed Files ({0})'}" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Brush.FG2}"/>
+                <ItemsControl ItemsSource="{Binding Changes}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="m:Change">
+                      <Grid Height="24" ColumnDefinitions="36,*" Background="Transparent">
+                        <v:ChangeStatusIcon Grid.Column="0" Width="14" Height="14" HorizontalAlignment="Left" Margin="16,0,0,0" Change="{Binding}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Path}" Margin="8,0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" FontSize="12"/>
+                      </Grid>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+
             </StackPanel>
+          </ScrollViewer>
+        </TabItem>
 
-            <!-- Branch info -->
-            <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="4" Margin="0,4,0,0">
-              <TextBlock Text="{Binding SelectedPullRequest.User.Login}" FontSize="11" Foreground="{DynamicResource Brush.FG2}"/>
-              <TextBlock Text="wants to merge" FontSize="11" Foreground="{DynamicResource Brush.FG2}"/>
-              <Border Padding="4,1" CornerRadius="3" Background="{DynamicResource Brush.Accent}" Opacity="0.2">
-                <TextBlock Text="{Binding SelectedPullRequest.Head.Ref}" FontSize="11" FontFamily="{DynamicResource Fonts.Monospace}"/>
+        <!-- Changes Tab -->
+        <TabItem>
+          <TabItem.Header>
+            <TextBlock Classes="tab_header" Text="Changes"/>
+          </TabItem.Header>
+
+          <Grid ColumnDefinitions="200,1,*">
+            <!-- File list -->
+            <Grid Grid.Column="0" RowDefinitions="Auto,*" Background="{DynamicResource Brush.Contents}">
+              <Border Grid.Row="0" Padding="8,4" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="0,0,0,1">
+                <TextBlock Text="Changed Files" FontWeight="Bold" FontSize="11" Foreground="{DynamicResource Brush.FG2}"/>
               </Border>
-              <TextBlock Text="into" FontSize="11" Foreground="{DynamicResource Brush.FG2}"/>
-              <Border Padding="4,1" CornerRadius="3" Background="{DynamicResource Brush.Accent}" Opacity="0.2">
-                <TextBlock Text="{Binding SelectedPullRequest.Base.Ref}" FontSize="11" FontFamily="{DynamicResource Fonts.Monospace}"/>
-              </Border>
-            </StackPanel>
+              <v:ChangeCollectionView Grid.Row="1"
+                                      Background="Transparent"
+                                      Changes="{Binding Changes}"
+                                      SelectedChanges="{Binding SelectedChanges, Mode=TwoWay}"/>
+            </Grid>
 
-            <!-- Action buttons -->
-            <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="4" Margin="0,6,0,0">
-              <Button Classes="flat primary" Content="Approve" Click="OnApprove" Height="24" Padding="10,0" FontSize="11"/>
-              <Button Classes="flat" Content="Request Changes" Click="OnRequestChanges" Height="24" Padding="10,0" FontSize="11"/>
-              <Border Width="1" Height="16" Background="{DynamicResource Brush.Border0}" Margin="4,0"/>
-              <Button Classes="flat" Click="OnMerge" Height="24" Padding="10,0" FontSize="11">
-                <StackPanel Orientation="Horizontal" Spacing="4">
-                  <Path Width="10" Height="10" Data="{StaticResource Icons.Merge}"/>
-                  <TextBlock Text="Merge"/>
-                </StackPanel>
-              </Button>
-              <Button Classes="flat" Content="Squash" Click="OnSquash" Height="24" Padding="10,0" FontSize="11"/>
-              <Button Classes="flat" Content="Rebase" Click="OnRebase" Height="24" Padding="10,0" FontSize="11"/>
-            </StackPanel>
+            <!-- Splitter -->
+            <GridSplitter Grid.Column="1" Width="1" Background="{DynamicResource Brush.Border0}" ResizeDirection="Columns"/>
+
+            <!-- Diff View -->
+            <v:DiffView Grid.Column="2" DataContext="{Binding DiffContext}"/>
           </Grid>
-        </Border>
+        </TabItem>
 
-        <!-- Content: Files + Diff + Comments -->
-        <Grid Grid.Row="1" ColumnDefinitions="200,1,*">
-          <!-- File list -->
-          <Grid Grid.Column="0" RowDefinitions="Auto,*" Background="{DynamicResource Brush.Contents}">
-            <Border Grid.Row="0" Padding="8,4" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="0,0,0,1">
-              <TextBlock Text="Changed Files" FontWeight="Bold" FontSize="11" Foreground="{DynamicResource Brush.FG2}"/>
-            </Border>
-            <v:ChangeCollectionView Grid.Row="1"
-                                    Background="Transparent"
-                                    Changes="{Binding Changes}"
-                                    SelectedChanges="{Binding SelectedChanges, Mode=TwoWay}"/>
-          </Grid>
-
-          <!-- Splitter -->
-          <GridSplitter Grid.Column="1" Width="1" Background="{DynamicResource Brush.Border0}" ResizeDirection="Columns"/>
-
-          <!-- Diff View -->
-          <v:DiffView Grid.Column="2" DataContext="{Binding DiffContext}"/>
-        </Grid>
-      </Grid>
+      </TabControl>
     </Grid>
   </Grid>
 </UserControl>

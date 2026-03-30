@@ -83,6 +83,14 @@ namespace SourceGit.ViewModels
             }
         }
 
+        public int ActiveTabIndex
+        {
+            get => _activeTabIndex;
+            set => SetProperty(ref _activeTabIndex, value);
+        }
+
+        public AvaloniaList<Models.GitHubCheckRun> CheckRuns { get; } = [];
+
         public bool IsGitHubRepo => _client != null;
 
         public PullRequestsPage(Repository repo)
@@ -234,12 +242,16 @@ namespace SourceGit.ViewModels
                 Dispatcher.UIThread.Invoke(() => Changes = []);
             }
 
-            // Load comments and reviews from GitHub API (in parallel)
+            // Load comments, reviews and check runs from GitHub API (in parallel)
             var commentsTask = _client.GetCommentsAsync(pr.Number);
             var reviewsTask = _client.GetReviewsAsync(pr.Number);
-            await Task.WhenAll(commentsTask, reviewsTask);
+            var checkRunsTask = pr.Head?.Sha != null
+                ? _client.GetCheckRunsAsync(pr.Head.Sha)
+                : Task.FromResult(new List<Models.GitHubCheckRun>());
+            await Task.WhenAll(commentsTask, reviewsTask, checkRunsTask);
             var comments = commentsTask.Result;
             var reviews = reviewsTask.Result;
+            var checkRuns = checkRunsTask.Result;
 
             Dispatcher.UIThread.Invoke(() =>
             {
@@ -247,6 +259,8 @@ namespace SourceGit.ViewModels
                 Comments.AddRange(comments);
                 Reviews.Clear();
                 Reviews.AddRange(reviews);
+                CheckRuns.Clear();
+                CheckRuns.AddRange(checkRuns);
             });
         }
 
@@ -257,6 +271,7 @@ namespace SourceGit.ViewModels
             DiffContext = null;
             Comments.Clear();
             Reviews.Clear();
+            CheckRuns.Clear();
         }
 
         private void InitializeClient()
@@ -273,6 +288,7 @@ namespace SourceGit.ViewModels
         private List<Models.Change> _selectedChanges;
         private DiffContext _diffContext;
         private bool _isLoading;
+        private int _activeTabIndex;
         private string _filterState = "open";
     }
 }
