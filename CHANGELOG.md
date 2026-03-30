@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.8](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.7...gitstation-v0.2.8) (2026-03-30)
+
+
+### Features
+
+* open worktrees in Dashboard, restructure PR detail with Info and Changes tabs ([dbc5457](https://github.com/albrtbc/gitstation/commit/dbc54575f77f9c8a8926e485797b85413dccba0b))
+* render PR description and comments as Markdown ([241a84c](https://github.com/albrtbc/gitstation/commit/241a84c596fb43385b5d84572d857876976a2de5))
+* show only allowed merge methods, add Open in Browser for PRs ([fcb70e7](https://github.com/albrtbc/gitstation/commit/fcb70e770dc21076e89782a430e7543ae8ab4bcc))
+
+
+### Bug Fixes
+
+* make PR description and comments selectable, add Changes tab padding ([b05f8f3](https://github.com/albrtbc/gitstation/commit/b05f8f330da3be6e26bf1876e9b5638cc66d62d5))
+* null-safe repo settings and stale PR data guard ([cc75904](https://github.com/albrtbc/gitstation/commit/cc7590499fe5d92332fe09f70bc7c4e6913e64b2))
+* PR Info tab DRAFT label conflict and null-safe Changed Files ([82bb8ec](https://github.com/albrtbc/gitstation/commit/82bb8ecf89f28fc7e178e629d2f02eb0a779fb86))
+
 ## [0.2.7](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.6...gitstation-v0.2.7) (2026-03-29)
 
 
