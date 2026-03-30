@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.9](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.8...gitstation-v0.2.9) (2026-03-30)
+
+
+### Bug Fixes
+
+* hide empty PR Info sections and their separators ([7af4dd1](https://github.com/albrtbc/gitstation/commit/7af4dd11ef875b29a9a0bbc1c1569cdecbc2bff8))
+
 ## [0.2.8](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.7...gitstation-v0.2.8) (2026-03-30)
 
 
