@@ -157,24 +157,20 @@
                 </Button>
               </StackPanel>
 
-              <!-- Separator -->
-              <Rectangle Height=".65" Fill="{DynamicResource Brush.Border2}"/>
-
               <!-- Description -->
               <StackPanel Spacing="4"
                           IsVisible="{Binding SelectedPullRequest.Body, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                <Rectangle Height=".65" Fill="{DynamicResource Brush.Border2}" Margin="0,0,0,4"/>
                 <TextBlock Text="Description" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Brush.FG2}"/>
                 <Border Padding="10,8" CornerRadius="4" Background="{DynamicResource Brush.Contents}" BorderBrush="{DynamicResource Brush.Border0}" BorderThickness="1">
                   <md:MarkdownScrollViewer Markdown="{Binding SelectedPullRequest.Body}"/>
                 </Border>
               </StackPanel>
 
-              <!-- Separator -->
-              <Rectangle Height=".65" Fill="{DynamicResource Brush.Border2}"/>
-
               <!-- Reviews -->
               <StackPanel Spacing="4"
                           IsVisible="{Binding Reviews.Count, Converter={x:Static c:IntConverters.IsGreaterThanZero}}">
+                <Rectangle Height=".65" Fill="{DynamicResource Brush.Border2}" Margin="0,0,0,4"/>
                 <TextBlock Text="Reviews" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Brush.FG2}"/>
                 <ItemsControl ItemsSource="{Binding Reviews}">
                   <ItemsControl.ItemTemplate>
@@ -192,6 +188,7 @@
               <!-- Check Runs -->
               <StackPanel Spacing="4"
                           IsVisible="{Binding CheckRuns.Count, Converter={x:Static c:IntConverters.IsGreaterThanZero}}">
+                <Rectangle Height=".65" Fill="{DynamicResource Brush.Border2}" Margin="0,0,0,4"/>
                 <TextBlock Text="Checks" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Brush.FG2}"/>
                 <ItemsControl ItemsSource="{Binding CheckRuns}">
                   <ItemsControl.ItemTemplate>
@@ -207,12 +204,10 @@
                 </ItemsControl>
               </StackPanel>
 
-              <!-- Separator -->
-              <Rectangle Height=".65" Fill="{DynamicResource Brush.Border2}"/>
-
               <!-- Comments -->
               <StackPanel Spacing="4"
                           IsVisible="{Binding Comments.Count, Converter={x:Static c:IntConverters.IsGreaterThanZero}}">
+                <Rectangle Height=".65" Fill="{DynamicResource Brush.Border2}" Margin="0,0,0,4"/>
                 <TextBlock Text="{Binding Comments.Count, StringFormat='Comments ({0})'}" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Brush.FG2}"/>
                 <ItemsControl ItemsSource="{Binding Comments}">
                   <ItemsControl.ItemTemplate>
@@ -231,11 +226,9 @@
                 </ItemsControl>
               </StackPanel>
 
-              <!-- Separator -->
-              <Rectangle Height=".65" Fill="{DynamicResource Brush.Border2}"/>
-
               <!-- Changed Files -->
               <StackPanel Spacing="4" IsVisible="{Binding Changes, Converter={x:Static ObjectConverters.IsNotNull}}">
+                <Rectangle Height=".65" Fill="{DynamicResource Brush.Border2}" Margin="0,0,0,4"/>
                 <TextBlock Text="{Binding Changes.Count, FallbackValue=0, StringFormat='Changed Files ({0})'}" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource Brush.FG2}"/>
                 <ItemsControl ItemsSource="{Binding Changes}">
                   <ItemsControl.ItemTemplate>
