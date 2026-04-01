@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.3.0](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.9...gitstation-v0.3.0) (2026-04-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* add Claude Code AI service integration
+
+### Features
+
+* add AI-powered PR review with streaming ([74b738d](https://github.com/albrtbc/gitstation/commit/74b738d941fa4b6c7f4c7d5201bafb5c0df34964))
+* add Claude Code AI service integration ([7c58fc9](https://github.com/albrtbc/gitstation/commit/7c58fc9412d975ebefc0eebd6ebaf43744dfc819))
+
+
+### Bug Fixes
+
+* improve AI service error handling and localization ([361305f](https://github.com/albrtbc/gitstation/commit/361305f440518a9c288d2e6f444e0aa41e184e5c))
+
 ## [0.2.9](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.8...gitstation-v0.2.9) (2026-03-30)
 
 
