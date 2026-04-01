@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/albrtbc/gitstation/compare/gitstation-v0.3.0...gitstation-v0.3.1) (2026-04-01)
+
+
+### Bug Fixes
+
+* handle closed PRs with commit SHAs ([401e5bc](https://github.com/albrtbc/gitstation/commit/401e5bc46697e11fbbc5c20e2cfeb451dfdc7301))
+
 ## [0.3.0](https://github.com/albrtbc/gitstation/compare/gitstation-v0.2.9...gitstation-v0.3.0) (2026-04-01)
 
 
