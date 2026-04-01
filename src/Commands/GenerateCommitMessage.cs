@@ -79,8 +79,10 @@ namespace SourceGit.Commands
                     update =>
                     {
                         resultBuilder.Append(update);
-                        _onResponse?.Invoke(resultBuilder.ToString().Trim());
+                        _onResponse?.Invoke(resultBuilder.ToString());
                     });
+
+                _onResponse?.Invoke(resultBuilder.ToString().Trim());
             }
             catch (Exception e)
             {
