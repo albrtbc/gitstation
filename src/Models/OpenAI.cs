@@ -149,7 +149,7 @@ namespace SourceGit.Models
 
         public OpenAIService()
         {
-            AnalyzeDiffPrompt = string.Empty;
+            AnalyzeDiffPrompt = IAIService.DefaultAnalyzeDiffPrompt;
             GenerateSubjectPrompt = IAIService.DefaultGenerateSubjectPrompt;
         }
 

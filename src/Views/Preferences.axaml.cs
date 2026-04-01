@@ -95,22 +95,13 @@ namespace SourceGit.Views
             set;
         } = false;
 
-        public static readonly StyledProperty<Models.OpenAIService> SelectedOpenAIServiceProperty =
-            AvaloniaProperty.Register<Preferences, Models.OpenAIService>(nameof(SelectedOpenAIService));
+        public static readonly StyledProperty<object> SelectedAIServiceProperty =
+            AvaloniaProperty.Register<Preferences, object>(nameof(SelectedAIService));
 
-        public Models.OpenAIService SelectedOpenAIService
+        public object SelectedAIService
         {
-            get => GetValue(SelectedOpenAIServiceProperty);
-            set => SetValue(SelectedOpenAIServiceProperty, value);
-        }
-
-        public static readonly StyledProperty<Models.ClaudeCodeService> SelectedClaudeCodeServiceProperty =
-            AvaloniaProperty.Register<Preferences, Models.ClaudeCodeService>(nameof(SelectedClaudeCodeService));
-
-        public Models.ClaudeCodeService SelectedClaudeCodeService
-        {
-            get => GetValue(SelectedClaudeCodeServiceProperty);
-            set => SetValue(SelectedClaudeCodeServiceProperty, value);
+            get => GetValue(SelectedAIServiceProperty);
+            set => SetValue(SelectedAIServiceProperty, value);
         }
 
         public static readonly StyledProperty<Models.CustomAction> SelectedCustomActionProperty =
@@ -162,6 +153,10 @@ namespace SourceGit.Views
 
             UpdateGitVersion();
             InitializeComponent();
+
+            RebuildAIServiceList();
+            pref.OpenAIServices.CollectionChanged += (_, _) => RebuildAIServiceList();
+            pref.CLIAIServices.CollectionChanged += (_, _) => RebuildAIServiceList();
         }
 
         protected override async void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -404,42 +399,68 @@ namespace SourceGit.Views
             UpdateGitVersion();
         }
 
-        private void OnAddOpenAIService(object sender, RoutedEventArgs e)
+        private void OnAddAIService(object sender, RoutedEventArgs e)
         {
-            var service = new Models.OpenAIService() { Name = "Unnamed Service" };
-            ViewModels.Preferences.Instance.OpenAIServices.Add(service);
-            SelectedOpenAIService = service;
+            if (sender is Button button)
+            {
+                var menu = new ContextMenu();
+
+                var apiItem = new MenuItem();
+                apiItem.Header = App.Text("Preferences.AI.AddAPI");
+                apiItem.Click += (_, ev) =>
+                {
+                    var service = new Models.OpenAIService() { Name = "Unnamed API Service" };
+                    ViewModels.Preferences.Instance.OpenAIServices.Add(service);
+                    SelectedAIService = service;
+                    ev.Handled = true;
+                };
+                menu.Items.Add(apiItem);
+
+                var cliItem = new MenuItem();
+                cliItem.Header = App.Text("Preferences.AI.AddCLI");
+                cliItem.Click += (_, ev) =>
+                {
+                    var service = new Models.CLIAIService() { Name = "Unnamed CLI Service" };
+                    ViewModels.Preferences.Instance.CLIAIServices.Add(service);
+                    SelectedAIService = service;
+                    ev.Handled = true;
+                };
+                menu.Items.Add(cliItem);
+
+                menu.Open(button);
+            }
 
             e.Handled = true;
         }
 
-        private void OnRemoveSelectedOpenAIService(object sender, RoutedEventArgs e)
+        private void OnRemoveSelectedAIService(object sender, RoutedEventArgs e)
         {
-            if (SelectedOpenAIService == null)
+            var selected = SelectedAIService;
+            if (selected == null)
                 return;
 
-            ViewModels.Preferences.Instance.OpenAIServices.Remove(SelectedOpenAIService);
-            SelectedOpenAIService = null;
+            if (selected is Models.OpenAIService openAI)
+                ViewModels.Preferences.Instance.OpenAIServices.Remove(openAI);
+            else if (selected is Models.CLIAIService cli)
+                ViewModels.Preferences.Instance.CLIAIServices.Remove(cli);
+
+            SelectedAIService = null;
             e.Handled = true;
         }
 
-        private void OnAddClaudeCodeService(object sender, RoutedEventArgs e)
+        private void RebuildAIServiceList()
         {
-            var service = new Models.ClaudeCodeService() { Name = "Claude Code" };
-            ViewModels.Preferences.Instance.ClaudeCodeServices.Add(service);
-            SelectedClaudeCodeService = service;
-
-            e.Handled = true;
-        }
-
-        private void OnRemoveSelectedClaudeCodeService(object sender, RoutedEventArgs e)
-        {
-            if (SelectedClaudeCodeService == null)
+            var list = this.FindControl<ListBox>("AIServiceList");
+            if (list == null)
                 return;
 
-            ViewModels.Preferences.Instance.ClaudeCodeServices.Remove(SelectedClaudeCodeService);
-            SelectedClaudeCodeService = null;
-            e.Handled = true;
+            var items = new Avalonia.Collections.AvaloniaList<object>();
+            foreach (var s in ViewModels.Preferences.Instance.OpenAIServices)
+                items.Add(s);
+            foreach (var s in ViewModels.Preferences.Instance.CLIAIServices)
+                items.Add(s);
+
+            list.ItemsSource = items;
         }
 
         private void OnAddCustomAction(object sender, RoutedEventArgs e)

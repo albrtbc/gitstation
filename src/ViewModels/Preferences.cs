@@ -498,7 +498,7 @@ namespace SourceGit.ViewModels
             set;
         } = [];
 
-        public AvaloniaList<Models.ClaudeCodeService> ClaudeCodeServices
+        public AvaloniaList<Models.CLIAIService> CLIAIServices
         {
             get;
             set;

@@ -798,9 +798,9 @@
                     Background="{DynamicResource Brush.Contents}">
               <Grid RowDefinitions="*,1,Auto">
                 <ListBox Grid.Row="0"
+                         x:Name="AIServiceList"
                          Background="Transparent"
-                         ItemsSource="{Binding OpenAIServices}"
-                         SelectedItem="{Binding #ThisControl.SelectedOpenAIService, Mode=TwoWay}"
+                         SelectedItem="{Binding #ThisControl.SelectedAIService, Mode=TwoWay}"
                          SelectionMode="Single">
                   <ListBox.Styles>
                     <Style Selector="ListBoxItem">
@@ -816,24 +816,30 @@
                     </ItemsPanelTemplate>
                   </ListBox.ItemsPanel>
 
-                  <ListBox.ItemTemplate>
+                  <ListBox.DataTemplates>
                     <DataTemplate DataType="m:OpenAIService">
                       <Grid ColumnDefinitions="Auto,*">
                         <Path Grid.Column="0" Width="14" Height="14" Data="{StaticResource Icons.AIAssist}"/>
                         <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="8,0" TextTrimming="CharacterEllipsis"/>
                       </Grid>
                     </DataTemplate>
-                  </ListBox.ItemTemplate>
+                    <DataTemplate DataType="m:CLIAIService">
+                      <Grid ColumnDefinitions="Auto,*">
+                        <Path Grid.Column="0" Width="14" Height="14" Data="{StaticResource Icons.AIAssist}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="8,0" TextTrimming="CharacterEllipsis"/>
+                      </Grid>
+                    </DataTemplate>
+                  </ListBox.DataTemplates>
                 </ListBox>
 
                 <Rectangle Grid.Row="1" Height="1" Fill="{DynamicResource Brush.Border2}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"/>
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" Background="{DynamicResource Brush.ToolBar}">
-                  <Button Classes="icon_button" Click="OnAddOpenAIService">
+                  <Button Classes="icon_button" Click="OnAddAIService">
                     <Path Width="14" Height="14" Data="{StaticResource Icons.Plus}"/>
                   </Button>
 
-                  <Button Classes="icon_button" Click="OnRemoveSelectedOpenAIService">
+                  <Button Classes="icon_button" Click="OnRemoveSelectedAIService">
                     <Path Width="14" Height="14" Data="{StaticResource Icons.Minus}"/>
                   </Button>
                 </StackPanel>
@@ -842,7 +848,7 @@
 
             <ContentControl Grid.Column="1" Margin="16,0,0,0">
               <ContentControl.Content>
-                <Binding Path="#ThisControl.SelectedOpenAIService">
+                <Binding Path="#ThisControl.SelectedAIService">
                   <Binding.TargetNullValue>
                     <Path Width="64" Height="64"
                           HorizontalAlignment="Center"
@@ -871,6 +877,15 @@
                               Content="{DynamicResource Text.Preferences.AI.ReadApiKeyFromEnv}"
                               IsChecked="{Binding ReadApiKeyFromEnv, Mode=TwoWay}"/>
 
+                    <TextBlock Margin="0,12,0,0" Text="{DynamicResource Text.Preferences.AI.AnalyzeDiffPrompt}"/>
+                    <TextBox Height="120"
+                             Margin="0,4,0,0"
+                             CornerRadius="3"
+                             VerticalContentAlignment="Top"
+                             Text="{Binding AnalyzeDiffPrompt, Mode=TwoWay}"
+                             AcceptsReturn="true"
+                             TextWrapping="Wrap"/>
+
                     <TextBlock Margin="0,12,0,0" Text="{DynamicResource Text.Preferences.AI.GenerateSubjectPrompt}"/>
                     <TextBox Height="120"
                              Margin="0,4,0,0"
@@ -885,90 +900,23 @@
                               IsChecked="{Binding Streaming, Mode=TwoWay}"/>
                   </StackPanel>
                 </DataTemplate>
-              </ContentControl.DataTemplates>
-            </ContentControl>
-          </Grid>
-        </TabItem>
 
-        <TabItem>
-          <TabItem.Header>
-            <TextBlock Classes="tab_header" Text="{DynamicResource Text.Preferences.ClaudeCode}"/>
-          </TabItem.Header>
-
-          <Grid Margin="0,8,0,16" MinHeight="400">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="200"/>
-              <ColumnDefinition Width="*" MaxWidth="400"/>
-            </Grid.ColumnDefinitions>
-
-            <Border Grid.Column="0"
-                    BorderThickness="1" BorderBrush="{DynamicResource Brush.Border2}"
-                    Background="{DynamicResource Brush.Contents}">
-              <Grid RowDefinitions="*,1,Auto">
-                <ListBox Grid.Row="0"
-                         Background="Transparent"
-                         ItemsSource="{Binding ClaudeCodeServices}"
-                         SelectedItem="{Binding #ThisControl.SelectedClaudeCodeService, Mode=TwoWay}"
-                         SelectionMode="Single">
-                  <ListBox.Styles>
-                    <Style Selector="ListBoxItem">
-                      <Setter Property="MinHeight" Value="0"/>
-                      <Setter Property="Height" Value="26"/>
-                      <Setter Property="Padding" Value="4,2"/>
-                    </Style>
-                  </ListBox.Styles>
-
-                  <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                      <StackPanel Orientation="Vertical"/>
-                    </ItemsPanelTemplate>
-                  </ListBox.ItemsPanel>
-
-                  <ListBox.ItemTemplate>
-                    <DataTemplate DataType="m:ClaudeCodeService">
-                      <Grid ColumnDefinitions="Auto,*">
-                        <Path Grid.Column="0" Width="14" Height="14" Data="{StaticResource Icons.AIAssist}"/>
-                        <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="8,0" TextTrimming="CharacterEllipsis"/>
-                      </Grid>
-                    </DataTemplate>
-                  </ListBox.ItemTemplate>
-                </ListBox>
-
-                <Rectangle Grid.Row="1" Height="1" Fill="{DynamicResource Brush.Border2}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"/>
-
-                <StackPanel Grid.Row="2" Orientation="Horizontal" Background="{DynamicResource Brush.ToolBar}">
-                  <Button Classes="icon_button" Click="OnAddClaudeCodeService">
-                    <Path Width="14" Height="14" Data="{StaticResource Icons.Plus}"/>
-                  </Button>
-
-                  <Button Classes="icon_button" Click="OnRemoveSelectedClaudeCodeService">
-                    <Path Width="14" Height="14" Data="{StaticResource Icons.Minus}"/>
-                  </Button>
-                </StackPanel>
-              </Grid>
-            </Border>
-
-            <ContentControl Grid.Column="1" Margin="16,0,0,0">
-              <ContentControl.Content>
-                <Binding Path="#ThisControl.SelectedClaudeCodeService">
-                  <Binding.TargetNullValue>
-                    <Path Width="64" Height="64"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          Fill="{DynamicResource Brush.FG2}"
-                          Data="{StaticResource Icons.Empty}"/>
-                  </Binding.TargetNullValue>
-                </Binding>
-              </ContentControl.Content>
-
-              <ContentControl.DataTemplates>
-                <DataTemplate DataType="m:ClaudeCodeService">
+                <DataTemplate DataType="m:CLIAIService">
                   <StackPanel Orientation="Vertical" MaxWidth="680">
                     <TextBlock Text="{DynamicResource Text.Preferences.AI.Name}"/>
                     <TextBox Margin="0,4,0,0" CornerRadius="3" Height="28" Text="{Binding Name, Mode=TwoWay}"/>
 
-                    <TextBlock Margin="0,12,0,0" Text="{DynamicResource Text.Preferences.ClaudeCode.CliPath}"/>
-                    <TextBox Margin="0,4,0,0" CornerRadius="3" Height="28" Text="{Binding CliPath, Mode=TwoWay}" Watermark="claude"/>
+                    <TextBlock Margin="0,12,0,0" Text="{DynamicResource Text.Preferences.AI.Executable}"/>
+                    <TextBox Margin="0,4,0,0" CornerRadius="3" Height="28" Text="{Binding Executable, Mode=TwoWay}" Watermark="claude"/>
+
+                    <TextBlock Margin="0,12,0,0" Text="{DynamicResource Text.Preferences.AI.AnalyzeDiffPrompt}"/>
+                    <TextBox Height="120"
+                             Margin="0,4,0,0"
+                             CornerRadius="3"
+                             VerticalContentAlignment="Top"
+                             Text="{Binding AnalyzeDiffPrompt, Mode=TwoWay}"
+                             AcceptsReturn="true"
+                             TextWrapping="Wrap"/>
 
                     <TextBlock Margin="0,12,0,0" Text="{DynamicResource Text.Preferences.AI.GenerateSubjectPrompt}"/>
                     <TextBox Height="120"

@@ -55,12 +55,26 @@ namespace SourceGit.Commands
                 if (_cancelToken.IsCancellationRequested)
                     return;
 
-                _onResponse?.Invoke("Generating...");
+                // Phase 1: Analyze all diffs into a purpose-focused summary
+                _onResponse?.Invoke("Analyzing changes...");
+
+                var summaryBuilder = new StringBuilder();
+                await _service.ChatAsync(
+                    _service.AnalyzeDiffPrompt,
+                    $"Here is the `git diff` output:\n{diffBuilder}",
+                    _cancelToken,
+                    update => summaryBuilder.Append(update));
+
+                if (_cancelToken.IsCancellationRequested)
+                    return;
+
+                // Phase 2: Generate commit message from the summary
+                _onResponse?.Invoke("Generating commit message...");
 
                 var resultBuilder = new StringBuilder();
                 await _service.ChatAsync(
                     _service.GenerateSubjectPrompt,
-                    $"Here is the `git diff` output:\n{diffBuilder}",
+                    $"Here are the summary of changes:\n{summaryBuilder}",
                     _cancelToken,
                     update =>
                     {
