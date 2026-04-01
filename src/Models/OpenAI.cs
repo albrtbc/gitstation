@@ -149,28 +149,8 @@ namespace SourceGit.Models
 
         public OpenAIService()
         {
-            AnalyzeDiffPrompt = """
-                You are an expert developer specialist in creating commits.
-                Provide a super concise one sentence overall changes summary of the user `git diff` output following strictly the next rules:
-                - Do not use any code snippets, imports, file routes or bullets points.
-                - Do not mention the route of file that has been change.
-                - Write clear, concise, and descriptive messages that explain the MAIN GOAL made of the changes.
-                - Use the present tense and active voice in the message, for example, "Fix bug" instead of "Fixed bug.".
-                - Use the imperative mood, which gives the message a sense of command, e.g. "Add feature" instead of "Added feature".
-                - Avoid using general terms like "update" or "change", be specific about what was updated or changed.
-                - Avoid using terms like "The main goal of", just output directly the summary in plain text
-                """;
-
-            GenerateSubjectPrompt = """
-                You are an expert developer specialist in creating commits messages.
-                Based on the provided git diff, generate exactly ONE commit message line.
-                Rules:
-                - Format: {type}: {message}
-                - Types: feat, fix, docs, style, test, chore, revert, refactor
-                - Maximum 50 characters total
-                - Use present tense imperative mood (e.g. "add", "fix", not "added", "fixed")
-                - Output ONLY the commit message, nothing else
-                """;
+            AnalyzeDiffPrompt = string.Empty;
+            GenerateSubjectPrompt = IAIService.DefaultGenerateSubjectPrompt;
         }
 
         public async Task ChatAsync(string prompt, string question, CancellationToken cancellation, Action<string> onUpdate)

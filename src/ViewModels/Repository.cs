@@ -1503,21 +1503,11 @@ namespace SourceGit.ViewModels
         public List<Models.IAIService> GetPreferredAIServices()
         {
             var all = new List<Models.IAIService>();
-            var preferred = _settings.PreferredOpenAIService;
 
-            var openAIServices = Preferences.Instance.OpenAIServices;
-            if (openAIServices != null)
-            {
-                foreach (var service in openAIServices)
-                    all.Add(service);
-            }
-
-            var claudeServices = Preferences.Instance.ClaudeCodeServices;
-            if (claudeServices != null)
-            {
-                foreach (var service in claudeServices)
-                    all.Add(service);
-            }
+            foreach (var service in Preferences.Instance.OpenAIServices)
+                all.Add(service);
+            foreach (var service in Preferences.Instance.ClaudeCodeServices)
+                all.Add(service);
 
             if (all.Count == 0)
                 return [];
@@ -1525,6 +1515,7 @@ namespace SourceGit.ViewModels
             if (all.Count == 1)
                 return [all[0]];
 
+            var preferred = _settings.PreferredOpenAIService;
             foreach (var service in all)
             {
                 if (service.Name.Equals(preferred, StringComparison.Ordinal))

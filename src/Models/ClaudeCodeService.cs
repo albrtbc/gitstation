@@ -22,12 +22,6 @@ namespace SourceGit.Models
             set => SetProperty(ref _cliPath, value);
         }
 
-        public string AnalyzeDiffPrompt
-        {
-            get => _analyzeDiffPrompt;
-            set => SetProperty(ref _analyzeDiffPrompt, value);
-        }
-
         public string GenerateSubjectPrompt
         {
             get => _generateSubjectPrompt;
@@ -36,34 +30,12 @@ namespace SourceGit.Models
 
         public ClaudeCodeService()
         {
-            AnalyzeDiffPrompt = """
-                You are an expert developer specialist in creating commits.
-                Provide a super concise one sentence overall changes summary of the user `git diff` output following strictly the next rules:
-                - Do not use any code snippets, imports, file routes or bullets points.
-                - Do not mention the route of file that has been change.
-                - Write clear, concise, and descriptive messages that explain the MAIN GOAL made of the changes.
-                - Use the present tense and active voice in the message, for example, "Fix bug" instead of "Fixed bug.".
-                - Use the imperative mood, which gives the message a sense of command, e.g. "Add feature" instead of "Added feature".
-                - Avoid using general terms like "update" or "change", be specific about what was updated or changed.
-                - Avoid using terms like "The main goal of", just output directly the summary in plain text
-                """;
-
-            GenerateSubjectPrompt = """
-                You are an expert developer specialist in creating commits messages.
-                Based on the provided git diff, generate exactly ONE commit message line.
-                Rules:
-                - Format: {type}: {message}
-                - Types: feat, fix, docs, style, test, chore, revert, refactor
-                - Maximum 50 characters total
-                - Use present tense imperative mood (e.g. "add", "fix", not "added", "fixed")
-                - Output ONLY the commit message, nothing else
-                """;
+            GenerateSubjectPrompt = IAIService.DefaultGenerateSubjectPrompt;
         }
 
         public async Task ChatAsync(string prompt, string question, CancellationToken cancellation, Action<string> onUpdate)
         {
             var exe = string.IsNullOrWhiteSpace(_cliPath) ? "claude" : _cliPath;
-            var combinedPrompt = $"{prompt}\n\n{question}";
 
             var start = new ProcessStartInfo()
             {
@@ -77,7 +49,7 @@ namespace SourceGit.Models
                 StandardErrorEncoding = Encoding.UTF8,
             };
             start.ArgumentList.Add("-p");
-            start.ArgumentList.Add(combinedPrompt);
+            start.ArgumentList.Add(prompt);
             start.ArgumentList.Add("--output-format");
             start.ArgumentList.Add("text");
 
@@ -86,26 +58,33 @@ namespace SourceGit.Models
             try
             {
                 process.Start();
+
+                await process.StandardInput.WriteAsync(question.AsMemory(), cancellation).ConfigureAwait(false);
                 process.StandardInput.Close();
 
-                var rsp = new OpenAIResponse(onUpdate);
                 var buffer = new char[512];
+                var trimmedStart = false;
 
                 while (!cancellation.IsCancellationRequested)
                 {
-                    var count = await process.StandardOutput.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellation).ConfigureAwait(false);
+                    var count = await process.StandardOutput.ReadAsync(buffer.AsMemory(), cancellation).ConfigureAwait(false);
                     if (count == 0)
                         break;
 
-                    rsp.Append(new string(buffer, 0, count));
-                }
+                    var text = new string(buffer, 0, count);
+                    if (!trimmedStart)
+                    {
+                        text = text.TrimStart();
+                        if (text.Length == 0)
+                            continue;
+                        trimmedStart = true;
+                    }
 
-                rsp.End();
+                    onUpdate?.Invoke(text);
+                }
 
                 if (cancellation.IsCancellationRequested && !process.HasExited)
-                {
                     process.Kill();
-                }
 
                 await process.WaitForExitAsync(CancellationToken.None).ConfigureAwait(false);
             }
@@ -122,7 +101,6 @@ namespace SourceGit.Models
 
         private string _name;
         private string _cliPath = string.Empty;
-        private string _analyzeDiffPrompt;
         private string _generateSubjectPrompt;
     }
 }

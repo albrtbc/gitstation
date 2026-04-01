@@ -871,15 +871,6 @@
                               Content="{DynamicResource Text.Preferences.AI.ReadApiKeyFromEnv}"
                               IsChecked="{Binding ReadApiKeyFromEnv, Mode=TwoWay}"/>
 
-                    <TextBlock Margin="0,12,0,0" Text="{DynamicResource Text.Preferences.AI.AnalyzeDiffPrompt}"/>
-                    <TextBox Height="120"
-                             Margin="0,4,0,0"
-                             CornerRadius="3"
-                             VerticalContentAlignment="Top"
-                             Text="{Binding AnalyzeDiffPrompt, Mode=TwoWay}"
-                             AcceptsReturn="true"
-                             TextWrapping="Wrap"/>
-
                     <TextBlock Margin="0,12,0,0" Text="{DynamicResource Text.Preferences.AI.GenerateSubjectPrompt}"/>
                     <TextBox Height="120"
                              Margin="0,4,0,0"
@@ -978,15 +969,6 @@
 
                     <TextBlock Margin="0,12,0,0" Text="{DynamicResource Text.Preferences.ClaudeCode.CliPath}"/>
                     <TextBox Margin="0,4,0,0" CornerRadius="3" Height="28" Text="{Binding CliPath, Mode=TwoWay}" Watermark="claude"/>
-
-                    <TextBlock Margin="0,12,0,0" Text="{DynamicResource Text.Preferences.AI.AnalyzeDiffPrompt}"/>
-                    <TextBox Height="120"
-                             Margin="0,4,0,0"
-                             CornerRadius="3"
-                             VerticalContentAlignment="Top"
-                             Text="{Binding AnalyzeDiffPrompt, Mode=TwoWay}"
-                             AcceptsReturn="true"
-                             TextWrapping="Wrap"/>
 
                     <TextBlock Margin="0,12,0,0" Text="{DynamicResource Text.Preferences.AI.GenerateSubjectPrompt}"/>
                     <TextBox Height="120"
