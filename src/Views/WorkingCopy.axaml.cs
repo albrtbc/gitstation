@@ -918,7 +918,7 @@ namespace SourceGit.Views
             var menu = new ContextMenu();
 
             MenuItem ai = null;
-            var services = repo.GetPreferredOpenAIServices();
+            var services = repo.GetPreferredAIServices();
             if (services.Count > 0)
             {
                 ai = new MenuItem();
