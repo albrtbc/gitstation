@@ -77,6 +77,9 @@ namespace SourceGit.Models
         [JsonIgnore]
         public bool HasCI => _hasCI;
 
+        [JsonIgnore]
+        public bool IsOpen => string.Equals(State, "open", StringComparison.OrdinalIgnoreCase);
+
         private string _ciConclusion;
         private bool _hasCI;
     }
