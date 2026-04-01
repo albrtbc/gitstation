@@ -76,6 +76,8 @@ namespace SourceGit.Models
                 await process.StandardInput.WriteAsync(question.AsMemory(), cancellation).ConfigureAwait(false);
                 process.StandardInput.Close();
 
+                var stderrTask = process.StandardError.ReadToEndAsync(cancellation);
+
                 var buffer = new char[512];
                 var trimmedStart = false;
 
@@ -100,7 +102,11 @@ namespace SourceGit.Models
                 if (cancellation.IsCancellationRequested && !process.HasExited)
                     process.Kill();
 
+                var stderr = await stderrTask.ConfigureAwait(false);
                 await process.WaitForExitAsync(CancellationToken.None).ConfigureAwait(false);
+
+                if (process.ExitCode != 0 && !cancellation.IsCancellationRequested)
+                    throw new Exception($"CLI exited with code {process.ExitCode}: {stderr?.Trim()}");
             }
             catch
             {

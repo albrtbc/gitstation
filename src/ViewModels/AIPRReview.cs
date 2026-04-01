@@ -53,12 +53,17 @@ namespace SourceGit.ViewModels
             _cancel = new CancellationTokenSource();
             Task.Run(async () =>
             {
-                await new Commands.GeneratePRReview(_service, _repo.FullPath, _baseRef, _headRef, _cancel.Token, message =>
+                try
                 {
-                    Dispatcher.UIThread.Post(() => Text = message);
-                }).ExecAsync().ConfigureAwait(false);
-
-                Dispatcher.UIThread.Post(() => IsGenerating = false);
+                    await new Commands.GeneratePRReview(_service, _repo.FullPath, _baseRef, _headRef, _cancel.Token, message =>
+                    {
+                        Dispatcher.UIThread.Post(() => Text = message);
+                    }).ExecAsync().ConfigureAwait(false);
+                }
+                finally
+                {
+                    Dispatcher.UIThread.Post(() => IsGenerating = false);
+                }
             }, _cancel.Token);
         }
 

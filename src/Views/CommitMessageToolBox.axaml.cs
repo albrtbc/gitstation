@@ -575,7 +575,7 @@ namespace SourceGit.Views
                 var services = repo.GetPreferredAIServices();
                 if (services.Count == 0)
                 {
-                    App.RaiseException(repo.FullPath, "No AI services configured. Add one in Preferences.");
+                    App.RaiseException(repo.FullPath, App.Text("AIAssistant.NoServices"));
                     e.Handled = true;
                     return;
                 }
