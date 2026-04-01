@@ -1506,7 +1506,7 @@ namespace SourceGit.ViewModels
 
             foreach (var service in Preferences.Instance.OpenAIServices)
                 all.Add(service);
-            foreach (var service in Preferences.Instance.ClaudeCodeServices)
+            foreach (var service in Preferences.Instance.CLIAIServices)
                 all.Add(service);
 
             if (all.Count == 0)

@@ -8,7 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace SourceGit.Models
 {
-    public class ClaudeCodeService : ObservableObject, IAIService
+    public class CLIAIService : ObservableObject, IAIService
     {
         public string Name
         {
@@ -16,10 +16,16 @@ namespace SourceGit.Models
             set => SetProperty(ref _name, value);
         }
 
-        public string CliPath
+        public string Executable
         {
-            get => _cliPath;
-            set => SetProperty(ref _cliPath, value);
+            get => _executable;
+            set => SetProperty(ref _executable, value);
+        }
+
+        public string AnalyzeDiffPrompt
+        {
+            get => _analyzeDiffPrompt;
+            set => SetProperty(ref _analyzeDiffPrompt, value);
         }
 
         public string GenerateSubjectPrompt
@@ -28,14 +34,15 @@ namespace SourceGit.Models
             set => SetProperty(ref _generateSubjectPrompt, value);
         }
 
-        public ClaudeCodeService()
+        public CLIAIService()
         {
+            AnalyzeDiffPrompt = IAIService.DefaultAnalyzeDiffPrompt;
             GenerateSubjectPrompt = IAIService.DefaultGenerateSubjectPrompt;
         }
 
         public async Task ChatAsync(string prompt, string question, CancellationToken cancellation, Action<string> onUpdate)
         {
-            var exe = string.IsNullOrWhiteSpace(_cliPath) ? "claude" : _cliPath;
+            var exe = string.IsNullOrWhiteSpace(_executable) ? "claude" : _executable;
 
             var start = new ProcessStartInfo()
             {
@@ -100,7 +107,8 @@ namespace SourceGit.Models
         }
 
         private string _name;
-        private string _cliPath = string.Empty;
+        private string _executable = string.Empty;
+        private string _analyzeDiffPrompt;
         private string _generateSubjectPrompt;
     }
 }
