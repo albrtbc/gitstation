@@ -36,9 +36,24 @@ namespace SourceGit.Models
             - Be as concise as possible, keep the message under 50 characters.
             """;
 
+        const string DefaultReviewPRPrompt = """
+            You are an expert code reviewer performing a thorough pull request review.
+            Analyze the provided git diff and produce a concise, actionable review.
+            Focus on:
+            - Bugs, logic errors, and potential runtime failures
+            - Security vulnerabilities (injection, auth, data exposure)
+            - Performance issues (N+1 queries, unnecessary allocations, blocking calls)
+            - Code quality: naming, structure, duplication, violation of SOLID principles
+            - Edge cases and missing error handling
+            For each issue found, state the file and location, explain the problem, and suggest a fix.
+            If the code is clean, say so briefly. Do not pad the review with praise or filler.
+            Use markdown formatting for readability.
+            """;
+
         string Name { get; }
         string AnalyzeDiffPrompt { get; }
         string GenerateSubjectPrompt { get; }
+        string ReviewPRPrompt { get; }
 
         Task ChatAsync(string prompt, string question, CancellationToken cancellation, Action<string> onUpdate);
     }

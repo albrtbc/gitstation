@@ -21,6 +21,8 @@
   <x:String x:Key="Text.AIAssistant.Regen" xml:space="preserve">RE-GENERATE</x:String>
   <x:String x:Key="Text.AIAssistant.Tip" xml:space="preserve">Use AI to generate commit message</x:String>
   <x:String x:Key="Text.AIAssistant.Use" xml:space="preserve">APPLY AS COMMIT MESSAGE</x:String>
+  <x:String x:Key="Text.AIPRReview" xml:space="preserve">AI PR Review</x:String>
+  <x:String x:Key="Text.AIPRReview.Regen" xml:space="preserve">RE-GENERATE</x:String>
   <x:String x:Key="Text.App.Hide" xml:space="preserve">Hide GitStation</x:String>
   <x:String x:Key="Text.App.ShowAll" xml:space="preserve">Show All</x:String>
   <x:String x:Key="Text.Apply" xml:space="preserve">Patch</x:String>
@@ -615,6 +617,7 @@
   <x:String x:Key="Text.Preferences.AI.Model" xml:space="preserve">Model</x:String>
   <x:String x:Key="Text.Preferences.AI.Name" xml:space="preserve">Name</x:String>
   <x:String x:Key="Text.Preferences.AI.ReadApiKeyFromEnv" xml:space="preserve">Entered value is the name to load API key from ENV</x:String>
+  <x:String x:Key="Text.Preferences.AI.ReviewPRPrompt" xml:space="preserve">Review PR Prompt</x:String>
   <x:String x:Key="Text.Preferences.AI.Server" xml:space="preserve">Server</x:String>
   <x:String x:Key="Text.Preferences.AI.Streaming" xml:space="preserve">Enable Streaming</x:String>
   <x:String x:Key="Text.Preferences.AI.Executable" xml:space="preserve">Executable (e.g. claude, codex, gemini)</x:String>
