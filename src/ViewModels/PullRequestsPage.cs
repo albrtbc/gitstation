@@ -44,8 +44,8 @@ namespace SourceGit.ViewModels
                     if (value != null && value.Count == 1 && _selectedPR != null)
                     {
                         var change = value[0];
-                        var baseRef = $"origin/{_selectedPR.Base.Ref}";
-                        var headRef = $"origin/{_selectedPR.Head.Ref}";
+                        var baseRef = _selectedPR.IsOpen ? $"origin/{_selectedPR.Base.Ref}" : _selectedPR.Base.Sha;
+                        var headRef = _selectedPR.IsOpen ? $"origin/{_selectedPR.Head.Ref}" : _selectedPR.Head.Sha;
                         var dc = new DiffContext(_repo.FullPath, new Models.DiffOption(baseRef, headRef, change));
                         dc.IsPullRequestDiff = true;
                         DiffContext = dc;
@@ -265,11 +265,11 @@ namespace SourceGit.ViewModels
             if (_client == null)
                 return;
 
-            // Load file changes using local git (fast)
+            // Load file changes using local git — use SHAs for closed PRs (branch may be deleted)
             try
             {
-                var baseRef = $"origin/{pr.Base.Ref}";
-                var headRef = $"origin/{pr.Head.Ref}";
+                var baseRef = pr.IsOpen ? $"origin/{pr.Base.Ref}" : pr.Base.Sha;
+                var headRef = pr.IsOpen ? $"origin/{pr.Head.Ref}" : pr.Head.Sha;
                 var changes = await new Commands.CompareRevisions(_repo.FullPath, baseRef, headRef).ReadAsync();
                 if (_selectedPR != pr) return;
                 Dispatcher.UIThread.Invoke(() => Changes = changes);
@@ -279,6 +279,8 @@ namespace SourceGit.ViewModels
                 if (_selectedPR != pr) return;
                 Dispatcher.UIThread.Invoke(() => Changes = []);
             }
+
+            if (_selectedPR != pr) return;
 
             // Load comments, reviews and check runs from GitHub API (in parallel)
             var commentsTask = _client.GetCommentsAsync(pr.Number);
