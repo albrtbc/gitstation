@@ -155,8 +155,8 @@ namespace SourceGit.Views
             InitializeComponent();
 
             RebuildAIServiceList();
-            pref.OpenAIServices.CollectionChanged += (_, _) => RebuildAIServiceList();
-            pref.CLIAIServices.CollectionChanged += (_, _) => RebuildAIServiceList();
+            pref.OpenAIServices.CollectionChanged += OnAIServiceCollectionChanged;
+            pref.CLIAIServices.CollectionChanged += OnAIServiceCollectionChanged;
         }
 
         protected override async void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -176,6 +176,9 @@ namespace SourceGit.Views
         protected override async void OnClosing(WindowClosingEventArgs e)
         {
             base.OnClosing(e);
+
+            ViewModels.Preferences.Instance.OpenAIServices.CollectionChanged -= OnAIServiceCollectionChanged;
+            ViewModels.Preferences.Instance.CLIAIServices.CollectionChanged -= OnAIServiceCollectionChanged;
 
             if (Design.IsDesignMode)
                 return;
@@ -448,11 +451,18 @@ namespace SourceGit.Views
             e.Handled = true;
         }
 
+        private void OnAIServiceCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RebuildAIServiceList();
+        }
+
         private void RebuildAIServiceList()
         {
             var list = this.FindControl<ListBox>("AIServiceList");
             if (list == null)
                 return;
+
+            var selected = SelectedAIService;
 
             var items = new Avalonia.Collections.AvaloniaList<object>();
             foreach (var s in ViewModels.Preferences.Instance.OpenAIServices)
@@ -461,6 +471,9 @@ namespace SourceGit.Views
                 items.Add(s);
 
             list.ItemsSource = items;
+
+            if (selected != null && items.Contains(selected))
+                SelectedAIService = selected;
         }
 
         private void OnAddCustomAction(object sender, RoutedEventArgs e)
