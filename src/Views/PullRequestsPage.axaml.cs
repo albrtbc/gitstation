@@ -45,6 +45,12 @@ namespace SourceGit.Views
                 await vm.RequestChangesAsync();
         }
 
+        private async void OnAIReview(object s, RoutedEventArgs e)
+        {
+            if (DataContext is ViewModels.PullRequestsPage vm)
+                await vm.AIReviewAsync();
+        }
+
         private async void OnMerge(object s, RoutedEventArgs e)
         {
             if (DataContext is ViewModels.PullRequestsPage vm)

@@ -34,10 +34,17 @@ namespace SourceGit.Models
             set => SetProperty(ref _generateSubjectPrompt, value);
         }
 
+        public string ReviewPRPrompt
+        {
+            get => _reviewPRPrompt;
+            set => SetProperty(ref _reviewPRPrompt, value);
+        }
+
         public CLIAIService()
         {
             AnalyzeDiffPrompt = IAIService.DefaultAnalyzeDiffPrompt;
             GenerateSubjectPrompt = IAIService.DefaultGenerateSubjectPrompt;
+            ReviewPRPrompt = IAIService.DefaultReviewPRPrompt;
         }
 
         public async Task ChatAsync(string prompt, string question, CancellationToken cancellation, Action<string> onUpdate)
@@ -110,5 +117,6 @@ namespace SourceGit.Models
         private string _executable = string.Empty;
         private string _analyzeDiffPrompt;
         private string _generateSubjectPrompt;
+        private string _reviewPRPrompt;
     }
 }

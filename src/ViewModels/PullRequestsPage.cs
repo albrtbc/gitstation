@@ -183,6 +183,24 @@ namespace SourceGit.ViewModels
                 await LoadPullRequestDetail(_selectedPR);
         }
 
+        public async Task AIReviewAsync()
+        {
+            if (_selectedPR == null)
+                return;
+
+            var services = _repo.GetPreferredAIServices();
+            if (services.Count == 0)
+            {
+                App.RaiseException(_repo.FullPath, "No AI services configured. Add one in Preferences.");
+                return;
+            }
+
+            var baseRef = $"origin/{_selectedPR.Base.Ref}";
+            var headRef = $"origin/{_selectedPR.Head.Ref}";
+
+            await App.ShowDialog(new AIPRReview(_repo, services[0], baseRef, headRef));
+        }
+
         public async Task MergeAsync(string method)
         {
             if (_client == null || _selectedPR == null)
