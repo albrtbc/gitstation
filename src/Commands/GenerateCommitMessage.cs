@@ -26,7 +26,7 @@ namespace SourceGit.Commands
             }
         }
 
-        public GenerateCommitMessage(Models.OpenAIService service, string repo, List<Models.Change> changes, CancellationToken cancelToken, Action<string> onResponse)
+        public GenerateCommitMessage(Models.IAIService service, string repo, List<Models.Change> changes, CancellationToken cancelToken, Action<string> onResponse)
         {
             _service = service;
             _repo = repo;
@@ -39,51 +39,33 @@ namespace SourceGit.Commands
         {
             try
             {
-                _onResponse?.Invoke("Waiting for pre-file analyzing to completed...\n\n");
+                _onResponse?.Invoke("Collecting diffs...");
 
-                var responseBuilder = new StringBuilder();
-                var summaryBuilder = new StringBuilder();
+                var diffBuilder = new StringBuilder();
                 foreach (var change in _changes)
                 {
                     if (_cancelToken.IsCancellationRequested)
                         return;
 
-                    responseBuilder.Append("- ");
-                    summaryBuilder.Append("- ");
-
                     var rs = await new GetDiffContent(_repo, new Models.DiffOption(change, false)).ReadAsync();
                     if (rs.IsSuccess)
-                    {
-                        await _service.ChatAsync(
-                            _service.AnalyzeDiffPrompt,
-                            $"Here is the `git diff` output: {rs.StdOut}",
-                            _cancelToken,
-                            update =>
-                            {
-                                responseBuilder.Append(update);
-                                summaryBuilder.Append(update);
-
-                                _onResponse?.Invoke($"Waiting for pre-file analyzing to completed...\n\n{responseBuilder}");
-                            });
-                    }
-
-                    responseBuilder.AppendLine();
-                    summaryBuilder.Append("(file: ").Append(change.Path).AppendLine(")");
+                        diffBuilder.Append(rs.StdOut);
                 }
 
                 if (_cancelToken.IsCancellationRequested)
                     return;
 
-                var responseBody = responseBuilder.ToString();
-                var subjectBuilder = new StringBuilder();
+                _onResponse?.Invoke("Generating...");
+
+                var resultBuilder = new StringBuilder();
                 await _service.ChatAsync(
                     _service.GenerateSubjectPrompt,
-                    $"Here are the summaries changes:\n{summaryBuilder}",
+                    $"Here is the `git diff` output:\n{diffBuilder}",
                     _cancelToken,
                     update =>
                     {
-                        subjectBuilder.Append(update);
-                        _onResponse?.Invoke($"{subjectBuilder}\n\n{responseBody}");
+                        resultBuilder.Append(update);
+                        _onResponse?.Invoke(resultBuilder.ToString().Trim());
                     });
             }
             catch (Exception e)
@@ -92,7 +74,7 @@ namespace SourceGit.Commands
             }
         }
 
-        private Models.OpenAIService _service;
+        private Models.IAIService _service;
         private string _repo;
         private List<Models.Change> _changes;
         private CancellationToken _cancelToken;

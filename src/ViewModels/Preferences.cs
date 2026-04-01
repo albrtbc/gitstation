@@ -498,6 +498,12 @@ namespace SourceGit.ViewModels
             set;
         } = [];
 
+        public AvaloniaList<Models.ClaudeCodeService> ClaudeCodeServices
+        {
+            get;
+            set;
+        } = [];
+
         public double LastCheckUpdateTime
         {
             get => _lastCheckUpdateTime;

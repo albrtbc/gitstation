@@ -22,7 +22,7 @@ namespace SourceGit.ViewModels
             private set => SetProperty(ref _text, value);
         }
 
-        public AIAssistant(Repository repo, Models.OpenAIService service, List<Models.Change> changes)
+        public AIAssistant(Repository repo, Models.IAIService service, List<Models.Change> changes)
         {
             _repo = repo;
             _service = service;
@@ -68,7 +68,7 @@ namespace SourceGit.ViewModels
         }
 
         private readonly Repository _repo = null;
-        private Models.OpenAIService _service = null;
+        private Models.IAIService _service = null;
         private List<Models.Change> _changes = null;
         private CancellationTokenSource _cancel = null;
         private bool _isGenerating = false;

@@ -97,7 +97,7 @@ namespace SourceGit.Models
         private bool _hasTrimmedStart = false;
     }
 
-    public class OpenAIService : ObservableObject
+    public class OpenAIService : ObservableObject, IAIService
     {
         public string Name
         {
@@ -163,20 +163,13 @@ namespace SourceGit.Models
 
             GenerateSubjectPrompt = """
                 You are an expert developer specialist in creating commits messages.
-                Your only goal is to retrieve a single commit message.
-                Based on the provided user changes, combine them in ONE SINGLE commit message retrieving the global idea, following strictly the next rules:
-                - Assign the commit {type} according to the next conditions:
-                    feat: Only when adding a new feature.
-                    fix: When fixing a bug.
-                    docs: When updating documentation.
-                    style: When changing elements styles or design and/or making changes to the code style (formatting, missing semicolons, etc.) without changing the code logic.
-                    test: When adding or updating tests.
-                    chore: When making changes to the build process or auxiliary tools and libraries.
-                    revert: When undoing a previous commit.
-                    refactor: When restructuring code without changing its external behavior, or is any of the other refactor types.
-                - Do not add any issues numeration, explain your output nor introduce your answer.
-                - Output directly only one commit message in plain text with the next format: {type}: {commit_message}.
-                - Be as concise as possible, keep the message under 50 characters.
+                Based on the provided git diff, generate exactly ONE commit message line.
+                Rules:
+                - Format: {type}: {message}
+                - Types: feat, fix, docs, style, test, chore, revert, refactor
+                - Maximum 50 characters total
+                - Use present tense imperative mood (e.g. "add", "fix", not "added", "fixed")
+                - Output ONLY the commit message, nothing else
                 """;
         }
 

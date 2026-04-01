@@ -572,10 +572,10 @@ namespace SourceGit.Views
                     return;
                 }
 
-                var services = repo.GetPreferredOpenAIServices();
+                var services = repo.GetPreferredAIServices();
                 if (services.Count == 0)
                 {
-                    App.RaiseException(repo.FullPath, "Bad configuration for OpenAI");
+                    App.RaiseException(repo.FullPath, "No AI services configured. Add one in Preferences.");
                     e.Handled = true;
                     return;
                 }

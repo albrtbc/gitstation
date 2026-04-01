@@ -104,6 +104,15 @@ namespace SourceGit.Views
             set => SetValue(SelectedOpenAIServiceProperty, value);
         }
 
+        public static readonly StyledProperty<Models.ClaudeCodeService> SelectedClaudeCodeServiceProperty =
+            AvaloniaProperty.Register<Preferences, Models.ClaudeCodeService>(nameof(SelectedClaudeCodeService));
+
+        public Models.ClaudeCodeService SelectedClaudeCodeService
+        {
+            get => GetValue(SelectedClaudeCodeServiceProperty);
+            set => SetValue(SelectedClaudeCodeServiceProperty, value);
+        }
+
         public static readonly StyledProperty<Models.CustomAction> SelectedCustomActionProperty =
             AvaloniaProperty.Register<Preferences, Models.CustomAction>(nameof(SelectedCustomAction));
 
@@ -411,6 +420,25 @@ namespace SourceGit.Views
 
             ViewModels.Preferences.Instance.OpenAIServices.Remove(SelectedOpenAIService);
             SelectedOpenAIService = null;
+            e.Handled = true;
+        }
+
+        private void OnAddClaudeCodeService(object sender, RoutedEventArgs e)
+        {
+            var service = new Models.ClaudeCodeService() { Name = "Claude Code" };
+            ViewModels.Preferences.Instance.ClaudeCodeServices.Add(service);
+            SelectedClaudeCodeService = service;
+
+            e.Handled = true;
+        }
+
+        private void OnRemoveSelectedClaudeCodeService(object sender, RoutedEventArgs e)
+        {
+            if (SelectedClaudeCodeService == null)
+                return;
+
+            ViewModels.Preferences.Instance.ClaudeCodeServices.Remove(SelectedClaudeCodeService);
+            SelectedClaudeCodeService = null;
             e.Handled = true;
         }
 

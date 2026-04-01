@@ -177,6 +177,8 @@ namespace SourceGit.ViewModels
             AvailableOpenAIServices = new List<string>() { "---" };
             foreach (var service in Preferences.Instance.OpenAIServices)
                 AvailableOpenAIServices.Add(service.Name);
+            foreach (var service in Preferences.Instance.ClaudeCodeServices)
+                AvailableOpenAIServices.Add(service.Name);
 
             if (!AvailableOpenAIServices.Contains(PreferredOpenAIService))
                 PreferredOpenAIService = "---";
