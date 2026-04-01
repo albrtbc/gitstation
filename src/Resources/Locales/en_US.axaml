@@ -21,6 +21,7 @@
   <x:String x:Key="Text.AIAssistant.Regen" xml:space="preserve">RE-GENERATE</x:String>
   <x:String x:Key="Text.AIAssistant.Tip" xml:space="preserve">Use AI to generate commit message</x:String>
   <x:String x:Key="Text.AIAssistant.Use" xml:space="preserve">APPLY AS COMMIT MESSAGE</x:String>
+  <x:String x:Key="Text.AIAssistant.NoServices" xml:space="preserve">No AI services configured. Add one in Preferences.</x:String>
   <x:String x:Key="Text.AIPRReview" xml:space="preserve">AI PR Review</x:String>
   <x:String x:Key="Text.AIPRReview.Regen" xml:space="preserve">RE-GENERATE</x:String>
   <x:String x:Key="Text.App.Hide" xml:space="preserve">Hide GitStation</x:String>
@@ -623,6 +624,8 @@
   <x:String x:Key="Text.Preferences.AI.Executable" xml:space="preserve">Executable (e.g. claude, codex, gemini)</x:String>
   <x:String x:Key="Text.Preferences.AI.AddAPI" xml:space="preserve">API Service (OpenAI, Azure...)</x:String>
   <x:String x:Key="Text.Preferences.AI.AddCLI" xml:space="preserve">CLI Service (Claude Code, Codex...)</x:String>
+  <x:String x:Key="Text.Preferences.AI.UnnamedAPI" xml:space="preserve">Unnamed API Service</x:String>
+  <x:String x:Key="Text.Preferences.AI.UnnamedCLI" xml:space="preserve">Unnamed CLI Service</x:String>
   <x:String x:Key="Text.Preferences.Appearance" xml:space="preserve">APPEARANCE</x:String>
   <x:String x:Key="Text.Preferences.Appearance.DefaultFont" xml:space="preserve">Default Font</x:String>
   <x:String x:Key="Text.Preferences.Appearance.EditorTabWidth" xml:space="preserve">Editor Tab Width</x:String>

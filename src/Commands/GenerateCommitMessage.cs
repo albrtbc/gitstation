@@ -74,7 +74,7 @@ namespace SourceGit.Commands
                 var resultBuilder = new StringBuilder();
                 await _service.ChatAsync(
                     _service.GenerateSubjectPrompt,
-                    $"Here are the summary of changes:\n{summaryBuilder}",
+                    $"Here is the summary of changes:\n{summaryBuilder}",
                     _cancelToken,
                     update =>
                     {

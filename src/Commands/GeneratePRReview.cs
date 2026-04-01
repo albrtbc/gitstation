@@ -39,7 +39,7 @@ namespace SourceGit.Commands
                 _onResponse?.Invoke("Fetching PR diff...");
 
                 var rs = await new GetPRDiff(_repo, _baseRef, _headRef).ReadAsync();
-                if (!rs.IsSuccess || _cancelToken.IsCancellationRequested)
+                if (!rs.IsSuccess || string.IsNullOrWhiteSpace(rs.StdOut) || _cancelToken.IsCancellationRequested)
                     return;
 
                 _onResponse?.Invoke("Reviewing changes...");

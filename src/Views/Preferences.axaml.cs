@@ -412,7 +412,7 @@ namespace SourceGit.Views
                 apiItem.Header = App.Text("Preferences.AI.AddAPI");
                 apiItem.Click += (_, ev) =>
                 {
-                    var service = new Models.OpenAIService() { Name = "Unnamed API Service" };
+                    var service = new Models.OpenAIService() { Name = App.Text("Preferences.AI.UnnamedAPI") };
                     ViewModels.Preferences.Instance.OpenAIServices.Add(service);
                     SelectedAIService = service;
                     ev.Handled = true;
@@ -423,7 +423,7 @@ namespace SourceGit.Views
                 cliItem.Header = App.Text("Preferences.AI.AddCLI");
                 cliItem.Click += (_, ev) =>
                 {
-                    var service = new Models.CLIAIService() { Name = "Unnamed CLI Service" };
+                    var service = new Models.CLIAIService() { Name = App.Text("Preferences.AI.UnnamedCLI") };
                     ViewModels.Preferences.Instance.CLIAIServices.Add(service);
                     SelectedAIService = service;
                     ev.Handled = true;
