@@ -1,4 +1,4 @@
-# GitStation - Opensource Git GUI client.
+# GitStation - Opensource Git GUI client
 
 [![stars](https://img.shields.io/github/stars/albrtbc/gitstation.svg)](https://github.com/albrtbc/gitstation/stargazers)
 [![forks](https://img.shields.io/github/forks/albrtbc/gitstation.svg)](https://github.com/albrtbc/gitstation/forks)
@@ -6,28 +6,38 @@
 [![latest](https://img.shields.io/github/v/release/albrtbc/gitstation.svg)](https://github.com/albrtbc/gitstation/releases/latest)
 [![downloads](https://img.shields.io/github/downloads/albrtbc/gitstation/total)](https://github.com/albrtbc/gitstation/releases)
 
-## Screenshots
+GitStation originally started as a fork of [SourceGit](https://github.com/sourcegit-scm/sourcegit), an excellent open-source Git GUI. It has since evolved into a **standalone project** with its own direction, focused on **GitHub integration**, **AI-powered workflows**, and a **workspace-based repository aggregator**.
 
-* Dark Theme
+> [!NOTE]
+> GitStation is currently in **beta**. It is under active development — expect frequent updates, new features, and occasional rough edges. Feedback and contributions are welcome!
 
-  ![Theme Dark](./screenshots/theme_dark.png)
+## Screenshot
 
-* Light Theme
+![Theme Dark](./screenshots/theme_dark.png)
 
-  ![Theme Light](./screenshots/theme_light.png)
+### Built-in Themes
 
-* Custom
+Default, Dark, Light, GitLab Dark, GitLab Light, Dracula, Nord, Monokai, Solarized Dark, Solarized Light
 
-  You can find custom themes from [gitstation-theme](https://github.com/albrtbc/gitstation-theme.git). And welcome to share your own themes.
+Custom themes are also supported via JSON override files.
+
+## What's Different from SourceGit
+
+* **Repository aggregator** — workspace-based view that groups repositories instead of individual tabs
+* **GitHub Pull Requests** — browse, review, approve, merge, squash, and rebase PRs directly from the app
+* **GitHub Pipelines** — view CI/CD check runs and status per PR
+* **AI PR Review** — analyze pull request diffs with AI and get actionable code reviews
+* **AI via CLI tools** — use Claude Code, Codex, Gemini or any CLI-based LLM alongside traditional API services (OpenAI, Azure)
+* **Unified AI settings** — single configuration tab for both API and CLI AI services with customizable prompts
+* **Optimized commit message generation** — two-phase approach (analyze diff, then generate subject) in just 2 API calls instead of N+1
 
 ## Highlights
 
 * Supports Windows/macOS/Linux
 * Opensource/Free
 * Fast
-* Deutsch/English/Español/Bahasa Indonesia/Français/Italiano/Português/Русский/Українська/简体中文/繁體中文/日本語/தமிழ் (Tamil)/한국어
+* Deutsch/English/Español/Bahasa Indonesia/Fran&ccedil;ais/Italiano/Portugu&ecirc;s/Русский/Українська/简体中文/繁體中文/日本語/தமிழ் (Tamil)/한국어
 * Built-in light/dark themes
-* Customize theme
 * Visual commit graph
 * Supports SSH access with each remote
 * GIT commands with GUI
@@ -57,16 +67,19 @@
 * Issue Link
 * Workspace
 * Custom Action
-* Create PR on GitHub/Gitlab/Gitea/Gitee/Bitbucket...
-* Using AI to generate commit message (C# port of [anjerodev/commitollama](https://github.com/anjerodev/commitollama))
-* Built-in conventional commit message helper.
+* GitHub Pull Requests & Pipelines
+* AI commit message generation (API + CLI)
+* AI pull request review
+* Built-in conventional commit message helper
 
 > [!WARNING]
 > **Linux** only tested on **Debian 12** on both **X11** & **Wayland**.
 
 ## How to Use
 
-**To use this tool, you need to install Git(>=2.25.1) first.**
+**To use this tool, you need to install [Git](https://git-scm.com/) (>=2.25.1) first.**
+
+For GitHub Pull Requests and Pipelines, you also need [GitHub CLI (`gh`)](https://cli.github.com/) installed and authenticated (`gh auth login`).
 
 You can download the latest stable from [Releases](https://github.com/albrtbc/gitstation/releases/latest) or download workflow artifacts from [GitHub Actions](https://github.com/albrtbc/gitstation/actions) to try this app based on latest commits.
 
@@ -80,96 +93,62 @@ This software creates a folder, which is platform-dependent, to store user setti
 
 > [!TIP]
 > * You can open this data storage directory from the main menu `Open Data Storage Directory`.
-> * You can create a `data` folder next to the `GitStation` executable to force this app to store data (user settings, downloaded avatars and crash logs) into it (Portable-Mode). Only works with Windows packages and Linux AppImages.
+> * You can create a `data` folder next to the `GitStation` executable to force this app to store data into it (Portable-Mode). Only works with Windows packages and Linux AppImages.
 
 For **Windows** users:
 
 * **MSYS Git is NOT supported**. Please use official [Git for Windows](https://git-scm.com/download/win) instead.
-* You can install the latest stable by `scoop` with follow commands:
-  ```shell
-  scoop bucket add extras
-  scoop install gitstation
-  ```
 * Pre-built binaries can be found in [Releases](https://github.com/albrtbc/gitstation/releases/latest)
-
-> [!NOTE]
-> `git-flow` is no longer shipped with **Git for Windows** since `2.51.1`. You can use it by following these steps:
->  * Download [git-flow-next](https://github.com/gittower/git-flow-next/releases)
->  * Unzip & Rename the `git-flow-next` to `git-flow`
->  * Copy to `$GIT_INSTALL_DIR/cmd` or just add its path to you `PATH` directly
 
 For **macOS** users:
 
-* Thanks [@ybeapps](https://github.com/ybeapps) for making `GitStation` available on `Homebrew`:
-  ```shell
-  brew install --cask gitstation
-  ```
 * If you want to install `GitStation.app` from GitHub Release manually, you need run following command to make sure it works:
   ```shell
   sudo xattr -cr /Applications/GitStation.app
   ```
-> [!NOTE]
-> macOS packages in the `Release` page of this project are all unsigned. If you are worried about potential security issues with the above command, you can download the signed package from the [distribution repository](https://github.com/ybeapps/homebrew-gitstation/releases) provided by [@ybeapps](https://github.com/ybeapps) (there is no need to execute the above command while installing `GitStation`).
-
 * Make sure [git-credential-manager](https://github.com/git-ecosystem/git-credential-manager/releases) is installed on your mac.
-* You can run `echo $PATH > ~/Library/Application\ Support/GitStation/PATH` to generate a custom PATH env file to introduce `PATH` env to GitStation.
 
 For **Linux** users:
 
-* Thanks [@aikawayataro](https://github.com/aikawayataro) for providing `rpm` and `deb` repositories, hosted on [Codeberg](https://codeberg.org/yataro/-/packages).
-
-  `deb` how to:
-  ```shell
-  curl https://codeberg.org/api/packages/yataro/debian/repository.key | sudo tee /etc/apt/keyrings/gitstation.asc
-  echo "deb [signed-by=/etc/apt/keyrings/gitstation.asc, arch=amd64,arm64] https://codeberg.org/api/packages/yataro/debian generic main" | sudo tee /etc/apt/sources.list.d/gitstation.list
-  sudo apt update
-  sudo apt install gitstation
-  ```
-
-  `rpm` how to:
-  ```shell
-  curl https://codeberg.org/api/packages/yataro/rpm.repo | sed -e 's/gpgcheck=1/gpgcheck=0/' > gitstation.repo
-
-  # Fedora 41 and newer
-  sudo dnf config-manager addrepo --from-repofile=./gitstation.repo
-  # Fedora 40 and earlier
-  sudo dnf config-manager --add-repo ./gitstation.repo
-
-  sudo dnf install gitstation
-  ```
-
-  If your distribution isn't using `dnf`, please refer to the documentation of your distribution on how to add an `rpm` repository.
-* `AppImage` files can be found on [AppImage hub](https://appimage.github.io/GitStation/), `xdg-open` (`xdg-utils`) must be installed to support open native file manager.
+* `AppImage` files can be found in [Releases](https://github.com/albrtbc/gitstation/releases/latest). `xdg-open` (`xdg-utils`) must be installed to support opening the native file manager.
 * Make sure [git-credential-manager](https://github.com/git-ecosystem/git-credential-manager/releases) or [git-credential-libsecret](https://pkgs.org/search/?q=git-credential-libsecret) is installed on your Linux.
 * Maybe you need to set environment variable `AVALONIA_SCREEN_SCALE_FACTORS`. See https://github.com/AvaloniaUI/Avalonia/wiki/Configuring-X11-per-monitor-DPI.
-* If you can NOT type accented characters, such as `ê`, `ó`, try to set the environment variable `AVALONIA_IM_MODULE` to `none`.
 
-## Commandline arguments
+## AI Services
 
-Users can also launcher `GitStation` from commandline. Usage:
+GitStation supports two types of AI services for generating commit messages and reviewing pull requests:
+
+### API Services (OpenAI, Azure, etc.)
+
+Configure in `Preferences > AI > + > API Service`:
+
+* **Server** — e.g. `https://api.openai.com/v1` for OpenAI, or `http://localhost:11434/v1` for Ollama
+* **Model** — e.g. `gpt-4`, `gpt-3.5-turbo`
+* **API Key** — your API key (can be loaded from an environment variable)
+
+### CLI Services (Claude Code, Codex, Gemini, etc.)
+
+Configure in `Preferences > AI > + > CLI Service`:
+
+* **Executable** — the CLI tool name or path (e.g. `claude`, `codex`, `gemini`)
+* The tool must support `-p <prompt>` for passing instructions and reading input from stdin
+
+Both service types support customizable prompts for:
+* **Analyze Diff** — summarizes the purpose of changes
+* **Generate Subject** — produces a conventional commit message
+* **Review PR** — performs an AI code review on pull request diffs
+
+## Commandline Arguments
 
 ```
-<GITSTATION_EXEC> <DIR>                       // Open repository in existing `GitStation` instance or a new one
-<GITSTATION_EXEC> --file-history <FILE_PATH>  // Launch `GitStation` to see the history of a file
-<GITSTATION_EXEC> --blame <FILE_PATH>         // Launch `GitStation` to blame a file (HEAD version only) 
+<GITSTATION_EXEC> <DIR>                       // Open repository
+<GITSTATION_EXEC> --file-history <FILE_PATH>  // See history of a file
+<GITSTATION_EXEC> --blame <FILE_PATH>         // Blame a file (HEAD version)
 ```
-
-## OpenAI
-
-This software supports using OpenAI or other AI service that has an OpenAI compatible HTTP API to generate commit message. You need configurate the service in `Preference` window.
-
-For `OpenAI`:
-
-* `Server` must be `https://api.openai.com/v1`
-
-For other AI service:
-
-* The `Server` should fill in a URL equivalent to OpenAI's `https://api.openai.com/v1`. For example, when using `Ollama`, it should be `http://localhost:11434/v1` instead of `http://localhost:11434/api/generate`
-* The `API Key` is optional that depends on the service
 
 ## External Tools
 
-This app supports open repository in external tools listed in the table below.
+This app supports opening repositories in external tools:
 
 | Tool                          | Windows | macOS | Linux |
 |-------------------------------|---------|-------|-------|
@@ -182,50 +161,19 @@ This app supports open repository in external tools listed in the table below.
 | Visual Studio                 | YES     | NO    | NO    |
 
 > [!NOTE]
-> This app will try to find those tools based on some pre-defined or expected locations automatically. If you are using one portable version of these tools, it will not be detected by this app.  
-> To solve this problem you can add a file named `external_editors.json` in app data storage directory and provide the path directly.  
-> User can also exclude some editors by using `external_editors.json`.
-
-The format of `external_editors.json`:
-```json
-{
-    "tools": {
-        "Visual Studio Code": "D:\\VSCode\\Code.exe"
-    },
-    "excludes": [
-        "Visual Studio Community 2019"
-    ]
-}
-```
-
-> [!NOTE]
-> This app also supports a lot of `JetBrains` IDEs, installing `JetBrains Toolbox` will help this app to find them.
-
-## Conventional Commit Helper
-
-You can define your own conventional commit types (per-repository) by following steps:
-
-1. Create a json file with your own conventional commit type definitions. For example:
-```json
-[
-  {
-    "Name": "New Feature",
-    "Type": "Feature",
-    "Description": "Adding a new feature",
-    "PrefillShortDesc": "this is a test"
-  },
-  {
-    "Name": "Bug Fixes",
-    "Type": "Fix",
-    "Description": "Fixing a bug"
-  }
-]
-```
-2. Configure the `Conventional Commit Types` in repository configuration window.  
+> This app will try to find those tools automatically. For portable versions, add a file named `external_editors.json` in the app data storage directory:
+> ```json
+> {
+>     "tools": {
+>         "Visual Studio Code": "D:\\VSCode\\Code.exe"
+>     },
+>     "excludes": [
+>         "Visual Studio Community 2019"
+>     ]
+> }
+> ```
 
 ## Contributing
-
-Everyone is welcome to submit a PR. Please make sure your PR is based on the latest `develop` branch and the target branch of PR is `develop`.
 
 In short, here are the commands to get started once [.NET tools are installed](https://dotnet.microsoft.com/en-us/download):
 
@@ -236,31 +184,10 @@ dotnet build
 dotnet run --project src/GitStation.csproj
 ```
 
-Thanks to all the people who contribute.
-
-[![Contributors](https://contrib.rocks/image?repo=albrtbc/gitstation&columns=20)](https://github.com/albrtbc/gitstation/graphs/contributors)
-
-## Translation Status
-
-You can find the current translation status in [TRANSLATION.md](https://github.com/albrtbc/gitstation/blob/develop/TRANSLATION.md)
-
-### Translate Utility Script
-
-A script that assists with translations by reading the target language, comparing it with the base language, and going through missing keys one by one, so the translator can provide the translations interactively without needing to check each key manually.
-
-#### Usage
-
-Check for a given language (e.g., `pt_BR`) and optionally check for missing translations:
-
-```bash
-python translate_helper.py pt_BR [--check]
-```
-
-- `pt_BR` is the target language code (change as needed), it should correspond to a file named `pt_BR.axaml` in the `src/Resources/Locales/` directory, so you can replace it with any other language code you want to translate, e.g., `de_DE`, `es_ES`, etc.
-- `--check` is an optional flag used to only check for missing keys without prompting for translations, useful for getting a list of missing translations.
-
-The script will read the base language file (`en_US.axaml`) and the target language file (e.g., `pt_BR.axaml`), identify missing keys, and prompt you to provide translations for those keys. If the `--check` flag is used, it will only list the missing keys without prompting for translations.
-
 ## Third-Party Components
 
 For detailed license information, see [THIRD-PARTY-LICENSES.md](THIRD-PARTY-LICENSES.md).
+
+## Acknowledgements
+
+GitStation is a fork of [SourceGit](https://github.com/sourcegit-scm/sourcegit) by the SourceGit contributors. The AI commit message generation feature is a C# port of [anjerodev/commitollama](https://github.com/anjerodev/commitollama).
