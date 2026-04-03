@@ -306,21 +306,6 @@
           <DataTemplate DataType="vm:RevisionCompare">
             <v:RevisionCompare/>
           </DataTemplate>
-
-          <DataTemplate DataType="m:Count">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-              <Path Width="128" Height="128"
-                    Data="{StaticResource Icons.Detail}"
-                    HorizontalAlignment="Center"
-                    Fill="{DynamicResource Brush.FG2}"/>
-
-              <TextBlock HorizontalAlignment="Center"
-                         Margin="0,16"
-                         FontSize="24" FontWeight="Bold"
-                         Foreground="{DynamicResource Brush.FG2}"
-                         Text="{Binding Value, Converter={x:Static c:StringConverters.FormatByResourceKey}, ConverterParameter='Histories.Selected'}"/>
-            </StackPanel>
-          </DataTemplate>
         </ContentControl.DataTemplates>
       </ContentControl>
     </Grid>

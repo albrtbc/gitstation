@@ -239,18 +239,30 @@ namespace SourceGit.ViewModels
                     DetailContext = commitDetail;
                 }
             }
-            else if (commits.Count == 2)
-            {
-                _repo.SearchCommitContext.Selected = null;
-
-                var end = commits[0] as Models.Commit;
-                var start = commits[1] as Models.Commit;
-                DetailContext = new RevisionCompare(_repo, start, end);
-            }
             else
             {
                 _repo.SearchCommitContext.Selected = null;
-                DetailContext = new Models.Count(commits.Count);
+
+                Models.Commit oldest = null;
+                Models.Commit newest = null;
+                foreach (var obj in commits)
+                {
+                    if (obj is Models.Commit c)
+                    {
+                        if (oldest == null || c.CommitterTime < oldest.CommitterTime)
+                            oldest = c;
+                        if (newest == null || c.CommitterTime > newest.CommitterTime)
+                            newest = c;
+                    }
+                }
+
+                if (oldest != null && newest != null)
+                {
+                    var start = oldest.Parents.Count > 0
+                        ? new Models.Commit { SHA = oldest.Parents[0] }
+                        : oldest;
+                    DetailContext = new RevisionCompare(_repo, start, newest);
+                }
             }
         }
 
