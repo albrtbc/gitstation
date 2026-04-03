@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.2](https://github.com/albrtbc/gitstation/compare/gitstation-v0.3.1...gitstation-v0.3.2) (2026-04-03)
+
+
+### Features
+
+* add multi-commit range diff for 3+ selections ([d088225](https://github.com/albrtbc/gitstation/commit/d0882251bddd0e0f0a10bf4df96897e1cace9540))
+
+
+### Bug Fixes
+
+* clear detail context on invalid commit selection ([4916420](https://github.com/albrtbc/gitstation/commit/49164205ec208e29abe7e644d48a06dfcac09f6e))
+* simplify multi-commit range comparison logic ([87f1d73](https://github.com/albrtbc/gitstation/commit/87f1d73237769b3ac61fc97a4efc88b54ff27b54))
+
 ## [0.3.1](https://github.com/albrtbc/gitstation/compare/gitstation-v0.3.0...gitstation-v0.3.1) (2026-04-01)
 
 
