@@ -263,6 +263,10 @@ namespace SourceGit.ViewModels
                         : oldest;
                     DetailContext = new RevisionCompare(_repo, start, newest);
                 }
+                else
+                {
+                    DetailContext = null;
+                }
             }
         }
 
