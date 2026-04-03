@@ -258,10 +258,7 @@ namespace SourceGit.ViewModels
 
                 if (oldest != null && newest != null)
                 {
-                    var start = oldest.Parents.Count > 0
-                        ? new Models.Commit { SHA = oldest.Parents[0] }
-                        : oldest;
-                    DetailContext = new RevisionCompare(_repo, start, newest);
+                    DetailContext = new RevisionCompare(_repo, oldest, newest);
                 }
                 else
                 {
