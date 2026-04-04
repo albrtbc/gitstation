@@ -16,5 +16,10 @@
         ///     The minimal version of Git that supports the `stash push` command with the `--staged` option.
         /// </summary>
         public static readonly System.Version STASH_PUSH_ONLY_STAGED = new(2, 35, 0);
+
+        /// <summary>
+        ///     The minimal version of Git that supports the `%(worktreepath)` format placeholder in `git branch` and `git for-each-ref`.
+        /// </summary>
+        public static readonly System.Version WORKTREEPATH_FORMAT = new(2, 36, 0);
     }
 }
