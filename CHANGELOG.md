@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/albrtbc/gitstation/compare/gitstation-v0.3.2...gitstation-v0.3.3) (2026-04-04)
+
+
+### Bug Fixes
+
+* use parent as base for multi-commit diffs ([7a8a4c7](https://github.com/albrtbc/gitstation/commit/7a8a4c77565c4f477d95cfd3c9c3258948fab8c8))
+
 ## [0.3.2](https://github.com/albrtbc/gitstation/compare/gitstation-v0.3.1...gitstation-v0.3.2) (2026-04-03)
 
 
