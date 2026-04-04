@@ -15,7 +15,12 @@ namespace SourceGit.Commands
         {
             WorkingDirectory = repo;
             Context = repo;
-            Args = "branch -l --all -v --format=\"%(refname)%00%(committerdate:unix)%00%(objectname)%00%(HEAD)%00%(upstream)%00%(upstream:trackshort)%00%(worktreepath)\"";
+
+            _supportsWorktreePath = Native.OS.GitVersion >= Models.GitVersions.WORKTREEPATH_FORMAT;
+            if (_supportsWorktreePath)
+                Args = "branch -l --all -v --format=\"%(refname)%00%(committerdate:unix)%00%(objectname)%00%(HEAD)%00%(upstream)%00%(upstream:trackshort)%00%(worktreepath)\"";
+            else
+                Args = "branch -l --all -v --format=\"%(refname)%00%(committerdate:unix)%00%(objectname)%00%(HEAD)%00%(upstream)%00%(upstream:trackshort)\"";
         }
 
         public async Task<List<Models.Branch>> GetResultAsync()
@@ -63,7 +68,8 @@ namespace SourceGit.Commands
         private Models.Branch ParseLine(string line, HashSet<string> mismatched)
         {
             var parts = line.Split('\0');
-            if (parts.Length != 7)
+            var expectedParts = _supportsWorktreePath ? 7 : 6;
+            if (parts.Length != expectedParts)
                 return null;
 
             var branch = new Models.Branch();
@@ -111,8 +117,10 @@ namespace SourceGit.Commands
                 !parts[5].Equals("=", StringComparison.Ordinal))
                 mismatched.Add(branch.FullName);
 
-            branch.WorktreePath = parts[6];
+            branch.WorktreePath = _supportsWorktreePath ? parts[6] : string.Empty;
             return branch;
         }
+
+        private readonly bool _supportsWorktreePath;
     }
 }
