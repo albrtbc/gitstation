@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.5](https://github.com/albrtbc/gitstation/compare/gitstation-v0.3.4...gitstation-v0.3.5) (2026-04-04)
+
+
+### Bug Fixes
+
+* handle worktreepath format for Git version compatibility ([36361aa](https://github.com/albrtbc/gitstation/commit/36361aa440a4edfd5fda90c8c5de505c6d365385))
+
 ## [0.3.4](https://github.com/albrtbc/gitstation/compare/gitstation-v0.3.3...gitstation-v0.3.4) (2026-04-04)
 
 
