@@ -54,10 +54,10 @@ namespace SourceGit.Native
         public string FindGitExecutable()
         {
             var gitPathVariants = new List<string>() {
-                "/usr/bin/git",
-                "/usr/local/bin/git",
                 "/opt/homebrew/bin/git",
-                "/opt/homebrew/opt/git/bin/git"
+                "/opt/homebrew/opt/git/bin/git",
+                "/usr/local/bin/git",
+                "/usr/bin/git"
             };
 
             foreach (var path in gitPathVariants)
