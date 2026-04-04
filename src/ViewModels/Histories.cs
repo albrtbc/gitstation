@@ -249,7 +249,7 @@ namespace SourceGit.ViewModels
                 {
                     if (obj is Models.Commit c)
                     {
-                        if (oldest == null || c.CommitterTime < oldest.CommitterTime)
+                        if (oldest == null || c.CommitterTime <= oldest.CommitterTime)
                             oldest = c;
                         if (newest == null || c.CommitterTime > newest.CommitterTime)
                             newest = c;
@@ -258,7 +258,15 @@ namespace SourceGit.ViewModels
 
                 if (oldest != null && newest != null)
                 {
-                    DetailContext = new RevisionCompare(_repo, oldest, newest);
+                    var selected = new List<Models.Commit>();
+                    foreach (var obj in commits)
+                    {
+                        if (obj is Models.Commit c)
+                            selected.Add(c);
+                    }
+
+                    var diffBase = oldest.Parents.Count > 0 ? oldest.Parents[0] : null;
+                    DetailContext = new RevisionCompare(_repo, oldest, newest, diffBase, selected);
                 }
                 else
                 {

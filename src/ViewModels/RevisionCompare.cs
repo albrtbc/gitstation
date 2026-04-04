@@ -74,7 +74,7 @@ namespace SourceGit.ViewModels
                 {
                     if (value is { Count: 1 })
                     {
-                        var option = new Models.DiffOption(GetSHA(_startPoint), GetSHA(_endPoint), value[0]);
+                        var option = new Models.DiffOption(GetStartSHA(), GetSHA(_endPoint), value[0]);
                         DiffContext = new DiffContext(_repo.FullPath, option, _diffContext);
                     }
                     else
@@ -101,11 +101,13 @@ namespace SourceGit.ViewModels
             private set => SetProperty(ref _diffContext, value);
         }
 
-        public RevisionCompare(Repository repo, Models.Commit startPoint, Models.Commit endPoint)
+        public RevisionCompare(Repository repo, Models.Commit startPoint, Models.Commit endPoint, string diffBaseSHA = null, List<Models.Commit> selectedCommits = null)
         {
             _repo = repo;
             _startPoint = (object)startPoint ?? new Models.Null();
             _endPoint = (object)endPoint ?? new Models.Null();
+            _diffBaseSHA = diffBaseSHA;
+            _selectedCommits = selectedCommits;
             Refresh();
         }
 
@@ -114,6 +116,8 @@ namespace SourceGit.ViewModels
             _repo = null;
             _startPoint = null;
             _endPoint = null;
+            _diffBaseSHA = null;
+            _selectedCommits = null;
             _changes?.Clear();
             _visibleChanges?.Clear();
             _selectedChanges?.Clear();
@@ -123,7 +127,7 @@ namespace SourceGit.ViewModels
 
         public void OpenChangeWithExternalDiffTool(Models.Change change)
         {
-            var opt = new Models.DiffOption(GetSHA(_startPoint), GetSHA(_endPoint), change);
+            var opt = new Models.DiffOption(GetStartSHA(), GetSHA(_endPoint), change);
             new Commands.DiffTool(_repo.FullPath, opt).Open();
         }
 
@@ -304,7 +308,7 @@ namespace SourceGit.ViewModels
 
         public async Task SaveChangesAsPatchAsync(List<Models.Change> changes, string saveTo)
         {
-            var succ = await Commands.SaveChangesAsPatch.ProcessRevisionCompareChangesAsync(_repo.FullPath, changes ?? _changes, GetSHA(_startPoint), GetSHA(_endPoint), saveTo);
+            var succ = await Commands.SaveChangesAsPatch.ProcessRevisionCompareChangesAsync(_repo.FullPath, changes ?? _changes, GetStartSHA(), GetSHA(_endPoint), saveTo);
             if (succ)
                 App.SendNotification(_repo.FullPath, App.Text("SaveAsPatchSuccess"));
         }
@@ -340,9 +344,30 @@ namespace SourceGit.ViewModels
         {
             Task.Run(async () =>
             {
-                _changes = await new Commands.CompareRevisions(_repo.FullPath, GetSHA(_startPoint), GetSHA(_endPoint))
-                    .ReadAsync()
-                    .ConfigureAwait(false);
+                if (_selectedCommits is { Count: > 0 })
+                {
+                    var seen = new HashSet<string>();
+                    _changes = new List<Models.Change>();
+                    foreach (var commit in _selectedCommits)
+                    {
+                        var parent = commit.Parents.Count > 0 ? commit.Parents[0] : Models.Commit.EmptyTreeSHA1;
+                        var commitChanges = await new Commands.CompareRevisions(_repo.FullPath, parent, commit.SHA)
+                            .ReadAsync()
+                            .ConfigureAwait(false);
+                        foreach (var change in commitChanges)
+                        {
+                            if (seen.Add(change.Path))
+                                _changes.Add(change);
+                        }
+                    }
+                    _changes.Sort((l, r) => Models.NumericSort.Compare(l.Path, r.Path));
+                }
+                else
+                {
+                    _changes = await new Commands.CompareRevisions(_repo.FullPath, GetStartSHA(), GetSHA(_endPoint))
+                        .ReadAsync()
+                        .ConfigureAwait(false);
+                }
 
                 var visible = _changes;
                 if (!string.IsNullOrWhiteSpace(_searchFilter))
@@ -369,6 +394,11 @@ namespace SourceGit.ViewModels
             });
         }
 
+        private string GetStartSHA()
+        {
+            return _diffBaseSHA ?? GetSHA(_startPoint);
+        }
+
         private string GetSHA(object obj)
         {
             return obj is Models.Commit commit ? commit.SHA : string.Empty;
@@ -383,6 +413,8 @@ namespace SourceGit.ViewModels
         private bool _isLoading = true;
         private object _startPoint = null;
         private object _endPoint = null;
+        private string _diffBaseSHA = null;
+        private List<Models.Commit> _selectedCommits = null;
         private int _totalChanges = 0;
         private List<Models.Change> _changes = null;
         private List<Models.Change> _visibleChanges = null;
