@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/albrtbc/gitstation/compare/gitstation-v0.3.3...gitstation-v0.3.4) (2026-04-04)
+
+
+### Bug Fixes
+
+* prioritize Homebrew git over Apple git on macOS ([ff1a117](https://github.com/albrtbc/gitstation/commit/ff1a117375f4fc7581fb756577719ef9be37f90b))
+
 ## [0.3.3](https://github.com/albrtbc/gitstation/compare/gitstation-v0.3.2...gitstation-v0.3.3) (2026-04-04)
 
 
