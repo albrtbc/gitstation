@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.6](https://github.com/albrtbc/gitstation/compare/gitstation-v0.3.5...gitstation-v0.3.6) (2026-04-05)
+
+
+### Features
+
+* add inline stage/unstage buttons ([01a0e4e](https://github.com/albrtbc/gitstation/commit/01a0e4e8e3f89dc53e7683e35c282b905c2d99bf))
+
 ## [0.3.5](https://github.com/albrtbc/gitstation/compare/gitstation-v0.3.4...gitstation-v0.3.5) (2026-04-04)
 
 
