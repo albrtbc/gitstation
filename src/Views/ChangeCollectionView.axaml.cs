@@ -12,6 +12,16 @@ using Avalonia.VisualTree;
 
 namespace SourceGit.Views
 {
+    public class ChangeActionRoutedEventArgs : RoutedEventArgs
+    {
+        public Models.Change Change { get; }
+
+        public ChangeActionRoutedEventArgs(RoutedEvent routedEvent, Models.Change change) : base(routedEvent)
+        {
+            Change = change;
+        }
+    }
+
     public class ChangeTreeNodeToggleButton : ToggleButton
     {
         protected override Type StyleKeyOverride => typeof(ToggleButton);
@@ -104,6 +114,15 @@ namespace SourceGit.Views
         {
             add { AddHandler(ChangeDoubleTappedEvent, value); }
             remove { RemoveHandler(ChangeDoubleTappedEvent, value); }
+        }
+
+        public static readonly RoutedEvent<ChangeActionRoutedEventArgs> ChangeActionButtonClickedEvent =
+            RoutedEvent.Register<ChangeCollectionView, ChangeActionRoutedEventArgs>(nameof(ChangeActionButtonClicked), RoutingStrategies.Tunnel | RoutingStrategies.Bubble);
+
+        public event EventHandler<ChangeActionRoutedEventArgs> ChangeActionButtonClicked
+        {
+            add { AddHandler(ChangeActionButtonClickedEvent, value); }
+            remove { RemoveHandler(ChangeActionButtonClickedEvent, value); }
         }
 
         public ChangeCollectionView()
@@ -227,6 +246,24 @@ namespace SourceGit.Views
 
             if (change.Property == EnableCompactFoldersProperty && ViewMode == Models.ChangeViewMode.Tree)
                 UpdateDataSource(true);
+        }
+
+        private void OnActionButtonClicked(object sender, RoutedEventArgs e)
+        {
+            Models.Change change = null;
+
+            if (sender is Button btn)
+            {
+                if (btn.DataContext is ViewModels.ChangeTreeNode node)
+                    change = node.Change;
+                else if (btn.DataContext is Models.Change c)
+                    change = c;
+            }
+
+            if (change != null)
+                RaiseEvent(new ChangeActionRoutedEventArgs(ChangeActionButtonClickedEvent, change));
+
+            e.Handled = true;
         }
 
         private void OnRowDataContextChanged(object sender, EventArgs e)

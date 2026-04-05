@@ -90,6 +90,18 @@ namespace SourceGit.Views
             }
         }
 
+        private async void OnUnstagedActionButtonClicked(object _, ChangeActionRoutedEventArgs e)
+        {
+            if (DataContext is ViewModels.WorkingCopy vm && e.Change != null)
+                await vm.StageChangesAsync([e.Change], null);
+        }
+
+        private async void OnStagedActionButtonClicked(object _, ChangeActionRoutedEventArgs e)
+        {
+            if (DataContext is ViewModels.WorkingCopy vm && e.Change != null)
+                await vm.UnstageChangesAsync([e.Change], null);
+        }
+
         private async void OnUnstagedKeyDown(object _, KeyEventArgs e)
         {
             if (DataContext is ViewModels.WorkingCopy vm)

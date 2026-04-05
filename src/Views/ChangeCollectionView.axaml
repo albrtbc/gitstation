@@ -37,7 +37,7 @@
                                    SelectionChanged="OnRowSelectionChanged">
         <ListBox.ItemTemplate>
           <DataTemplate DataType="vm:ChangeTreeNode">
-            <Grid ColumnDefinitions="16,16,Auto,*"
+            <Grid ColumnDefinitions="16,16,Auto,*,Auto"
                   Margin="{Binding Depth, Converter={x:Static c:IntConverters.ToTreeMargin}}"
                   Background="Transparent"
                   DoubleTapped="OnRowDoubleTapped"
@@ -68,6 +68,20 @@
                 <TextBlock Text="{Binding ConflictMarker, Mode=OneWay}" Foreground="DarkOrange" FontWeight="Bold" Margin="0,0,4,0" IsVisible="{Binding ShowConflictMarker}"/>
                 <TextBlock Text="{Binding DisplayName, Mode=OneWay}"/>
               </StackPanel>
+
+              <Button Grid.Column="4"
+                      Classes="icon_button"
+                      Width="18" Height="18"
+                      Padding="0"
+                      Margin="0,0,4,0"
+                      HorizontalAlignment="Right"
+                      IsVisible="{Binding !IsFolder}"
+                      Click="OnActionButtonClicked">
+                <Panel>
+                  <Path Width="10" Height="10" Data="{StaticResource Icons.Plus}" IsVisible="{Binding #ThisControl.IsUnstagedChange}"/>
+                  <Path Width="10" Height="10" Data="{StaticResource Icons.Minus}" IsVisible="{Binding !#ThisControl.IsUnstagedChange}"/>
+                </Panel>
+              </Button>
             </Grid>
           </DataTemplate>
         </ListBox.ItemTemplate>
@@ -82,7 +96,7 @@
                                    SelectionChanged="OnRowSelectionChanged">
         <ListBox.ItemTemplate>
           <DataTemplate DataType="m:Change">
-            <Grid ColumnDefinitions="Auto,Auto,Auto,*"
+            <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto"
                   Background="Transparent"
                   DoubleTapped="OnRowDoubleTapped"
                   DataContextChanged="OnRowDataContextChanged">
@@ -100,6 +114,19 @@
               <TextBlock Grid.Column="2"
                          Text="{Binding Path, Converter={x:Static c:PathConverters.PureDirectoryName}}"
                          Foreground="{DynamicResource Brush.FG2}"/>
+
+              <Button Grid.Column="4"
+                      Classes="icon_button"
+                      Width="18" Height="18"
+                      Padding="0"
+                      Margin="0,0,4,0"
+                      HorizontalAlignment="Right"
+                      Click="OnActionButtonClicked">
+                <Panel>
+                  <Path Width="10" Height="10" Data="{StaticResource Icons.Plus}" IsVisible="{Binding #ThisControl.IsUnstagedChange}"/>
+                  <Path Width="10" Height="10" Data="{StaticResource Icons.Minus}" IsVisible="{Binding !#ThisControl.IsUnstagedChange}"/>
+                </Panel>
+              </Button>
             </Grid>
           </DataTemplate>
         </ListBox.ItemTemplate>
@@ -114,7 +141,7 @@
                                    SelectionChanged="OnRowSelectionChanged">
         <ListBox.ItemTemplate>
           <DataTemplate DataType="m:Change">
-            <Grid ColumnDefinitions="Auto,Auto,*"
+            <Grid ColumnDefinitions="Auto,Auto,*,Auto"
                   Background="Transparent"
                   DoubleTapped="OnRowDoubleTapped"
                   DataContextChanged="OnRowDataContextChanged">
@@ -128,6 +155,19 @@
                 <TextBlock Text="{Binding ConflictMarker}" Foreground="DarkOrange" FontWeight="Bold" Margin="0,0,4,0" IsVisible="{Binding IsConflicted}"/>
                 <TextBlock Text="{Binding Path}"/>
               </StackPanel>
+
+              <Button Grid.Column="3"
+                      Classes="icon_button"
+                      Width="18" Height="18"
+                      Padding="0"
+                      Margin="0,0,4,0"
+                      HorizontalAlignment="Right"
+                      Click="OnActionButtonClicked">
+                <Panel>
+                  <Path Width="10" Height="10" Data="{StaticResource Icons.Plus}" IsVisible="{Binding #ThisControl.IsUnstagedChange}"/>
+                  <Path Width="10" Height="10" Data="{StaticResource Icons.Minus}" IsVisible="{Binding !#ThisControl.IsUnstagedChange}"/>
+                </Panel>
+              </Button>
             </Grid>
           </DataTemplate>
         </ListBox.ItemTemplate>
